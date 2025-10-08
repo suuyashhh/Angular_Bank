@@ -1,13 +1,17 @@
-<!-- style="position: fixed;top: 10px;left: 287px; "  -->
-
-<nav
+<nav 
   class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme shadow-xs bg-white p-5 mt-3 no-print"
-  id="layout-navbar">
-  <!-- <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0   d-xl-none ">
-    <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
-      <i class="ri-menu-fill ri-24px"></i>
-    </a>
-  </div> -->
+  id="layout-navbar"
+  [class.full-width]="isFullWidth">
+
+  <!-- Menu Toggle Button -->
+  <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0">
+    <button class="btn btn-text-secondary btn-icon"
+            type="button"
+            aria-label="Toggle sidebar"
+            (click)="toggleSidebar.emit()">
+      <i class="ri-menu-3-line ri-24px"></i>
+    </button>
+  </div>
 
   <div class="navbar-nav-right d-flex align-items-center no-print" id="navbar-collapse">
     <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -136,12 +140,6 @@
                 </div>
               </li>
             </ul>
-            <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
-              <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-            </div>
-            <div class="ps__rail-y" style="top: 0px; right: 0px;">
-              <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div>
-            </div>
           </li>
           <li class="border-top">
             <div class="d-grid p-4">
@@ -233,24 +231,7 @@
 
   <!-- Search Small Screens -->
   <div class="navbar-search-wrapper search-input-wrapper d-none">
-    <span class="twitter-typeahead" style="position: relative; display: inline-block;"><input type="text"
-        class="form-control search-input container-xxl border-0 tt-input" placeholder="Search..." aria-label="Search..."
-        autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top;">
-      <pre aria-hidden="true"
-        style="position: absolute; visibility: hidden; white-space: pre; font-family: Inter, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Oxygen, Ubuntu, Cantarell, &quot;Fira Sans&quot;, &quot;Droid Sans&quot;, &quot;Helvetica Neue&quot;, sans-serif; font-size: 15px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre>
-      <div class="tt-menu navbar-search-suggestion ps"
-        style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;">
-        <div class="tt-dataset tt-dataset-pages"></div>
-        <div class="tt-dataset tt-dataset-files"></div>
-        <div class="tt-dataset tt-dataset-members"></div>
-        <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
-          <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-        </div>
-        <div class="ps__rail-y" style="top: 0px; right: 0px;">
-          <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div>
-        </div>
-      </div>
-    </span>
+    <input type="text" class="form-control search-input container-xxl border-0" placeholder="Search..." aria-label="Search...">
     <i class="ri-close-fill search-toggler cursor-pointer"></i>
   </div>
 </nav>
