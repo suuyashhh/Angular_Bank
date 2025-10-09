@@ -1,0 +1,33 @@
+/* Shared look for both pills */
+.session-badge {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  padding: 6px 10px;
+  font-size: 11px;
+  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.35);
+}
+
+/* Position beside the bell icon */
+.bell-badge {
+  position: absolute;
+  top: -4px;
+  right: -10px;
+}
+
+/* Keep the avatar row compact */
+.user-badge {
+  margin-left: 4px;
+}
+
+/* Optional: pulse when under 1 minute */
+:host ::ng-deep .session-badge.pulse,
+.session-badge.pulse {
+  animation: pulseDanger 1.2s infinite;
+}
+
+@keyframes pulseDanger {
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(220,53,69,0.5); }
+  70%  { transform: scale(1.03); box-shadow: 0 0 0 8px rgba(220,53,69,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+}
