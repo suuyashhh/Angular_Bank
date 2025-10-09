@@ -1,6 +1,7 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnDestroy, HostListener } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -9,19 +10,60 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnDestroy {
   @Output() toggleSidebar = new EventEmitter<void>();
   @Input() isFullWidth: boolean = false;
 
   user: any;
-  constructor(private auth:AuthService, private toster:ToastrService){}
-  ngOnInit():void{
-    this.user=this.auth.getUser();
+
+  private totalSeconds = 20 * 60;            // 20 minutes
+  remainingSeconds = this.totalSeconds;
+  private tickSub?: Subscription;
+  private isLoggedOut = false;
+
+  constructor(private auth: AuthService, private toster: ToastrService) {}
+
+  ngOnInit(): void {
+    this.user = this.auth.getUser();
+
+    this.tickSub = interval(1000).subscribe(() => {
+      this.remainingSeconds = Math.max(0, this.remainingSeconds - 1);
+      if (this.remainingSeconds === 0) {
+        this.logout(); // Auto-logout when time is up
+      }
+    });
   }
 
-  logout(){
+  ngOnDestroy(): void {
+    this.tickSub?.unsubscribe();
+  }
+
+  logout() {
+    if (this.isLoggedOut) return;
+    this.isLoggedOut = true;
+    this.tickSub?.unsubscribe();
     this.auth.logout();
-    this.toster.success('LogOut SuccessFul..!','Logout');
+    this.toster.success('LogOut SuccessFul..!', 'Logout');
   }
 
+  //  Reset timer on ANY click anywhere on the page
+  @HostListener('document:click')
+  onAnyDocumentClick() {
+    if (this.isLoggedOut) return;
+    this.resetTimer();
+  }
+
+
+  private resetTimer() {
+    this.remainingSeconds = this.totalSeconds;
+  }
+
+  // Format as MM:SS
+  get countdown(): string {
+    const m = Math.floor(this.remainingSeconds / 60);
+    const s = this.remainingSeconds % 60;
+    return `${this.pad(m)}:${this.pad(s)}`;
+  }
+
+  private pad(n: number) { return n < 10 ? `0${n}` : `${n}`; }
 }
