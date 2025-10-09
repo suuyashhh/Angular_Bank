@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
         if (res?.token) {
           this.auth.setToken(res);
-          this.toastr.success('Login successful!', 'Welcome');
+          this.toastr.success('Login successful...!', 'Login');
           this.router.navigate(['USERMASTER']);
         } else {
           this.toastr.error('Login failed. Invalid response.', 'Error');
