@@ -1,0 +1,217 @@
+<style>
+ /* Main Layout Structure */
+.layout-wrapper {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  background: transparent;
+}
+
+/* Sidebar Styles */
+.layout-menu {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  background: #fff;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.layout-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.layout-menu.show {
+  transform: translateX(0);
+}
+
+/* Collapsed sidebar state */
+.layout-menu.collapsed {
+  transform: translateX(-100%);
+}
+
+/* Navbar Styles */
+app-navbar {
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
+  z-index: 900;
+  height: 60px;
+  width: calc(100% - 260px);
+  transition: all 0.3s ease;
+}
+
+/* When sidebar is hidden, navbar takes full width */
+app-navbar.full-width {
+  left: 0;
+  width: 100%;
+}
+
+/* Main Content Area */
+.layout-page {
+  margin-top: 70px;
+  margin-left: 260px;
+  transition: margin-left 0.3s ease;
+}
+
+.layout-page.full-width {
+  margin-left: 0;
+}
+
+/* Router Outlet - Content Area */
+router-outlet {
+  display: block;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+  margin-top: -60px;
+  padding-top: 60px;
+}
+
+/* Content inside router-outlet */
+router-outlet > * {
+  background: transparent;
+}
+
+/* Mobile Toggle Button */
+.mobile-menu-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1001;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #7367f0;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Overlay - Fixed to cover entire screen */
+.layout-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.layout-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Floating Home Button */
+.floating-home-button {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 1001;
+}
+
+/* Responsive Behavior */
+@media (min-width: 1200px) {
+  .layout-menu {
+    transform: translateX(0);
+  }
+
+  .layout-menu.collapsed {
+    transform: translateX(-100%);
+  }
+
+  .layout-page {
+    margin-left: 260px;
+  }
+
+  .layout-page.full-width {
+    margin-left: 0;
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+  }
+
+  .layout-overlay {
+    display: none !important;
+  }
+
+  app-navbar {
+    left: 260px;
+    width: calc(100% - 260px);
+  }
+  
+  app-navbar.full-width {
+    left: 0;
+    width: 100%;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .layout-menu {
+    display: none !important;
+  }
+
+  .layout-page {
+    margin-left: 0 !important;
+  }
+
+  app-navbar {
+    display: none !important;
+  }
+}
+</style>
+
+<div class="layout-wrapper layout-content-navbar">
+  <!-- Overlay -->
+  <div class="layout-overlay" [class.show]="sidebarCollapsed" (click)="onToggleSidebar()"></div>
+
+  <div class="layout-container">
+    <!-- Menu -->
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" 
+           [class.collapsed]="sidebarCollapsed" [class.show]="!sidebarCollapsed">
+      <div class="menu-inner-shadow"></div>
+      <app-sidebar></app-sidebar>
+    </aside>
+    <!-- / Menu -->
+
+    <!-- Layout container -->
+    <div class="layout-page" [class.full-width]="sidebarCollapsed">
+      <!-- Navbar -->
+      <app-navbar [class.full-width]="sidebarCollapsed" (toggleSidebar)="onToggleSidebar()"></app-navbar>
+      <!-- / Navbar -->
+
+      <!-- Content wrapper -->
+      <!-- Content -->
+      <router-outlet></router-outlet>
+      <!-- / Content -->
+
+      <div class="content-backdrop fade"></div>
+      <!-- Content wrapper -->
+    </div>
+    <!-- / Layout page -->
+  </div>
+</div>
