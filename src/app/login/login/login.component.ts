@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -12,11 +12,12 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
-  @ViewChild('passwordIcon', { static: false }) passwordIcon!: ElementRef<HTMLElement>;
-
+export class LoginComponent {
   loginObj = { INI: '', CODE: '' };
   isLoading = false;
+
+  // new property
+  showPassword = false;
 
   constructor(
     private router: Router,
@@ -24,11 +25,11 @@ export class LoginComponent implements OnInit {
     private toastr: ToastrService
   ) {}
 
-  ngOnInit(): void {
-    if (this.auth.isLoggedIn()) {
-      this.router.navigate(['USERMASTER']);
-    }
-  }
+  // ngOnInit(): void {
+  //   if (this.auth.isLoggedIn()) {
+  //     this.router.navigate(['USERMASTER']);
+  //   }
+  // }
 
   login(): void {
     if (!this.loginObj.INI || !this.loginObj.CODE) {
@@ -37,7 +38,7 @@ export class LoginComponent implements OnInit {
     }
 
     this.isLoading = true;
-        debugger;
+    debugger;
     this.auth.login(this.loginObj).subscribe({
       next: (res: any) => {
         this.isLoading = false;
@@ -56,13 +57,8 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  togglePasswordVisibility(passwordInput: HTMLInputElement): void {
-    const isPassword = passwordInput.type === 'password';
-    passwordInput.type = isPassword ? 'text' : 'password';
-
-    if (!this.passwordIcon) return;
-    const cl = this.passwordIcon.nativeElement.classList;
-    cl.toggle('ri-eye-off-line', !isPassword);
-    cl.toggle('ri-eye-line', isPassword);
+  // simplified toggle
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }
