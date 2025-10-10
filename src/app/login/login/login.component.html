@@ -1,104 +1,93 @@
 <div class="position-relative">
-  <div class="position-absolute top-0 end-0 m-3">
-    <button
-      class="btn btn-icon btn-outline-primary"
-      type="button"
-      data-bs-toggle="tooltip"
-      data-bs-placement="left"
-      title="Important login information"
-    >
-      <i class="ri-information-line ri-lg"></i>
-    </button>
-  </div>
-
+ <div class="position-absolute top-0 end-0 m-3">
+  <!-- <button class="btn btn-icon btn-outline-primary" type="button" 
+          data-bs-toggle="tooltip" data-bs-placement="left" 
+          title="Important login information" >
+    <i class="ri-information-line ri-lg"></i>
+  </button> -->
+</div>
   <div class="authentication-wrapper authentication-basic container-p-y">
     <div class="authentication-inner py-6 mx-4">
+      <!-- Login -->
       <div class="card p-7">
+        <!-- Logo -->
         <div class="app-brand justify-content-center mt-5">
-          <a class="app-brand-link gap-3" routerLink="/">
-            <span class="app-brand-logo demo">
+          <a href="index.html" class="app-brand-link gap-3">
+             <span class="app-brand-logo demo">
               <img src="../../../assets/img/ProBank/TSIIcon.png" alt="Pro Bank Logo" width="60" height="44" />
             </span>
             <span class="app-brand-text demo text-heading fw-semibold">Pro Bank</span>
           </a>
         </div>
+        <!-- /Logo -->
 
         <div class="card-body mt-1">
           <h4 class="mb-1">Welcome to Pro Bank! 👋🏻</h4>
           <p class="mb-5">Please sign-in to your account and start the adventure</p>
 
-          <form class="mb-5" (ngSubmit)="login()" novalidate>
+          <form id="formAuthentication" class="mb-5" action="index.html" method="POST" #loginForm="ngForm"
+            (ngSubmit)="login()">
             <div class="form-floating form-floating-outline mb-5">
-              <input
-                type="text"
-                class="form-control"
-                id="contact"
-                name="contact"
-                [(ngModel)]="loginObj.INI"
-                placeholder="Enter your email or username"
-                required
-                autofocus
-              />
-              <label for="contact">Email or Username</label>
+              <input type="text" class="form-control" id="email" name="email-username" [(ngModel)]="loginObj.INI"
+                placeholder="Enter your email or username" autofocus />
+              <label for="email">Email or Username</label>
             </div>
+          <!-- Password input -->
+<div class="mb-5">
+  <div class="form-password-toggle">
+    <div class="input-group input-group-merge">
+      <div class="form-floating form-floating-outline" style="flex:1;">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          id="password"
+          class="form-control"
+          name="password"
+          [(ngModel)]="loginObj.CODE"
+          placeholder="············"
+          aria-describedby="password"
+        />
+        <label for="password">Password</label>
+      </div>
 
-            <div class="mb-5">
-              <div class="form-password-toggle">
-                <div class="input-group input-group-merge">
-                  <div class="form-floating form-floating-outline">
-                    <input
-                      #passwordInput
-                      type="password"
-                      id="password"
-                      class="form-control"
-                      name="password"
-                      [(ngModel)]="loginObj.CODE"
-                      placeholder="••••••••••••"
-                      aria-describedby="password"
-                      required
-                    />
-                    <label for="password">Password</label>
-                  </div>
-
-                  <button
-                    class="input-group-text btn btn-link border-0"
-                    type="button"
-                    (click)="togglePasswordVisibility(passwordInput)"
-                    aria-label="Toggle password visibility"
-                  >
-                    <i #passwordIcon class="ri-eye-off-line ri-20px"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
+      <!-- Toggle button: uses ngClass to swap icons -->
+      <span class="input-group-text cursor-pointer" (click)="togglePasswordVisibility()"
+            style="user-select: none;">
+        <i [ngClass]="showPassword ? 'ri-eye-line ri-20px' : 'ri-eye-off-line ri-20px'"></i>
+      </span>
+    </div>
+  </div>
+</div>
 
             <div class="mb-5 pb-2 d-flex justify-content-between pt-2 align-items-center">
               <div class="form-check mb-0">
-                <input class="form-check-input" type="checkbox" id="remember-me" />
-                <label class="form-check-label" for="remember-me"> Remember Me </label>
+             
               </div>
-              <a routerLink="/forgot-password" class="float-end mb-1"><span>Forgot Password?</span></a>
+              <a href="auth-forgot-password-basic.html" class="float-end mb-1">
+                <span>Forgot Password?</span>
+              </a>
             </div>
-
             <div class="mb-5 position-relative">
               <button class="btn btn-primary d-grid w-100" type="submit" [disabled]="isLoading">
                 <span *ngIf="!isLoading">Login</span>
-                <span *ngIf="isLoading" class="d-inline-flex align-items-center gap-2">
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  Signing in…
+                <span *ngIf="isLoading">
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Logging in...
                 </span>
               </button>
             </div>
+
           </form>
 
-          <p class="text-center mb-5">
-            <span>New on our platform?</span>
-            <a href="tel:+918180821173"><span>Create an account</span></a>
-          </p>
         </div>
       </div>
-
-      <!-- Optional decorative images... -->
+      <!-- /Login -->
+      <img src="../assets/img/illustrations/tree-3.png" alt="auth-tree"
+        class="authentication-image-object-left d-none d-lg-block" />
+      <img src="../assets/img/illustrations/auth-basic-mask-light.png" class="authentication-image d-none d-lg-block"
+        height="172" alt="triangle-bg" data-app-light-img="illustrations/auth-basic-mask-light.png"
+        data-app-dark-img="illustrations/auth-basic-mask-dark.png" />
+      <img src="../assets/img/illustrations/tree.png" alt="auth-tree"
+        class="authentication-image-object-right d-none d-lg-block" />
     </div>
   </div>
 </div>

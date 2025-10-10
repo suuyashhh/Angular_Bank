@@ -9,13 +9,21 @@ import { inject, PLATFORM_ID } from '@angular/core';
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
 
-  constructor(private router: Router, private http: HttpClient, private api: ApiService) {}
+  constructor(private router: Router, private http: HttpClient, private api: ApiService) { }
+
 
   setToken(res: any): void {
-    localStorage.setItem('token', res.token);
-    localStorage.setItem('userDetails', JSON.stringify(res.userDetails));
-    document.cookie = `authToken=${res.token}; path=/`;
+    localStorage.setItem('token', res?.token ?? '');
+
+    const minimalUser = {
+      ini: res.userDetails.ini ?? null,
+      workinG_BRANCH: res.userDetails.workinG_BRANCH ?? null,
+    };
+
+    localStorage.setItem('userDetails', JSON.stringify(minimalUser));
+    document.cookie = `authToken=${res?.token ?? ''}; path=/`;
   }
+
 
   getUser(): any {
     const userJson = localStorage.getItem('userDetails');
