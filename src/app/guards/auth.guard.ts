@@ -38,7 +38,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   } else {
     router.navigate(['/'], { replaceUrl: true });
-     toast?.info('Direct URL access is blocked. Please use the app menus.', 'Logged out');
+     toast?.info(' Other Side Login this id.', 'Logged out');
     return false;
   }
 };
