@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-login',
@@ -19,11 +20,16 @@ export class LoginComponent {
   // new property
   showPassword = false;
 
+  showModel = false;
+  userName = '';
+
+  GetBranches = '';
   constructor(
     private router: Router,
     private auth: AuthService,
-    private toastr: ToastrService
-  ) {}
+    private toastr: ToastrService,
+    private api: ApiService
+  ) { }
 
   // ngOnInit(): void {
   //   if (this.auth.isLoggedIn()) {
@@ -39,16 +45,17 @@ export class LoginComponent {
 
     this.isLoading = true;
     debugger;
+    this.api.get('BranchMast/GetAllBranches').subscribe((res: any) => {
+      this.GetBranches = res;
+      console.log(this.GetBranches);
+    });
     this.auth.login(this.loginObj).subscribe({
       next: (res: any) => {
         this.isLoading = false;
-        if (res?.token) {
-          this.auth.setToken(res);
-          this.toastr.success('Login successful...!', 'Login');
-          this.router.navigate(['USERMASTER']);
-        } else {
-          this.toastr.error('Login failed. Invalid response.', 'Error');
-        }
+
+        const name = res?.userDetails?.name ?? 'User';
+        this.userName = name;
+        this.showModel = true;
       },
       error: () => {
         this.isLoading = false;
@@ -56,6 +63,11 @@ export class LoginComponent {
       },
     });
   }
+
+  closeModal(): void {
+    this.showModel = false;
+  }
+
 
   // simplified toggle
   togglePasswordVisibility(): void {
