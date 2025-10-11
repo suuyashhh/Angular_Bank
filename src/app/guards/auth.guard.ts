@@ -38,7 +38,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   } else {
     router.navigate(['/'], { replaceUrl: true });
-     toast?.info(' Other Side Login this id.', 'Logged out');
+     toast?.info('This ID opens other side', 'Logged out');
     return false;
   }
 };
