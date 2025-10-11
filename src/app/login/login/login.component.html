@@ -1,11 +1,11 @@
 <div class="position-relative">
- <div class="position-absolute top-0 end-0 m-3">
-  <!-- <button class="btn btn-icon btn-outline-primary" type="button" 
+  <div class="position-absolute top-0 end-0 m-3">
+    <!-- <button class="btn btn-icon btn-outline-primary" type="button" 
           data-bs-toggle="tooltip" data-bs-placement="left" 
           title="Important login information" >
     <i class="ri-information-line ri-lg"></i>
   </button> -->
-</div>
+  </div>
   <div class="authentication-wrapper authentication-basic container-p-y">
     <div class="authentication-inner py-6 mx-4">
       <!-- Login -->
@@ -13,7 +13,7 @@
         <!-- Logo -->
         <div class="app-brand justify-content-center mt-5">
           <a href="index.html" class="app-brand-link gap-3">
-             <span class="app-brand-logo demo">
+            <span class="app-brand-logo demo">
               <img src="../../../assets/img/ProBank/TSIIcon.png" alt="Pro Bank Logo" width="60" height="44" />
             </span>
             <span class="app-brand-text demo text-heading fw-semibold">Pro Bank</span>
@@ -32,35 +32,29 @@
                 placeholder="Enter your email or username" autofocus />
               <label for="email">Email or Username</label>
             </div>
-          <!-- Password input -->
-<div class="mb-5">
-  <div class="form-password-toggle">
-    <div class="input-group input-group-merge">
-      <div class="form-floating form-floating-outline" style="flex:1;">
-        <input
-          [type]="showPassword ? 'text' : 'password'"
-          id="password"
-          class="form-control"
-          name="password"
-          [(ngModel)]="loginObj.CODE"
-          placeholder="············"
-          aria-describedby="password"
-        />
-        <label for="password">Password</label>
-      </div>
+            <!-- Password input -->
+            <div class="mb-5">
+              <div class="form-password-toggle">
+                <div class="input-group input-group-merge">
+                  <div class="form-floating form-floating-outline" style="flex:1;">
+                    <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control"
+                      name="password" [(ngModel)]="loginObj.CODE" placeholder="············"
+                      aria-describedby="password" />
+                    <label for="password">Password</label>
+                  </div>
 
-      <!-- Toggle button: uses ngClass to swap icons -->
-      <span class="input-group-text cursor-pointer" (click)="togglePasswordVisibility()"
-            style="user-select: none;">
-        <i [ngClass]="showPassword ? 'ri-eye-line ri-20px' : 'ri-eye-off-line ri-20px'"></i>
-      </span>
-    </div>
-  </div>
-</div>
+                  <!-- Toggle button: uses ngClass to swap icons -->
+                  <span class="input-group-text cursor-pointer" (click)="togglePasswordVisibility()"
+                    style="user-select: none;">
+                    <i [ngClass]="showPassword ? 'ri-eye-line ri-20px' : 'ri-eye-off-line ri-20px'"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
 
             <div class="mb-5 pb-2 d-flex justify-content-between pt-2 align-items-center">
               <div class="form-check mb-0">
-             
+
               </div>
               <a href="auth-forgot-password-basic.html" class="float-end mb-1">
                 <span>Forgot Password?</span>
@@ -91,3 +85,75 @@
     </div>
   </div>
 </div>
+
+<!-- Modal -->
+<div class="modal custom-modal-fade" id="labMatFormModal" tabindex="-1" aria-labelledby="labMatFormModalLabel"
+  [attr.aria-hidden]="!showModel" [class.show]="showModel" [style.display]="showModel ? 'block' : 'none'">
+
+  <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content custom-modal-content">
+      <div class="modal-header custom-modal-header">
+        <div class="modal-title-wrapper">
+          <div class="modal-icon">
+            <img src="../../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
+          </div>
+          <h5 class="modal-title custom-modal-title">{{ userName }}</h5>
+        </div>
+        <button type="button" class="btn-close custom-btn-close" (click)="closeModal()" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body custom-modal-body">
+        <form class="custom-form" novalidate>
+          <div class="form-group-wrapper">
+            <div class="custom-form-group">
+              <!-- Faux input that opens the dropdown -->
+              <div class="form-floating form-floating-outline mb-4 position-relative">
+                <input type="text" id="branch-input" class="form-control branch-input" placeholder="Branch"
+                  [(ngModel)]="branchSearch" name="branchSearch" (focus)="dropdownOpen = true"
+                  (input)="onSearchChange()" autocomplete="off" />
+                <label for="branch-input">
+                  <i class="ri-box-3-line"></i>Branch <span class="text-danger">*</span>
+                </label>
+
+                <!-- Caret button on the right -->
+                <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
+                  aria-label="Toggle branches">
+                  <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+                </button>
+
+                <!-- Dropdown list -->
+                <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
+                  <div class="dropdown-list">
+                    <div class="dropdown-item" *ngFor="let b of filteredBranches; trackBy: trackByCode"
+                      (click)="pickBranch(b)" [ngClass]="{ 'is-selected': selectedBranch?.code === b.code }">
+                      <span class="item-name">{{ b.name }}</span>
+                    </div>
+
+
+                    <div class="dropdown-empty" *ngIf="filteredBranches.length === 0">
+                      No branches found
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="modal-footer custom-modal-footer">
+            <button type="button" class="custom-btn custom-btn-save" (click)="continue()" [disabled]="!selectedBranch">
+              <i class="ri-save-line"></i> Continue
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Simple backdrop -->
+<div *ngIf="showModel" class="modal-backdrop fade show" (click)="closeModal()">
+</div>
+<!-- click outside to close dropdown (but keep modal) -->
+<div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen=false"></div>
