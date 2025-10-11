@@ -3,9 +3,8 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  baseurl = 'https://localhost:7265/api/';
-  // baseurl = 'https://backend.suyashpatil.in/api/';
-  // baseurl = 'https://labmvcapi.bsite.net/api/';
+  //baseurl = 'https://localhost:7265/api/';
+  baseurl = 'https://membersap.bsite.net/api/';
 
   constructor(private http: HttpClient) {}
 
