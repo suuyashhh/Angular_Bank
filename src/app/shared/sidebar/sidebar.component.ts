@@ -1,47 +1,75 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, OnDestroy, OnInit, ElementRef, ViewChild, inject, NgZone, Renderer2 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterModule,CommonModule],
+  imports: [RouterModule, CommonModule],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrls: ['./sidebar.component.css']
 })
-export class SidebarComponent implements OnInit, AfterViewInit {
+export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
   user: any;
+
+  private initialized = false;
+  private resizeListener!: () => void;
+
+  // Inject Angular services correctly
+  private ngZone: NgZone = inject(NgZone);
+  private renderer: Renderer2 = inject(Renderer2);
+
+  @ViewChild('layoutMenu', { static: false }) layoutMenuRef!: ElementRef;
 
   constructor(private auth: AuthService) {}
 
   ngOnInit(): void {
-    this.user = this.auth.getUser();
+    // Only keep minimal user info to avoid exposing sensitive data
+    const fullUser = this.auth.getUser();
+    this.user = fullUser
+      ? { ini: fullUser.ini, workinG_BRANCH: fullUser.workinG_BRANCH }
+      : null;
   }
 
-  ngAfterViewInit(): void {
-    // Only initialize menu on desktop
-    if (window.innerWidth >= 1200) {
-      this.reinitializeSidebarMenu();
+  ngAfterViewChecked(): void {
+    // Initialize menu once after view is ready and on desktop only
+    if (!this.initialized && window.innerWidth >= 1200 && this.layoutMenuRef?.nativeElement) {
+      this.ngZone.runOutsideAngular(() => this.initializeMenu());
+      this.initialized = true;
     }
-    
-    // Add resize listener
-    window.addEventListener('resize', () => {
-      if (window.innerWidth >= 1200) {
-        this.reinitializeSidebarMenu();
-      }
-    });
   }
 
-  reinitializeSidebarMenu(): void {
-    setTimeout(() => {
-      const layoutMenu = document.querySelector('#layout-menu');
-      if (typeof (window as any).Menu !== 'undefined' && layoutMenu) {
-        new (window as any).Menu(layoutMenu, {
+  private initializeMenu(): void {
+    try {
+      const win: any = window;
+      if (win?.Menu && typeof win.Menu === 'function') {
+        new win.Menu(this.layoutMenuRef.nativeElement, {
           orientation: 'vertical',
           closeChildren: false,
         });
       }
-    }, 50);
+    } catch (error) {
+      console.warn('Sidebar menu initialization failed:', error);
+    }
+
+    // Setup debounced resize listener
+    let resizeTimeout: any;
+    this.resizeListener = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        if (window.innerWidth >= 1200 && this.layoutMenuRef?.nativeElement) {
+          this.ngZone.runOutsideAngular(() => this.initializeMenu());
+        }
+      }, 300);
+    };
+    window.addEventListener('resize', this.resizeListener);
+  }
+
+  ngOnDestroy(): void {
+    // Remove resize listener to prevent memory leaks
+    if (this.resizeListener) {
+      window.removeEventListener('resize', this.resizeListener);
+    }
   }
 }

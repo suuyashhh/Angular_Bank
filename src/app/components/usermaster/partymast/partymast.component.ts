@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { on } from 'events';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-partymast',
@@ -8,7 +10,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './partymast.component.html',
   styleUrl: './partymast.component.css'
 })
-export class PartymastComponent {
+export class PartymastComponent implements OnInit {
   previews: any = {
     photo: null,
     sign: null,
@@ -17,8 +19,16 @@ export class PartymastComponent {
     aadhaarBack: null
   };
 
+  constructor(private auth:AuthService) {}
+  ngOnInit(): void {
+    console.log(this.auth.getUser());
+
+  }
+
   onFileChange(event: any, key: string) {
     const file = event.target.files[0];
+    console.log(file);
+
     if (!file) return;
 
     const reader = new FileReader();
@@ -40,7 +50,7 @@ export class PartymastComponent {
       aadhaarFront: null,
       aadhaarBack: null
     };
-    
+
     // Reset file inputs
     const fileInputs = document.querySelectorAll('.file-input') as NodeListOf<HTMLInputElement>;
     fileInputs.forEach(input => {

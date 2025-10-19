@@ -1,0 +1,20 @@
+<div
+  #modalRoot
+  class="modal-overlay"
+  [class.show]="show"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-hidden]="!show"
+  (click)="close()"
+>
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h5>{{ title }}</h5>
+      <button type="button" class="close-btn" (click)="close()" aria-label="Close">×</button>
+    </div>
+
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

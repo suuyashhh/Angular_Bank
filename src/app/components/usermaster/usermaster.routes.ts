@@ -1,20 +1,29 @@
-import { Routes } from "@angular/router";
-import { authGuard } from "../../guards/auth.guard";
+import { Routes } from '@angular/router';
+import { authGuard } from '../../guards/auth.guard';
 
 export const UserMaster_Routes: Routes = [
+  // Default redirect to dashboard
   {
     path: '',
-    redirectTo:'dashboard',
-    pathMatch:"full"   
+    redirectTo: 'dashboard',
+    pathMatch: 'full',
   },
+
+  // Dashboard (protected)
   {
     path: 'dashboard',
-    canActivate:[authGuard],
-    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
+    title: 'Dashboard | SmartBank',
   },
+
+  // Party Master (protected)
   {
-    path:'partymast',
-    canActivate:[authGuard],
-    loadComponent: ()=> import('./partymast/partymast.component').then(m=>m.PartymastComponent)
-  }
+    path: 'partymast',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./partymast/partymast.component').then((m) => m.PartymastComponent),
+    title: 'Party Master | SmartBank',
+  },
 ];
