@@ -4,20 +4,55 @@ import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
+  const auth = inject(AuthService);
   const router = inject(Router);
-  const token = authService.getToken();
+  const toast = inject(ToastrService, { optional: true });
 
-  const clonedRequest = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
+  const token = auth.getToken();
+  const clonedReq = token
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req;
 
-  return next(clonedRequest).pipe(
-    catchError((err) => {
-      if (err.status === 401 || err.status === 403 || err.status === 0) {
-        authService.logout();
-        router.navigate(['/']);
+  return next(clonedReq).pipe(
+    catchError(err => {
+      const url = req.url || '';
+
+      // Skip login/logout endpoints
+      if (url.includes('Login/Login') || url.includes('Login/Logout')) {
+        return throwError(() => err);
       }
+
+      // ✅ Detect session expiration (401 from backend middleware)
+      if ((err.status === 401 || err.status === 403) && !auth.isLoggingOut) {
+        auth.isLoggingOut = true;
+
+        try {
+          if (err.error && typeof err.error === 'string' && err.error.includes('Session expired')) {
+            toast?.info('You were logged out because you logged in from another device.', 'Session Ended');
+          } else {
+            toast?.info('Session expired or unauthorized. Please log in again.', 'Logged Out');
+          }
+        } catch {}
+
+        auth.logout();
+
+        if (window.location.pathname !== '/') {
+          router.navigate(['/'], { replaceUrl: true });
+        }
+
+        setTimeout(() => (auth.isLoggingOut = false), 3000);
+      } else if (err.status === 0 && !auth.isLoggingOut) {
+        // Handle network issues
+        auth.isLoggingOut = true;
+        try {
+          toast?.warning('Network error. Please check your connection.', 'Connection Lost');
+        } catch {}
+        setTimeout(() => (auth.isLoggingOut = false), 3000);
+      }
+
       return throwError(() => err);
     })
   );
