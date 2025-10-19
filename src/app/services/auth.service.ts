@@ -28,8 +28,10 @@ export class AuthService {
 
   constructor(private router: Router, private http: HttpClient) {
     if (isPlatformBrowser(this.platformId)) {
-      this.restorePromise = this.restoreFromStorage();
-      this.setupInactivityTracking(); // start tracking after restore
+      this.restorePromise = this.restoreFromStorage().then(() => {
+        this.setupInactivityTracking();
+        this.setupTabCloseDetection();
+      });
     } else {
       this.restorePromise = Promise.resolve();
     }
@@ -99,7 +101,6 @@ export class AuthService {
       setTimeout(() => {
         this.inMemoryToken = this.restoreTokenFromStorage();
         this.inMemoryUser = this.restoreUserFromStorage();
-
         this.isRestoringSession$.next(false);
         resolve();
       }, 0);
@@ -195,5 +196,44 @@ export class AuthService {
   private clearInactivityTimer(): void {
     if (this.inactivityTimer) clearTimeout(this.inactivityTimer);
     this.inactivityTimer = null;
+  }
+
+  // ===== Safe Tab-Close Detection =====
+  private setupTabCloseDetection(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const HEARTBEAT_KEY = 'tab_heartbeat';
+    const HEARTBEAT_INTERVAL = 2000; // 2 sec
+    let heartbeatTimer: any;
+
+    const startHeartbeat = () => {
+      heartbeatTimer = setInterval(() => {
+        localStorage.setItem(HEARTBEAT_KEY, Date.now().toString());
+      }, HEARTBEAT_INTERVAL);
+    };
+
+    const stopHeartbeat = () => {
+      if (heartbeatTimer) clearInterval(heartbeatTimer);
+    };
+
+    startHeartbeat();
+
+    window.addEventListener('beforeunload', () => {
+      stopHeartbeat();
+
+      const lastHeartbeat = parseInt(localStorage.getItem(HEARTBEAT_KEY) || '0', 10);
+      const now = Date.now();
+
+      // If another tab is active, skip logout
+      if (now - lastHeartbeat <= HEARTBEAT_INTERVAL + 500) return;
+
+      // No other tab → logout safely
+      if (this.isLoggedIn()) {
+        try {
+          navigator.sendBeacon(`${this.baseUrl}Login/Logout`);
+        } catch {}
+        this.clearLocalSession();
+      }
+    });
   }
 }
