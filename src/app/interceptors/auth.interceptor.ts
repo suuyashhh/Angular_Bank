@@ -25,7 +25,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => err);
       }
 
-      // ✅ Detect session expiration (401 from backend middleware)
+      // Handle unauthorized / session expired
       if ((err.status === 401 || err.status === 403) && !auth.isLoggingOut) {
         auth.isLoggingOut = true;
 
@@ -44,8 +44,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         }
 
         setTimeout(() => (auth.isLoggingOut = false), 3000);
+
       } else if (err.status === 0 && !auth.isLoggingOut) {
-        // Handle network issues
+        // Network errors
         auth.isLoggingOut = true;
         try {
           toast?.warning('Network error. Please check your connection.', 'Connection Lost');
