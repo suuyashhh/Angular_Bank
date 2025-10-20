@@ -20,7 +20,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err) => {
       const url = req.url || '';
 
-      // Diagnostic log for debugging
       console.warn('🧩 Interceptor caught error:', {
         url,
         status: err.status,
@@ -28,60 +27,49 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         error: err.error,
       });
 
-      // Skip login/logout endpoints
       if (url.includes('Login/Login') || url.includes('Login/Logout')) {
         return throwError(() => err);
       }
 
-      // Unauthorized / session expired
       if ((err.status === 401 || err.status === 403) && !auth.isLoggingOut) {
-        console.warn('⚠️ 401/403 detected - logging out user.');
-        auth.isLoggingOut = true;
+        if (auth.getToken()) {
+          auth.isLoggingOut = true;
 
-        try {
-          if (err.error?.toString().includes('Session expired')) {
-            toast?.info(
-              'You were logged out because you logged in from another device.',
-              'Session Ended'
-            );
-          } else {
-            toast?.warning(
-              'Your session has expired. Please log in again.',
-              'Logged Out'
-            );
-          }
-        } catch (toastErr) {
-          console.error('❌ Toast error:', toastErr);
+          try {
+            if (err.error?.toString().includes('Session expired')) {
+              toast?.info(
+                'You were logged out because you logged in from another device.',
+                'Session Ended'
+              );
+            } else {
+              toast?.warning(
+                'Your session has expired. Please log in again.',
+                'Logged Out'
+              );
+            }
+          } catch {}
+
+          auth.logout('interceptor 401/403');
+          localStorage.clear();
+
+          history.pushState(null, '', '/');
+          router.navigate(['/'], { replaceUrl: true });
+
+          router.routeReuseStrategy.shouldReuseRoute = () => false;
+          router.onSameUrlNavigation = 'reload';
+
+          setTimeout(() => (auth.isLoggingOut = false), 3000);
         }
-
-        // ✅ Safe logout without wiping unrelated localStorage
-        auth.logout('interceptor 401/403'); // passes reason to diagnostic logs
-        localStorage.clear(); // remove all stored items
-
-        // Force redirect & prevent back navigation
-        history.pushState(null, '', '/');
-        router.navigate(['/'], { replaceUrl: true });
-
-        // Disable Angular route reuse to prevent cached dashboard
-        router.routeReuseStrategy.shouldReuseRoute = () => false;
-        router.onSameUrlNavigation = 'reload';
-
-        // Reset logout lock after short delay
-        setTimeout(() => (auth.isLoggingOut = false), 3000);
       }
 
-      // Network error
       else if (err.status === 0 && !auth.isLoggingOut) {
-        console.warn('🌐 Network error - maybe backend offline or CORS issue.');
         auth.isLoggingOut = true;
         try {
           toast?.warning(
             'Network error. Please check your internet connection.',
             'Connection Lost'
           );
-        } catch (toastErr) {
-          console.error('❌ Toast error:', toastErr);
-        }
+        } catch {}
         setTimeout(() => (auth.isLoggingOut = false), 3000);
       }
 
