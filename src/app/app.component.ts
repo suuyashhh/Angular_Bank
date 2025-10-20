@@ -13,14 +13,24 @@ import { Meta } from '@angular/platform-browser';
 })
 export class AppComponent implements OnInit {
   title = 'Angular_Bank';
-  constructor(public auth: AuthService,private meta: Meta) {}
-  async ngOnInit(): Promise<void> {
-    // Ensure the AuthService restores token & user before anything else
-    await this.auth.ensureInitialized();
-    console.log('✅ AuthService initialized, token restored if exists:', this.auth.getToken());
+  constructor(private auth: AuthService, private router: Router) {}
 
-  this.meta.addTag({ 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate' });
-  this.meta.addTag({ 'http-equiv': 'Pragma', content: 'no-cache' });
-  this.meta.addTag({ 'http-equiv': 'Expires', content: '0' });
-}
+  ngOnInit() {
+    // Handle router events to detect refresh
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        // If it's a navigation to the current URL, it's likely a refresh
+        if (event.navigationTrigger === 'imperative' && 
+            event.restoredState === null) {
+          // This is a fresh navigation, not a refresh
+          localStorage.removeItem('prevent_logout_on_refresh');
+        }
+      }
+    });
+
+    // Initialize auth service
+    this.auth.ensureInitialized().then(() => {
+      console.log('Auth service initialized');
+    });
+  }
 }
