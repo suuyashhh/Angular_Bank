@@ -151,10 +151,13 @@ export class AuthService {
   logout(): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
-
+    alert('You have been logged out due to inactivity or tab closure.');
     const token = this.getToken();
     const headers = token
-      ? new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` })
+      ? new HttpHeaders({
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        })
       : new HttpHeaders({ 'Content-Type': 'application/json' });
 
     this.http.post(`${this.baseUrl}Login/Logout`, {}, { headers }).subscribe({
@@ -164,18 +167,29 @@ export class AuthService {
   }
 
   private clearLocalSession(): void {
-    this.inMemoryToken = null;
-    this.inMemoryUser = null;
+  this.inMemoryToken = null;
+  this.inMemoryUser = null;
 
-    try {
-      this.clearStorage();
-      document.cookie = 'authToken=; path=/; max-age=0';
-    } catch {}
+  try {
+    this.clearStorage(); // removes token/userDetails
+    localStorage.clear(); // remove JWT if stored separately
+    document.cookie = 'authToken=; path=/; max-age=0';
+  } catch {}
 
-    this.clearInactivityTimer();
-    this.isLoggingOut = false;
-    this.router.navigate(['/']);
-  }
+  this.clearInactivityTimer();
+  this.isLoggingOut = false;
+
+  // Navigate to login page and prevent back
+  history.pushState(null, '', '/');
+  this.router.navigate(['/'], { replaceUrl: true });
+
+  // Disable Angular route reuse
+  this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+  this.router.onSameUrlNavigation = 'reload';
+}
+
+
+
 
   // ===== Inactivity Tracking =====
   private setupInactivityTracking(): void {
@@ -219,21 +233,31 @@ export class AuthService {
     startHeartbeat();
 
     window.addEventListener('beforeunload', () => {
-      stopHeartbeat();
+  stopHeartbeat();
 
-      const lastHeartbeat = parseInt(localStorage.getItem(HEARTBEAT_KEY) || '0', 10);
-      const now = Date.now();
+  // Detect if it's a real close or just refresh/navigation
+  const [nav] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+  const isReload = nav?.type === 'reload';
 
-      // If another tab is active, skip logout
-      if (now - lastHeartbeat <= HEARTBEAT_INTERVAL + 500) return;
+  if (isReload) {
+    // Just a page refresh — don't logout!
+    return;
+  }
 
-      // No other tab → logout safely
-      if (this.isLoggedIn()) {
-        try {
-          navigator.sendBeacon(`${this.baseUrl}Login/Logout`);
-        } catch {}
-        this.clearLocalSession();
-      }
-    });
+  const lastHeartbeat = parseInt(localStorage.getItem(HEARTBEAT_KEY) || '0', 10);
+  const now = Date.now();
+
+  // If another tab is active, skip logout
+  if (now - lastHeartbeat <= HEARTBEAT_INTERVAL + 500) return;
+
+  // No other tab → logout safely
+  if (this.isLoggedIn()) {
+    try {
+      navigator.sendBeacon(`${this.baseUrl}Login/Logout`);
+    } catch {}
+    this.clearLocalSession();
+  }
+});
+
   }
 }

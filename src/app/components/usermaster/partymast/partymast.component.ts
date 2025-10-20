@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { on } from 'events';
 import { AuthService } from '../../../services/auth.service';
+import { ApiService } from '../../../services/api.service';
 
 @Component({
   selector: 'app-partymast',
@@ -19,10 +20,15 @@ export class PartymastComponent implements OnInit {
     aadhaarBack: null
   };
 
-  constructor(private auth:AuthService) {}
+  constructor(private auth:AuthService,private api: ApiService) {}
   ngOnInit(): void {
     console.log(this.auth.getUser());
+    this.api.get('BranchMast/GetAllBranches').subscribe({
+      next: (res: any) => {
+        console.log(res);
 
+      },
+    });
   }
 
   onFileChange(event: any, key: string) {

@@ -44,32 +44,35 @@ export class LoginComponent {
 
     this.isLoading = true;
 
-    // Load branches first
-    this.api.get('BranchMast/GetAllBranches').subscribe({
-      next: (res: any) => {
-        const list: any[] = Array.isArray(res) ? res : Object.values(res || {});
-        this.branches = (list || [])
-          .filter(x => x && (x.name ?? x.Name))
-          .map(x => ({
-            code: Number(x.code ?? x.Code),
-            name: String(x.name ?? x.Name).trim(),
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name));
-        this.filteredBranches = [...this.branches];
-      },
-      error: () => this.toastr.error('Unable to load branches.', 'Error')
-    });
-
-    // Perform login
+    // Perform login first
     this.auth.login(this.loginObj).subscribe({
       next: (res: any) => {
-        this.isLoading = false;
         // AES + in-memory storage
         this.auth.setToken(res);
 
         const name = res?.userDetails?.name ?? 'User';
         this.userName = name;
-        this.showModel = true;
+
+        // Load branches after login success
+        this.api.get('BranchMast/GetAllBranches').subscribe({
+          next: (branches: any) => {
+            const list: any[] = Array.isArray(branches) ? branches : Object.values(branches || {});
+            this.branches = (list || [])
+              .filter(x => x && (x.name ?? x.Name))
+              .map(x => ({
+                code: Number(x.code ?? x.Code),
+                name: String(x.name ?? x.Name).trim(),
+              }))
+              .sort((a, b) => a.name.localeCompare(b.name));
+            this.filteredBranches = [...this.branches];
+            this.isLoading = false;
+            this.showModel = true;
+          },
+          error: () => {
+            this.isLoading = false;
+            this.toastr.error('Unable to load branches.', 'Error');
+          },
+        });
       },
       error: () => {
         this.isLoading = false;
@@ -78,7 +81,7 @@ export class LoginComponent {
     });
   }
 
-  // Branch selection
+  // Branch selection dropdown
   toggleDropdown(): void {
     this.dropdownOpen = !this.dropdownOpen;
     if (this.dropdownOpen) this.filteredBranches = this.filterBy(this.branchSearch);
@@ -107,9 +110,7 @@ export class LoginComponent {
     }
 
     sessionStorage.setItem('branchCode', String(this.selectedBranch.code));
-
     this.showModel = false;
-
     this.toastr.success('Login successful!', 'Login');
     this.router.navigate(['USERMASTER']);
   }
