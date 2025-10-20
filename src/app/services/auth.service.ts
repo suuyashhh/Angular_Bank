@@ -29,7 +29,7 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       this.restorePromise = this.restoreFromStorage().then(() => {
         this.setupInactivityTracking();
-        this.setupTabCloseDetection();
+        this.setupSessionSync();
       });
     } else {
       this.restorePromise = Promise.resolve();
@@ -96,14 +96,33 @@ export class AuthService {
   private clearStorage(): void {
     this.storage.removeItem('token');
     this.storage.removeItem('userDetails');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('session_refresh_timestamp');
   }
 
   // ===== Restore Token/User on App Init =====
   private async restoreFromStorage(): Promise<void> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        this.inMemoryToken = this.restoreTokenFromStorage() || localStorage.getItem('authToken');
-        this.inMemoryUser = this.restoreUserFromStorage();
+        // Check if this is a fresh page load or a refresh
+        const currentTime = Date.now();
+        const lastRefresh = localStorage.getItem('session_refresh_timestamp');
+        
+        // If last refresh was very recent (less than 5 seconds ago), it's likely a refresh
+        const isRefresh = lastRefresh && (currentTime - parseInt(lastRefresh)) < 5000;
+        
+        if (!isRefresh) {
+          // Fresh page load - restore from storage
+          this.inMemoryToken = this.restoreTokenFromStorage() || localStorage.getItem('authToken');
+          this.inMemoryUser = this.restoreUserFromStorage();
+        } else {
+          // It's a refresh - tokens should already be in memory
+          console.log('Refresh detected - maintaining current session');
+        }
+        
+        // Update refresh timestamp
+        localStorage.setItem('session_refresh_timestamp', currentTime.toString());
+        
         this.isRestoringSession$.next(false);
         resolve();
       }, 0);
@@ -126,6 +145,7 @@ export class AuthService {
     this.writeStorage('userDetails', user);
 
     localStorage.setItem('authToken', token);
+    localStorage.setItem('session_refresh_timestamp', Date.now().toString());
 
     try {
       document.cookie = `authToken=${btoa(token)}; path=/; Secure; SameSite=Strict`;
@@ -140,7 +160,7 @@ export class AuthService {
 
   getToken(): string | null {
     if (!this.inMemoryToken) {
-      this.inMemoryToken = localStorage.getItem('authToken');
+      this.inMemoryToken = this.restoreTokenFromStorage() || localStorage.getItem('authToken');
     }
     return this.inMemoryToken;
   }
@@ -160,7 +180,10 @@ export class AuthService {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
 
-    alert('You have been logged out due to inactivity or tab closure.');
+    if (trigger === 'inactivity timeout') {
+      alert('You have been logged out due to inactivity.');
+    }
+
     const token = this.getToken();
     const headers = token
       ? new HttpHeaders({
@@ -181,25 +204,24 @@ export class AuthService {
 
     try {
       this.clearStorage();
-      localStorage.removeItem('authToken'); // only remove auth token
       document.cookie = 'authToken=; path=/; max-age=0';
     } catch {}
 
     this.clearInactivityTimer();
     this.isLoggingOut = false;
 
-    history.pushState(null, '', '/');
-    this.router.navigate(['/'], { replaceUrl: true });
-
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.onSameUrlNavigation = 'reload';
+    this.ngZone.run(() => {
+      this.router.navigate(['/'], { replaceUrl: true }).then(() => {
+        window.location.reload();
+      });
+    });
   }
 
   // ===== Inactivity Tracking =====
   private setupInactivityTracking(): void {
-    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
     events.forEach(ev =>
-      window.addEventListener(ev, () => this.resetInactivityTimer())
+      window.addEventListener(ev, () => this.resetInactivityTimer(), { passive: true })
     );
     this.resetInactivityTimer();
   }
@@ -208,54 +230,59 @@ export class AuthService {
     this.clearInactivityTimer();
     this.ngZone.runOutsideAngular(() => {
       this.inactivityTimer = setTimeout(() => {
-        this.ngZone.run(() => this.logout('inactivity timeout'));
+        this.ngZone.run(() => {
+          if (this.isLoggedIn()) {
+            this.logout('inactivity timeout');
+          }
+        });
       }, this.INACTIVITY_LIMIT);
     });
   }
 
   private clearInactivityTimer(): void {
-    if (this.inactivityTimer) clearTimeout(this.inactivityTimer);
-    this.inactivityTimer = null;
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer);
+      this.inactivityTimer = null;
+    }
   }
 
-  // ===== Safe Tab-Close Detection =====
-  private setupTabCloseDetection(): void {
+  // ===== Improved Session Sync (Removed Problematic Tab Close Detection) =====
+  private setupSessionSync(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const HEARTBEAT_KEY = 'tab_heartbeat';
-    const HEARTBEAT_INTERVAL = 2000;
-    let heartbeatTimer: any;
-
-    const startHeartbeat = () => {
-      heartbeatTimer = setInterval(() => {
-        localStorage.setItem(HEARTBEAT_KEY, Date.now().toString());
-      }, HEARTBEAT_INTERVAL);
-    };
-
-    const stopHeartbeat = () => {
-      if (heartbeatTimer) clearInterval(heartbeatTimer);
-    };
-
-    startHeartbeat();
-
-    window.addEventListener('beforeunload', () => {
-      stopHeartbeat();
-
-      const [nav] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-      const isReload = nav?.type === 'reload';
-      if (isReload) return;
-
-      const lastHeartbeat = parseInt(localStorage.getItem(HEARTBEAT_KEY) || '0', 10);
-      const now = Date.now();
-
-      if (now - lastHeartbeat <= HEARTBEAT_INTERVAL + 500) return;
-
-      if (this.isLoggedIn()) {
-        try {
-          navigator.sendBeacon(`${this.baseUrl}Login/Logout`);
-        } catch {}
+    // Listen for storage changes (other tabs logging out)
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'authToken' && !event.newValue && this.isLoggedIn()) {
         this.clearLocalSession();
       }
     });
+
+    // Handle page visibility changes
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        // Page became visible again, check session
+        this.resetInactivityTimer();
+      }
+    });
+
+    // Reliable beforeunload for actual tab close
+    window.addEventListener('beforeunload', () => {
+      this.clearInactivityTimer();
+    });
+  }
+
+  // ===== Manual Refresh Protection =====
+  preventAccidentalLogoutOnRefresh(): void {
+    // This method can be called from your components before navigation
+    localStorage.setItem('prevent_logout_on_refresh', 'true');
+  }
+
+  // ===== Public method to check session status =====
+  public validateSession(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    // Add any additional token validation logic here
+    return true;
   }
 }
