@@ -1,4 +1,3 @@
-// src/app/services/auth.service.ts
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject, PLATFORM_ID, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
@@ -148,9 +147,12 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}Login/Login`, credentials, { headers });
   }
 
-  logout(): void {
+  logout(trigger: string = 'manual'): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
+
+    console.warn(`🚪 Logout triggered (${trigger})`, new Error().stack);
+
     alert('You have been logged out due to inactivity or tab closure.');
     const token = this.getToken();
     const headers = token
@@ -167,34 +169,36 @@ export class AuthService {
   }
 
   private clearLocalSession(): void {
-  this.inMemoryToken = null;
-  this.inMemoryUser = null;
+    this.inMemoryToken = null;
+    this.inMemoryUser = null;
 
-  try {
-    this.clearStorage(); // removes token/userDetails
-    localStorage.clear(); // remove JWT if stored separately
-    document.cookie = 'authToken=; path=/; max-age=0';
-  } catch {}
+    try {
+      this.clearStorage(); // removes token/userDetails
+      localStorage.clear(); // remove JWT if stored separately
+      document.cookie = 'authToken=; path=/; max-age=0';
+    } catch {}
 
-  this.clearInactivityTimer();
-  this.isLoggingOut = false;
+    this.clearInactivityTimer();
+    this.isLoggingOut = false;
 
-  // Navigate to login page and prevent back
-  history.pushState(null, '', '/');
-  this.router.navigate(['/'], { replaceUrl: true });
+    // Navigate to login page and prevent back
+    history.pushState(null, '', '/');
+    this.router.navigate(['/'], { replaceUrl: true });
 
-  // Disable Angular route reuse
-  this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-  this.router.onSameUrlNavigation = 'reload';
-}
-
-
-
+    // Disable Angular route reuse
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+  }
 
   // ===== Inactivity Tracking =====
   private setupInactivityTracking(): void {
     const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
-    events.forEach(ev => window.addEventListener(ev, () => this.resetInactivityTimer()));
+    events.forEach(ev =>
+      window.addEventListener(ev, () => {
+        console.log('🔄 Inactivity timer reset by', ev);
+        this.resetInactivityTimer();
+      })
+    );
     this.resetInactivityTimer();
   }
 
@@ -202,7 +206,7 @@ export class AuthService {
     this.clearInactivityTimer();
     this.ngZone.runOutsideAngular(() => {
       this.inactivityTimer = setTimeout(() => {
-        this.ngZone.run(() => this.logout());
+        this.ngZone.run(() => this.logout('inactivity timeout'));
       }, this.INACTIVITY_LIMIT);
     });
   }
@@ -233,31 +237,30 @@ export class AuthService {
     startHeartbeat();
 
     window.addEventListener('beforeunload', () => {
-  stopHeartbeat();
+      stopHeartbeat();
 
-  // Detect if it's a real close or just refresh/navigation
-  const [nav] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-  const isReload = nav?.type === 'reload';
+      const [nav] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+      const isReload = nav?.type === 'reload';
+      if (isReload) {
+        console.log('🔁 Page reload detected — skipping logout.');
+        return;
+      }
 
-  if (isReload) {
-    // Just a page refresh — don't logout!
-    return;
-  }
+      const lastHeartbeat = parseInt(localStorage.getItem(HEARTBEAT_KEY) || '0', 10);
+      const now = Date.now();
 
-  const lastHeartbeat = parseInt(localStorage.getItem(HEARTBEAT_KEY) || '0', 10);
-  const now = Date.now();
+      if (now - lastHeartbeat <= HEARTBEAT_INTERVAL + 500) {
+        console.log('🟢 Another tab active — skipping logout.');
+        return;
+      }
 
-  // If another tab is active, skip logout
-  if (now - lastHeartbeat <= HEARTBEAT_INTERVAL + 500) return;
-
-  // No other tab → logout safely
-  if (this.isLoggedIn()) {
-    try {
-      navigator.sendBeacon(`${this.baseUrl}Login/Logout`);
-    } catch {}
-    this.clearLocalSession();
-  }
-});
-
+      if (this.isLoggedIn()) {
+        console.warn('💀 Tab closed, triggering logout.');
+        try {
+          navigator.sendBeacon(`${this.baseUrl}Login/Logout`);
+        } catch {}
+        this.clearLocalSession();
+      }
+    });
   }
 }
