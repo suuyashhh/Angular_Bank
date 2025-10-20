@@ -63,6 +63,8 @@ export class AuthService {
   }
 
   private restoreTokenFromStorage(): string | null {
+    if (this.inMemoryToken) return this.inMemoryToken;
+
     const encrypted = this.storage.getItem('token');
     if (!encrypted) return null;
 
@@ -74,6 +76,8 @@ export class AuthService {
   }
 
   private restoreUserFromStorage(): any {
+    if (this.inMemoryUser) return this.inMemoryUser;
+
     const encrypted = this.storage.getItem('userDetails');
     if (!encrypted) return null;
 
@@ -98,7 +102,7 @@ export class AuthService {
   private async restoreFromStorage(): Promise<void> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        this.inMemoryToken = this.restoreTokenFromStorage();
+        this.inMemoryToken = this.restoreTokenFromStorage() || localStorage.getItem('authToken');
         this.inMemoryUser = this.restoreUserFromStorage();
         this.isRestoringSession$.next(false);
         resolve();
@@ -121,6 +125,8 @@ export class AuthService {
     this.writeStorage('token', token);
     this.writeStorage('userDetails', user);
 
+    localStorage.setItem('authToken', token);
+
     try {
       document.cookie = `authToken=${btoa(token)}; path=/; Secure; SameSite=Strict`;
     } catch {}
@@ -133,7 +139,10 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return this.restoreTokenFromStorage();
+    if (!this.inMemoryToken) {
+      this.inMemoryToken = localStorage.getItem('authToken');
+    }
+    return this.inMemoryToken;
   }
 
   isLoggedIn(): boolean {
@@ -150,8 +159,6 @@ export class AuthService {
   logout(trigger: string = 'manual'): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
-
-    console.warn(`🚪 Logout triggered (${trigger})`, new Error().stack);
 
     alert('You have been logged out due to inactivity or tab closure.');
     const token = this.getToken();
@@ -173,19 +180,17 @@ export class AuthService {
     this.inMemoryUser = null;
 
     try {
-      this.clearStorage(); // removes token/userDetails
-      localStorage.clear(); // remove JWT if stored separately
+      this.clearStorage();
+      localStorage.removeItem('authToken'); // only remove auth token
       document.cookie = 'authToken=; path=/; max-age=0';
     } catch {}
 
     this.clearInactivityTimer();
     this.isLoggingOut = false;
 
-    // Navigate to login page and prevent back
     history.pushState(null, '', '/');
     this.router.navigate(['/'], { replaceUrl: true });
 
-    // Disable Angular route reuse
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
   }
@@ -194,10 +199,7 @@ export class AuthService {
   private setupInactivityTracking(): void {
     const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
     events.forEach(ev =>
-      window.addEventListener(ev, () => {
-        console.log('🔄 Inactivity timer reset by', ev);
-        this.resetInactivityTimer();
-      })
+      window.addEventListener(ev, () => this.resetInactivityTimer())
     );
     this.resetInactivityTimer();
   }
@@ -221,7 +223,7 @@ export class AuthService {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const HEARTBEAT_KEY = 'tab_heartbeat';
-    const HEARTBEAT_INTERVAL = 2000; // 2 sec
+    const HEARTBEAT_INTERVAL = 2000;
     let heartbeatTimer: any;
 
     const startHeartbeat = () => {
@@ -241,21 +243,14 @@ export class AuthService {
 
       const [nav] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
       const isReload = nav?.type === 'reload';
-      if (isReload) {
-        console.log('🔁 Page reload detected — skipping logout.');
-        return;
-      }
+      if (isReload) return;
 
       const lastHeartbeat = parseInt(localStorage.getItem(HEARTBEAT_KEY) || '0', 10);
       const now = Date.now();
 
-      if (now - lastHeartbeat <= HEARTBEAT_INTERVAL + 500) {
-        console.log('🟢 Another tab active — skipping logout.');
-        return;
-      }
+      if (now - lastHeartbeat <= HEARTBEAT_INTERVAL + 500) return;
 
       if (this.isLoggedIn()) {
-        console.warn('💀 Tab closed, triggering logout.');
         try {
           navigator.sendBeacon(`${this.baseUrl}Login/Logout`);
         } catch {}
