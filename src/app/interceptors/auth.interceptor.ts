@@ -17,7 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     : req;
 
   return next(clonedReq).pipe(
-    catchError(err => {
+    catchError((err) => {
       const url = req.url || '';
 
       // Skip login/logout endpoints
@@ -25,31 +25,49 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => err);
       }
 
-      // Handle unauthorized / session expired
+      // Unauthorized / session expired
       if ((err.status === 401 || err.status === 403) && !auth.isLoggingOut) {
         auth.isLoggingOut = true;
 
         try {
-          if (err.error && typeof err.error === 'string' && err.error.includes('Session expired')) {
-            toast?.info('You were logged out because you logged in from another device.', 'Session Ended');
+          if (err.error?.toString().includes('Session expired')) {
+            toast?.info(
+              'You were logged out because you logged in from another device.',
+              'Session Ended'
+            );
           } else {
-            toast?.info('Session expired or unauthorized. Please log in again.', 'Logged Out');
+            toast?.warning(
+              'Your session has expired. Please log in again.',
+              'Logged Out'
+            );
           }
         } catch {}
 
-        auth.logout();
+        // ✅ Safe logout without wiping unrelated localStorage
+        auth.logout(); // clears in-memory token & user
+        localStorage.clear(); // only remove auth token
+        // optional: remove other sensitive items if needed
+        // localStorage.removeItem('userDetails');
 
-        if (window.location.pathname !== '/') {
-          router.navigate(['/'], { replaceUrl: true });
-        }
+        // Force redirect & prevent back navigation
+        history.pushState(null, '', '/');
+        router.navigate(['/'], { replaceUrl: true });
 
+        // Disable Angular route reuse to prevent cached dashboard
+        router.routeReuseStrategy.shouldReuseRoute = () => false;
+        router.onSameUrlNavigation = 'reload';
+
+        // Reset logout lock after short delay
         setTimeout(() => (auth.isLoggingOut = false), 3000);
-
-      } else if (err.status === 0 && !auth.isLoggingOut) {
-        // Network errors
+      }
+      // Network error
+      else if (err.status === 0 && !auth.isLoggingOut) {
         auth.isLoggingOut = true;
         try {
-          toast?.warning('Network error. Please check your connection.', 'Connection Lost');
+          toast?.warning(
+            'Network error. Please check your internet connection.',
+            'Connection Lost'
+          );
         } catch {}
         setTimeout(() => (auth.isLoggingOut = false), 3000);
       }
