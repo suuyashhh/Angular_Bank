@@ -20,6 +20,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err) => {
       const url = req.url || '';
 
+      // Diagnostic log for debugging
+      console.warn('🧩 Interceptor caught error:', {
+        url,
+        status: err.status,
+        message: err.message,
+        error: err.error,
+      });
+
       // Skip login/logout endpoints
       if (url.includes('Login/Login') || url.includes('Login/Logout')) {
         return throwError(() => err);
@@ -27,6 +35,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Unauthorized / session expired
       if ((err.status === 401 || err.status === 403) && !auth.isLoggingOut) {
+        console.warn('⚠️ 401/403 detected - logging out user.');
         auth.isLoggingOut = true;
 
         try {
@@ -41,13 +50,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               'Logged Out'
             );
           }
-        } catch {}
+        } catch (toastErr) {
+          console.error('❌ Toast error:', toastErr);
+        }
 
         // ✅ Safe logout without wiping unrelated localStorage
-        auth.logout(); // clears in-memory token & user
-        localStorage.clear(); // only remove auth token
-        // optional: remove other sensitive items if needed
-        // localStorage.removeItem('userDetails');
+        auth.logout('interceptor 401/403'); // passes reason to diagnostic logs
+        localStorage.clear(); // remove all stored items
 
         // Force redirect & prevent back navigation
         history.pushState(null, '', '/');
@@ -60,15 +69,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         // Reset logout lock after short delay
         setTimeout(() => (auth.isLoggingOut = false), 3000);
       }
+
       // Network error
       else if (err.status === 0 && !auth.isLoggingOut) {
+        console.warn('🌐 Network error - maybe backend offline or CORS issue.');
         auth.isLoggingOut = true;
         try {
           toast?.warning(
             'Network error. Please check your internet connection.',
             'Connection Lost'
           );
-        } catch {}
+        } catch (toastErr) {
+          console.error('❌ Toast error:', toastErr);
+        }
         setTimeout(() => (auth.isLoggingOut = false), 3000);
       }
 
