@@ -11,10 +11,14 @@ import { Meta } from '@angular/platform-browser';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Angular_Bank';
   constructor(public auth: AuthService,private meta: Meta) {}
-  ngOnInit() {
+  async ngOnInit(): Promise<void> {
+    // Ensure the AuthService restores token & user before anything else
+    await this.auth.ensureInitialized();
+    console.log('✅ AuthService initialized, token restored if exists:', this.auth.getToken());
+
   this.meta.addTag({ 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate' });
   this.meta.addTag({ 'http-equiv': 'Pragma', content: 'no-cache' });
   this.meta.addTag({ 'http-equiv': 'Expires', content: '0' });
