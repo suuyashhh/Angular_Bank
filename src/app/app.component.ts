@@ -13,7 +13,7 @@ import { Meta } from '@angular/platform-browser';
 })
 export class AppComponent implements OnInit {
   title = 'Angular_Bank';
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(public auth: AuthService, private router: Router) {}
 
   ngOnInit() {
     // Handle router events to detect refresh
