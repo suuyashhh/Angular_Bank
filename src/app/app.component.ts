@@ -20,29 +20,33 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Initialize auth service and wait for session restore
-    this.auth.ensureInitialized().then(() => {
-      console.log('✅ Auth session restored');
-    });
+  this.auth.ensureInitialized().then(() => {
+    console.log('✅ Auth session restored');
+  });
 
-    // Only access localStorage on the browser
-    if (isPlatformBrowser(this.platformId)) {
-      this.router.events.subscribe(event => {
-        if (event instanceof NavigationStart) {
-          try {
-            const lastRefresh = localStorage.getItem('session_refresh_timestamp');
-            const now = Date.now();
-            const isRefresh = lastRefresh && now - parseInt(lastRefresh, 10) < 5000;
+  if (isPlatformBrowser(this.platformId)) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        try {
+          // more robust: use navigation timing API
+          const navEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+          const navType = navEntries?.[0]?.type;
+          const isReload = navType === 'reload' || navType === 'back_forward';
 
-            if (isRefresh && this.auth.isLoggedIn()) {
-              // Prevent navigation flicker on reload
-              event.restoredState = { navigationId: 0 };
-            }
-          } catch (err) {
-            console.warn('⚠️ localStorage access error:', err);
+          // fallback: check session refresh timestamp (set in beforeunload)
+          const lastRefresh = localStorage.getItem('session_refresh_timestamp');
+          const now = Date.now();
+          const isRecentRefresh = lastRefresh && (now - parseInt(lastRefresh, 10) < 5000);
+
+          if ((isReload || isRecentRefresh) && this.auth.isLoggedIn()) {
+            event.restoredState = { navigationId: 0 }; // prevent flicker
           }
+        } catch (err) {
+          console.warn('⚠️ reload detection error:', err);
         }
-      });
-    }
+      }
+    });
   }
+}
+
 }
