@@ -1,15 +1,22 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { isPlatformBrowser } from '@angular/common';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  const toastr = inject(ToastrService);
+  const toastr = inject(ToastrService, { optional: true });
+  const platformId = inject(PLATFORM_ID);
+
+  // 🧠 Skip all token logic on the server (SSR-safe)
+  if (!isPlatformBrowser(platformId)) {
+    return next(req);
+  }
 
   const token = auth.getToken();
   const authReq = token
@@ -18,18 +25,33 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error) => {
-      if (error.status === 401 || error.status === 403) {
-        const lastRefresh = localStorage.getItem('session_refresh_timestamp');
-        const now = Date.now();
-        const isRefresh = lastRefresh && now - parseInt(lastRefresh) < 5000;
+      // Skip client-only actions if SSR
+      if (!isPlatformBrowser(platformId)) {
+        return throwError(() => error);
+      }
 
-        if (isRefresh) return throwError(() => error);
+      // 🧩 Handle unauthorized or forbidden
+      if ((error.status === 401 || error.status === 403) && !auth.isLoggingOut) {
+        if (auth.isLoggedIn()) {
+          toastr?.warning('Your session has expired. Please log in again.', 'Session Ended', {
+            timeOut: 3000,
+            positionClass: 'toast-top-center',
+          });
 
-        if (!auth.isLoggingOut && auth.isLoggedIn()) {
-          toastr.warning('Your session has expired. Please log in again.', 'Session Ended');
-          auth.logout('unauthorized');
+          // Add a short delay before logout to ensure toast shows
+          setTimeout(() => {
+            auth.logout('unauthorized');
+          }, 500);
         }
       }
+      // 🌐 Handle network errors (server unreachable)
+      else if (error.status === 0 && !auth.isLoggingOut) {
+        toastr?.warning('Network error. Please check your internet connection.', 'Connection Lost', {
+          timeOut: 3000,
+          positionClass: 'toast-top-center',
+        });
+      }
+
       return throwError(() => error);
     })
   );
