@@ -13,24 +13,29 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const toastr = inject(ToastrService, { optional: true });
   const platformId = inject(PLATFORM_ID);
 
-  // 🧠 Skip all token logic on the server (SSR-safe)
   if (!isPlatformBrowser(platformId)) {
     return next(req);
   }
 
   const token = auth.getToken();
-  const authReq = token
-    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-    : req;
+  let authReq = req;
+
+  if (token) {
+    authReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
 
   return next(authReq).pipe(
     catchError((error) => {
-      // Skip client-only actions if SSR
       if (!isPlatformBrowser(platformId)) {
         return throwError(() => error);
       }
 
-      // 🧩 Handle unauthorized or forbidden
+      console.log('🚨 HTTP Error:', error.status);
+
       if ((error.status === 401 || error.status === 403) && !auth.isLoggingOut) {
         if (auth.isLoggedIn()) {
           toastr?.warning('Your session has expired. Please log in again.', 'Session Ended', {
@@ -38,13 +43,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             positionClass: 'toast-top-center',
           });
 
-          // Add a short delay before logout to ensure toast shows
           setTimeout(() => {
             auth.logout('unauthorized');
           }, 500);
         }
       }
-      // 🌐 Handle network errors (server unreachable)
       else if (error.status === 0 && !auth.isLoggingOut) {
         toastr?.warning('Network error. Please check your internet connection.', 'Connection Lost', {
           timeOut: 3000,

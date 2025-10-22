@@ -27,9 +27,9 @@ export class AuthService {
   private inMemoryToken: string | null = null;
   private inMemoryUser: any = null;
 
-  private secretKey = environment.ENCRYPT_KEY || 'fallback_dev_key';
-  private persist = !!environment.PERSIST_SESSION;
-  private baseUrl = environment.BASE_URL || '/api/';
+  private secretKey = environment.ENCRYPT_KEY;
+  private persist = environment.PERSIST_SESSION;
+  private baseUrl = environment.BASE_URL;
   private inactivityTimer: any = null;
   private readonly INACTIVITY_LIMIT = 20 * 60 * 1000; // 20 min
   private currentTabId = '';
@@ -39,15 +39,18 @@ export class AuthService {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
+      console.log('🏗️ AuthService initializing in browser environment');
+      console.log('🌐 Base URL:', this.baseUrl);
+      console.log('💾 Persist Session:', this.persist);
+
       this.currentTabId = this.generateTabId();
       // Set our active tab id on load
-      localStorage.setItem('active_tab_id', this.currentTabId);
+      this.safeSetStorage('active_tab_id', this.currentTabId);
 
       // start restore and then set up listeners
       this.restorePromise = this.restoreFromStorage().then(() => {
         this.setupInactivityTracking();
         this.setupSessionSync();
-        this.setupTabCloseLogout();
         this.setupSingleTabEnforcement();
       });
     } else {
@@ -55,10 +58,43 @@ export class AuthService {
     }
   }
 
+  // ===== Safe Storage Operations =====
+  private safeSetStorage(key: string, value: string): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn('⚠️ localStorage set failed:', e);
+    }
+  }
+
+  private safeGetStorage(key: string): string | null {
+    if (!isPlatformBrowser(this.platformId)) return null;
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      console.warn('⚠️ localStorage get failed:', e);
+      return null;
+    }
+  }
+
+  private safeRemoveStorage(key: string): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    try {
+      localStorage.removeItem(key);
+    } catch (e) {
+      console.warn('⚠️ localStorage remove failed:', e);
+    }
+  }
+
   // ===== Encryption / Decryption =====
   private encryptData(data: any): string | null {
-    try { return CryptoJS.AES.encrypt(JSON.stringify(data), this.secretKey).toString(); }
-    catch { return null; }
+    try {
+      return CryptoJS.AES.encrypt(JSON.stringify(data), this.secretKey).toString();
+    } catch (e) {
+      console.warn('⚠️ Encryption failed:', e);
+      return null;
+    }
   }
 
   private decryptData(cipherText: string | null): any {
@@ -67,40 +103,59 @@ export class AuthService {
       const bytes = CryptoJS.AES.decrypt(cipherText, this.secretKey);
       const decrypted = bytes.toString(CryptoJS.enc.Utf8);
       return decrypted ? JSON.parse(decrypted) : null;
-    } catch { return null; }
+    } catch (e) {
+      console.warn('⚠️ Decryption failed:', e);
+      return null;
+    }
   }
 
   // ===== Storage accessor =====
   private get storage(): StorageLike {
-  if (!isPlatformBrowser(this.platformId)) {
-    return {
-      length: 0,
-      clear: () => {},
-      getItem: () => null,
-      key: () => null,
-      removeItem: () => {},
-      setItem: () => {},
-    } as unknown as StorageLike;
+    if (!isPlatformBrowser(this.platformId)) {
+      return {
+        length: 0,
+        clear: () => {},
+        getItem: () => null,
+        key: () => null,
+        removeItem: () => {},
+        setItem: () => {},
+      } as unknown as StorageLike;
+    }
+    // Use localStorage for better persistence in hosted environments
+    return localStorage;
   }
-
-  // Force localStorage in production to persist login across refresh
-  const isHosted = window.location.hostname.includes('netlify.app') || window.location.protocol === 'https:';
-  return isHosted ? localStorage : (this.persist ? localStorage : sessionStorage);
-}
-
 
   private writeStorage(key: string, value: any): void {
     const encrypted = this.encryptData(value);
-    if (isPlatformBrowser(this.platformId) && encrypted) this.storage.setItem(key, encrypted);
+    if (isPlatformBrowser(this.platformId) && encrypted) {
+      try {
+        this.storage.setItem(key, encrypted);
+      } catch (e) {
+        console.warn('⚠️ Storage write failed:', e);
+      }
+    }
   }
 
   private restoreTokenFromStorage(): string | null {
     if (this.inMemoryToken) return this.inMemoryToken;
     try {
+      // Try encrypted storage first
       const encrypted = this.storage.getItem('token');
       const dec = this.decryptData(encrypted);
-      if (dec && typeof dec === 'string') { this.inMemoryToken = dec; return dec; }
-    } catch {}
+      if (dec && typeof dec === 'string') {
+        this.inMemoryToken = dec;
+        return dec;
+      }
+
+      // Fallback to plain token (legacy support)
+      const plainToken = this.safeGetStorage('authToken');
+      if (plainToken) {
+        this.inMemoryToken = plainToken;
+        return plainToken;
+      }
+    } catch (e) {
+      console.warn('⚠️ Token restoration failed:', e);
+    }
     return null;
   }
 
@@ -109,40 +164,62 @@ export class AuthService {
     try {
       const encrypted = this.storage.getItem('userDetails');
       const dec = this.decryptData(encrypted);
-      if (dec && typeof dec === 'object') { this.inMemoryUser = dec; return dec; }
-    } catch {}
+      if (dec && typeof dec === 'object') {
+        this.inMemoryUser = dec;
+        return dec;
+      }
+    } catch (e) {
+      console.warn('⚠️ User restoration failed:', e);
+    }
     return null;
   }
 
   private clearStorage(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    this.storage.removeItem('token');
-    this.storage.removeItem('userDetails');
-    // keep authToken fallback removal (if used)
-    localStorage.removeItem('authToken');
-    // DO NOT blindly remove active_tab_id here (other tabs may misinterpret)
+    try {
+      this.storage.removeItem('token');
+      this.storage.removeItem('userDetails');
+      this.safeRemoveStorage('authToken');
+      // Keep active_tab_id for multi-tab detection
+    } catch (e) {
+      console.warn('⚠️ Storage clear failed:', e);
+    }
   }
 
   // ===== Restore session =====
   private async restoreFromStorage(): Promise<void> {
-    if (!isPlatformBrowser(this.platformId)) return;
+    if (!isPlatformBrowser(this.platformId)) {
+      this.isRestoringSession$.next(false);
+      return;
+    }
 
-    // Try encrypted locations first
-    const tokenFromEncrypted = this.restoreTokenFromStorage();
-    // fallback to plain localStorage key if present (legacy)
-    const tokenFallback = localStorage.getItem('authToken');
+    console.log('🔄 Starting session restoration...');
 
-    const token = tokenFromEncrypted || tokenFallback || null;
-    const user = this.restoreUserFromStorage();
+    // Add delay to ensure storage is ready in hosted environments
+    await new Promise(resolve => setTimeout(resolve, 200));
 
-    this.inMemoryToken = token;
-    this.inMemoryUser = user;
+    try {
+      const token = this.restoreTokenFromStorage();
+      const user = this.restoreUserFromStorage();
 
-    // done restoring
-    this.isRestoringSession$.next(false);
+      this.inMemoryToken = token;
+      this.inMemoryUser = user;
+
+      console.log('✅ Session restoration completed');
+      console.log('🔑 Token exists:', !!token);
+      console.log('👤 User exists:', !!user);
+      console.log('🔐 Storage type:', this.persist ? 'persistent' : 'session');
+
+    } catch (error) {
+      console.error('❌ Session restoration failed:', error);
+    } finally {
+      this.isRestoringSession$.next(false);
+    }
   }
 
-  async ensureInitialized(): Promise<void> { await this.restorePromise; }
+  async ensureInitialized(): Promise<void> {
+    await this.restorePromise;
+  }
 
   // ===== Session Handling =====
   setToken(res: any): void {
@@ -151,36 +228,50 @@ export class AuthService {
     const token = res?.token ?? '';
     const user = res?.userDetails ?? null;
 
+    console.log('💾 Setting token and user data');
+
     this.inMemoryToken = token || null;
     this.inMemoryUser = user;
 
+    // Write to encrypted storage
     this.writeStorage('token', token);
     this.writeStorage('userDetails', user);
-    // keep plain fallback copy for older code if required
-    localStorage.setItem('authToken', token);
 
+    // Write plain token as fallback
+    this.safeSetStorage('authToken', token);
+
+    // Set secure cookie
     const isHttps = window.location.protocol === 'https:';
     try {
-      document.cookie = `authToken=${btoa(token)}; path=/;${isHttps ? ' Secure;' : ''} SameSite=Strict`;
-    } catch {}
+      document.cookie = `authToken=${btoa(token)}; path=/; max-age=${60 * 60 * 24 * 7};${isHttps ? ' Secure;' : ''} SameSite=Strict`;
+    } catch (e) {
+      console.warn('⚠️ Cookie set failed:', e);
+    }
 
     this.resetInactivityTimer();
   }
 
   getToken(): string | null {
     if (!this.inMemoryToken) {
-      this.inMemoryToken = this.restoreTokenFromStorage() || (isPlatformBrowser(this.platformId) ? localStorage.getItem('authToken') : null);
+      this.inMemoryToken = this.restoreTokenFromStorage();
     }
     return this.inMemoryToken;
   }
 
-  getUser(): any { return this.inMemoryUser ?? this.restoreUserFromStorage(); }
+  getUser(): any {
+    return this.inMemoryUser ?? this.restoreUserFromStorage();
+  }
 
-  isLoggedIn(): boolean { return !!this.getToken(); }
+  isLoggedIn(): boolean {
+    const loggedIn = !!this.getToken();
+    console.log('🔐 Login check:', loggedIn);
+    return loggedIn;
+  }
 
   // ===== Login / Logout =====
   login(credentials: any) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    console.log('🚀 Attempting login to:', `${this.baseUrl}Login/Login`);
     return this.http.post(`${this.baseUrl}Login/Login`, credentials, { headers });
   }
 
@@ -189,12 +280,18 @@ export class AuthService {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
 
-    if (trigger === 'inactivity timeout') alert('You have been logged out due to inactivity.');
+    console.log('🚪 Logging out, trigger:', trigger);
+
+    if (trigger === 'inactivity timeout') {
+      this.toastr?.warning('You have been logged out due to inactivity.', 'Session Ended');
+    }
 
     const token = this.getToken();
-    const headers = token ? new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }) : new HttpHeaders({ 'Content-Type': 'application/json' });
+    const headers = token ?
+      new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }) :
+      new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    // attempt server logout but always clear local session afterwards
+    // Always clear local session, attempt server logout if possible
     this.http.post(`${this.baseUrl}Login/Logout`, {}, { headers }).subscribe({
       next: () => this.clearLocalSession(),
       error: () => this.clearLocalSession(),
@@ -204,30 +301,34 @@ export class AuthService {
   private clearLocalSession(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
+    console.log('🧹 Clearing local session');
+
     this.inMemoryToken = null;
     this.inMemoryUser = null;
 
-    // Only clear auth-related storage, not the refresh detection timestamp
-    this.storage.removeItem('token');
-    this.storage.removeItem('userDetails');
-    localStorage.removeItem('authToken');
+    this.clearStorage();
 
-    // clear cookie
+    // Clear cookie
     document.cookie = 'authToken=; path=/; max-age=0';
     this.clearInactivityTimer();
     this.isLoggingOut = false;
 
     this.ngZone.run(() => {
-      this.router.navigate(['/'], { replaceUrl: true }).then(() => window.location.reload());
+      this.router.navigate(['/'], { replaceUrl: true });
     });
   }
 
   // ===== Inactivity Tracking =====
   private setupInactivityTracking(): void {
     if (!isPlatformBrowser(this.platformId)) return;
+
     const events = ['mousemove','mousedown','keydown','touchstart','scroll','click'];
     const handler = () => this.resetInactivityTimer();
-    events.forEach(ev => window.addEventListener(ev, handler, { passive: true }));
+
+    events.forEach(ev => {
+      window.addEventListener(ev, handler, { passive: true });
+    });
+
     this.resetInactivityTimer();
   }
 
@@ -238,14 +339,20 @@ export class AuthService {
     this.ngZone.runOutsideAngular(() => {
       this.inactivityTimer = setTimeout(() => {
         this.ngZone.run(() => {
-          if (this.isLoggedIn()) this.logout('inactivity timeout');
+          if (this.isLoggedIn()) {
+            console.log('⏰ Inactivity timeout reached');
+            this.logout('inactivity timeout');
+          }
         });
       }, this.INACTIVITY_LIMIT);
     });
   }
 
   private clearInactivityTimer(): void {
-    if (this.inactivityTimer) { clearTimeout(this.inactivityTimer); this.inactivityTimer = null; }
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer);
+      this.inactivityTimer = null;
+    }
   }
 
   // ===== Multi-tab & refresh safe =====
@@ -253,79 +360,44 @@ export class AuthService {
     if (!isPlatformBrowser(this.platformId)) return;
 
     window.addEventListener('storage', (event) => {
-      // If token removed (explicit logout from another tab) or explicit force_logout key
-      if ((event.key === 'authToken' && !event.newValue) || event.key === 'force_logout') {
+      console.log('🔄 Storage event:', event.key, event.newValue);
+
+      if (event.key === 'authToken' && !event.newValue) {
+        console.log('🗑️ Token cleared in another tab');
+        if (this.isLoggedIn()) this.clearLocalSession();
+      }
+
+      if (event.key === 'force_logout') {
+        console.log('🔒 Force logout from another tab');
         if (this.isLoggedIn()) this.clearLocalSession();
       }
     });
 
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) this.resetInactivityTimer(); });
-  }
-
-  private setupTabCloseLogout(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-
-    // Mark refresh in progress (set in sessionStorage)
-    window.addEventListener('beforeunload', () => {
-      // Mark this is a refresh/navigation; pagehide will check this
-      try { sessionStorage.setItem('refresh_in_progress', 'true'); }
-      catch {}
-      // Also set a timestamp so AppComponent can detect quick reloads
-      try { localStorage.setItem('session_refresh_timestamp', Date.now().toString()); }
-      catch {}
-    });
-
-    window.addEventListener('pagehide', (event) => {
-      // if refresh_in_progress is set, it is a navigation/refresh - do NOT clear storage
-      const refresh = sessionStorage.getItem('refresh_in_progress');
-      if (refresh) {
-        // normal refresh: remove flag and KEEP session/state
-        sessionStorage.removeItem('refresh_in_progress');
-        return; // ← THIS IS THE KEY: Don't clear storage on refresh!
-      }
-
-      // At this point it's likely a tab close / unload that is not a refresh
-      if (this.isLoggedIn()) {
-        try {
-          const token = this.getToken();
-          if (token) {
-            // use sendBeacon to notify server
-            navigator.sendBeacon(`${this.baseUrl}Login/Logout`, JSON.stringify({ token }));
-          }
-        } catch {}
-      }
-
-      // Remove active_tab_id only on actual close (not refresh)
-      try { localStorage.removeItem('active_tab_id'); } catch {}
-      // clear encrypted local storage items for safety ONLY on tab close
-      this.clearStorage(); // ← This only runs on tab close, not refresh
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) this.resetInactivityTimer();
     });
   }
 
   private setupSingleTabEnforcement(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    // Only treat active_tab_id *set* to a different id as session takeover.
     window.addEventListener('storage', (event) => {
       if (event.key === 'active_tab_id') {
-        // only handle when a new active tab id is set and it's not ours
         if (event.newValue && event.newValue !== this.currentTabId && this.isLoggedIn()) {
+          console.log('🚫 Another tab took over the session');
           this.toastr?.warning('Your session opened in another tab. Logging out.', 'Session Ended');
           this.logout('another tab login');
         }
       }
     });
 
-    // Double-check on load (but only if an *existing* active_tab_id exists and isn't us)
-    const activeTabId = localStorage.getItem('active_tab_id');
+    // Check on load if another tab is already active
+    const activeTabId = this.safeGetStorage('active_tab_id');
     if (activeTabId && activeTabId !== this.currentTabId && this.isLoggedIn()) {
-      // Another tab is active — force logout
+      console.log('🚫 This tab is not the active session tab');
       this.toastr?.warning('Your session opened in another tab. Logging out.', 'Session Ended');
       this.logout('another tab login');
     }
-
-    // do not remove active_tab_id in a beforeunload listener (this caused refresh -> removal -> other tabs logout)
-    // we handle removal only in pagehide above when it's not a refresh
   }
 
   private generateTabId(): string {
