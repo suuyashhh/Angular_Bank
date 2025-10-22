@@ -6,7 +6,7 @@ export const authGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  await auth.ensureInitialized(); // if you restore token async
+  await auth.ensureInitialized(); // wait for token restore
 
   if (!auth.isLoggedIn()) {
     router.navigate(['/'], { replaceUrl: true });

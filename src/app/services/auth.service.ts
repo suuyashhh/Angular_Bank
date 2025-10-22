@@ -1,288 +1,146 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject, PLATFORM_ID, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-import * as CryptoJS from 'crypto-js';
-import { environment } from '../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
-  private ngZone = inject(NgZone);
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private zone = inject(NgZone);
+  private toastr = inject(ToastrService);
 
-  private inMemoryToken: string | null = null;
-  private inMemoryUser: any = null;
+  private tokenSubject = new BehaviorSubject<string | null>(null);
+  private loggedInSubject = new BehaviorSubject<boolean>(false);
 
-  private secretKey = environment.ENCRYPT_KEY || 'fallback_dev_key';
-  private persist = !!environment.PERSIST_SESSION;
-  private baseUrl = environment.BASE_URL;
+  isLoggingOut = false;
+  private initialized = false;
+  baseUrl = environment.BASE_URL;
 
-  private inactivityTimer: any = null;
-  private readonly INACTIVITY_LIMIT = 20 * 60 * 1000; // 20 min
-
-  public isLoggingOut = false;
-  public isRestoringSession$ = new BehaviorSubject<boolean>(true);
-  private restorePromise: Promise<void>;
-
-  constructor(private router: Router, private http: HttpClient) {
+  constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      this.restorePromise = this.restoreFromStorage().then(() => {
-        this.setupInactivityTracking();
-        this.setupSessionSync();
-      });
-    } else {
-      this.restorePromise = Promise.resolve();
+      this.ensureInitialized();
+      this.setupStorageSync();
+      this.setupTabCloseLogout();
     }
   }
 
-  // ===== AES Encryption / Decryption =====
-  private encryptData(data: any): string | null {
-    try {
-      return CryptoJS.AES.encrypt(JSON.stringify(data), this.secretKey).toString();
-    } catch {
-      return null;
-    }
-  }
-
-  private decryptData(cipherText: string | null): any {
-    try {
-      if (!cipherText) return null;
-      const bytes = CryptoJS.AES.decrypt(cipherText, this.secretKey);
-      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-      if (!decrypted) return null;
-      return JSON.parse(decrypted);
-    } catch {
-      return null;
-    }
-  }
-
-  // ===== Storage Access =====
-  private get storage() {
-    return this.persist ? localStorage : sessionStorage;
-  }
-
-  private restoreTokenFromStorage(): string | null {
-    if (this.inMemoryToken) return this.inMemoryToken;
-
-    const encrypted = this.storage.getItem('token');
-    if (!encrypted) return null;
-
-    const dec = this.decryptData(encrypted);
-    if (!dec || typeof dec !== 'string') return null;
-
-    this.inMemoryToken = dec;
-    return dec;
-  }
-
-  private restoreUserFromStorage(): any {
-    if (this.inMemoryUser) return this.inMemoryUser;
-
-    const encrypted = this.storage.getItem('userDetails');
-    if (!encrypted) return null;
-
-    const dec = this.decryptData(encrypted);
-    if (!dec || typeof dec !== 'object') return null;
-
-    this.inMemoryUser = dec;
-    return dec;
-  }
-
-  private writeStorage(key: string, value: any): void {
-    const encrypted = this.encryptData(value);
-    if (encrypted) this.storage.setItem(key, encrypted);
-  }
-
-  private clearStorage(): void {
-    this.storage.removeItem('token');
-    this.storage.removeItem('userDetails');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('session_refresh_timestamp');
-  }
-
-  // ===== Restore Token/User on App Init =====
-  private async restoreFromStorage(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Check if this is a fresh page load or a refresh
-        const currentTime = Date.now();
-        const lastRefresh = localStorage.getItem('session_refresh_timestamp');
-        
-        // If last refresh was very recent (less than 5 seconds ago), it's likely a refresh
-        const isRefresh = lastRefresh && (currentTime - parseInt(lastRefresh)) < 5000;
-        
-        if (!isRefresh) {
-          // Fresh page load - restore from storage
-          this.inMemoryToken = this.restoreTokenFromStorage() || localStorage.getItem('authToken');
-          this.inMemoryUser = this.restoreUserFromStorage();
-        } else {
-          // It's a refresh - tokens should already be in memory
-          console.log('Refresh detected - maintaining current session');
-        }
-        
-        // Update refresh timestamp
-        localStorage.setItem('session_refresh_timestamp', currentTime.toString());
-        
-        this.isRestoringSession$.next(false);
-        resolve();
-      }, 0);
-    });
-  }
-
+  // ==============================
+  // 🧠 Initialization
+  // ==============================
   async ensureInitialized(): Promise<void> {
-    await this.restorePromise;
-  }
+    if (this.initialized) return;
+    this.initialized = true;
 
-  // ===== Session Handling =====
-  setToken(res: any): void {
-    const token = res?.token ?? '';
-    const user = res?.userDetails ?? null;
-
-    this.inMemoryToken = token || null;
-    this.inMemoryUser = user;
-
-    this.writeStorage('token', token);
-    this.writeStorage('userDetails', user);
-
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('session_refresh_timestamp', Date.now().toString());
-
-    try {
-      document.cookie = `authToken=${btoa(token)}; path=/; Secure; SameSite=Strict`;
-    } catch {}
-
-    this.resetInactivityTimer();
-  }
-
-  getUser(): any {
-    return this.inMemoryUser ?? this.restoreUserFromStorage();
-  }
-
-  getToken(): string | null {
-    if (!this.inMemoryToken) {
-      this.inMemoryToken = this.restoreTokenFromStorage() || localStorage.getItem('authToken');
+    // Restore token if available
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      this.tokenSubject.next(token);
+      this.loggedInSubject.next(true);
     }
-    return this.inMemoryToken;
+
+    // Optional: short async step to let guards wait
+    await Promise.resolve();
+  }
+
+  // ==============================
+  // 🔐 Auth state accessors
+  // ==============================
+  getToken(): string | null {
+    return this.tokenSubject.value;
   }
 
   isLoggedIn(): boolean {
-    if (!isPlatformBrowser(this.platformId)) return false;
-    return !!this.getToken();
+    return this.loggedInSubject.value;
   }
 
-  // ===== Login / Logout =====
-  login(credentials: any) {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(`${this.baseUrl}Login/Login`, credentials, { headers });
+  // ==============================
+  // 🚀 Login + Logout
+  // ==============================
+  login(token: string): void {
+    localStorage.setItem('auth_token', token);
+    this.tokenSubject.next(token);
+    this.loggedInSubject.next(true);
+    this.toastr.success('Welcome back!', 'Login Successful');
   }
 
-  logout(trigger: string = 'manual'): void {
+  logout(reason: string = 'manual'): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
 
-    if (trigger === 'inactivity timeout') {
-      alert('You have been logged out due to inactivity.');
-    }
-
-    const token = this.getToken();
-    const headers = token
-      ? new HttpHeaders({
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        })
-      : new HttpHeaders({ 'Content-Type': 'application/json' });
-
-    this.http.post(`${this.baseUrl}Login/Logout`, {}, { headers }).subscribe({
-      next: () => this.clearLocalSession(),
-      error: () => this.clearLocalSession(),
-    });
-  }
-
-  private clearLocalSession(): void {
-    this.inMemoryToken = null;
-    this.inMemoryUser = null;
-
     try {
       this.clearStorage();
-      document.cookie = 'authToken=; path=/; max-age=0';
-    } catch {}
-
-    this.clearInactivityTimer();
-    this.isLoggingOut = false;
-
-    this.ngZone.run(() => {
-      this.router.navigate(['/'], { replaceUrl: true }).then(() => {
-        window.location.reload();
+      this.zone.run(() => {
+        this.router.navigate(['/'], { replaceUrl: true });
+        this.toastr.info('You have been logged out.', 'Session Ended');
       });
-    });
-  }
-
-  // ===== Inactivity Tracking =====
-  private setupInactivityTracking(): void {
-    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
-    events.forEach(ev =>
-      window.addEventListener(ev, () => this.resetInactivityTimer(), { passive: true })
-    );
-    this.resetInactivityTimer();
-  }
-
-  private resetInactivityTimer(): void {
-    this.clearInactivityTimer();
-    this.ngZone.runOutsideAngular(() => {
-      this.inactivityTimer = setTimeout(() => {
-        this.ngZone.run(() => {
-          if (this.isLoggedIn()) {
-            this.logout('inactivity timeout');
-          }
-        });
-      }, this.INACTIVITY_LIMIT);
-    });
-  }
-
-  private clearInactivityTimer(): void {
-    if (this.inactivityTimer) {
-      clearTimeout(this.inactivityTimer);
-      this.inactivityTimer = null;
+    } finally {
+      this.isLoggingOut = false;
     }
   }
 
-  // ===== Improved Session Sync (Removed Problematic Tab Close Detection) =====
-  private setupSessionSync(): void {
+  // ==============================
+  // 🧽 Clear only our auth data
+  // ==============================
+  private clearStorage(): void {
+    localStorage.removeItem('auth_token');
+    this.tokenSubject.next(null);
+    this.loggedInSubject.next(false);
+  }
+
+  // ==============================
+  // 🔄 Multi-tab session sync
+  // ==============================
+  private setupStorageSync(): void {
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'auth_token' && !event.newValue) {
+        // Token removed — logout in this tab too
+        this.zone.run(() => this.logout('sync'));
+      }
+    });
+  }
+
+  // ==============================
+  // 🚪 Logout only on real tab close (not refresh)
+  // ==============================
+  private setupTabCloseLogout(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    // Listen for storage changes (other tabs logging out)
-    window.addEventListener('storage', (event) => {
-      if (event.key === 'authToken' && !event.newValue && this.isLoggedIn()) {
-        this.clearLocalSession();
-      }
-    });
-
-    // Handle page visibility changes
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-        // Page became visible again, check session
-        this.resetInactivityTimer();
-      }
-    });
-
-    // Reliable beforeunload for actual tab close
+    // Mark refresh intent
     window.addEventListener('beforeunload', () => {
-      this.clearInactivityTimer();
+      sessionStorage.setItem('refresh_in_progress', 'true');
     });
-  }
 
-  // ===== Manual Refresh Protection =====
-  preventAccidentalLogoutOnRefresh(): void {
-    // This method can be called from your components before navigation
-    localStorage.setItem('prevent_logout_on_refresh', 'true');
-  }
+    // When page loads back, clear refresh flag
+    window.addEventListener('load', () => {
+      setTimeout(() => sessionStorage.removeItem('refresh_in_progress'), 500);
+    });
 
-  // ===== Public method to check session status =====
-  public validateSession(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
+    // Detect true close (pagehide fires even on refresh)
+    window.addEventListener('pagehide', () => {
+      const isRefresh = sessionStorage.getItem('refresh_in_progress');
+      if (isRefresh) return; // Skip logout on refresh
 
-    // Add any additional token validation logic here
-    return true;
+      // True tab close
+      if (this.isLoggedIn()) {
+        try {
+          const token = this.getToken();
+          if (token) {
+            navigator.sendBeacon(
+              `${this.baseUrl}Login/Logout`,
+              JSON.stringify({ token })
+            );
+          }
+        } catch (err) {
+          console.warn('Beacon logout failed:', err);
+        }
+
+        this.clearStorage();
+      }
+    });
   }
 }
