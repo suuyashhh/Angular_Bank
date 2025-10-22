@@ -13,7 +13,7 @@ import { AuthService } from './services/auth.service';
 export class AppComponent{
   title = 'Angular_Bank';
 
-  constructor(private auth: AuthService) {
+  constructor(public auth: AuthService) {
   this.auth.ensureInitialized();
 }
 
