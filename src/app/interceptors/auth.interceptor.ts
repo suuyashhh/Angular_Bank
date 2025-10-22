@@ -9,71 +9,28 @@ import { ToastrService } from 'ngx-toastr';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  const toast = inject(ToastrService, { optional: true });
+  const toastr = inject(ToastrService);
 
   const token = auth.getToken();
-  const clonedReq = token
+  const authReq = token
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
     : req;
 
-  return next(clonedReq).pipe(
-    catchError((err) => {
-      const url = req.url || '';
+  return next(authReq).pipe(
+    catchError((error) => {
+      if (error.status === 401 || error.status === 403) {
+        const lastRefresh = localStorage.getItem('session_refresh_timestamp');
+        const now = Date.now();
+        const isRefresh = lastRefresh && now - parseInt(lastRefresh) < 5000;
 
-      console.warn('🧩 Interceptor caught error:', {
-        url,
-        status: err.status,
-        message: err.message,
-        error: err.error,
-      });
+        if (isRefresh) return throwError(() => error);
 
-      if (url.includes('Login/Login') || url.includes('Login/Logout')) {
-        return throwError(() => err);
-      }
-
-      if ((err.status === 401 || err.status === 403) && !auth.isLoggingOut) {
-        if (auth.getToken()) {
-          auth.isLoggingOut = true;
-
-          try {
-            if (err.error?.toString().includes('Session expired')) {
-              toast?.info(
-                'You were logged out because you logged in from another device.',
-                'Session Ended'
-              );
-            } else {
-              toast?.warning(
-                'Your session has expired. Please log in again.',
-                'Logged Out'
-              );
-            }
-          } catch {}
-
-          auth.logout('interceptor 401/403');
-          localStorage.clear();
-
-          history.pushState(null, '', '/');
-          router.navigate(['/'], { replaceUrl: true });
-
-          router.routeReuseStrategy.shouldReuseRoute = () => false;
-          router.onSameUrlNavigation = 'reload';
-
-          setTimeout(() => (auth.isLoggingOut = false), 3000);
+        if (!auth.isLoggingOut && auth.isLoggedIn()) {
+          toastr.warning('Your session has expired. Please log in again.', 'Session Ended');
+          auth.logout('unauthorized');
         }
       }
-
-      else if (err.status === 0 && !auth.isLoggingOut) {
-        auth.isLoggingOut = true;
-        try {
-          toast?.warning(
-            'Network error. Please check your internet connection.',
-            'Connection Lost'
-          );
-        } catch {}
-        setTimeout(() => (auth.isLoggingOut = false), 3000);
-      }
-
-      return throwError(() => err);
+      return throwError(() => error);
     })
   );
 };
