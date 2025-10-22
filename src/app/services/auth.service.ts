@@ -203,7 +203,12 @@ export class AuthService {
 
     this.inMemoryToken = null;
     this.inMemoryUser = null;
-    this.clearStorage();
+
+    // Only clear auth-related storage, not the refresh detection timestamp
+    this.storage.removeItem('token');
+    this.storage.removeItem('userDetails');
+    localStorage.removeItem('authToken');
+
     // clear cookie
     document.cookie = 'authToken=; path=/; max-age=0';
     this.clearInactivityTimer();
@@ -268,12 +273,12 @@ export class AuthService {
     });
 
     window.addEventListener('pagehide', (event) => {
-      // if refresh_in_progress is set, it is a navigation/refresh - do nothing
+      // if refresh_in_progress is set, it is a navigation/refresh - do NOT clear storage
       const refresh = sessionStorage.getItem('refresh_in_progress');
       if (refresh) {
-        // normal refresh: remove flag and keep session/state
+        // normal refresh: remove flag and KEEP session/state
         sessionStorage.removeItem('refresh_in_progress');
-        return;
+        return; // ← THIS IS THE KEY: Don't clear storage on refresh!
       }
 
       // At this point it's likely a tab close / unload that is not a refresh
@@ -289,8 +294,8 @@ export class AuthService {
 
       // Remove active_tab_id only on actual close (not refresh)
       try { localStorage.removeItem('active_tab_id'); } catch {}
-      // clear encrypted local storage items for safety
-      this.clearStorage();
+      // clear encrypted local storage items for safety ONLY on tab close
+      this.clearStorage(); // ← This only runs on tab close, not refresh
     });
   }
 

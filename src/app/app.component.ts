@@ -20,33 +20,25 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-  this.auth.ensureInitialized().then(() => {
-    console.log('✅ Auth session restored');
-  });
-
-  if (isPlatformBrowser(this.platformId)) {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        try {
-          // more robust: use navigation timing API
-          const navEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-          const navType = navEntries?.[0]?.type;
-          const isReload = navType === 'reload' || navType === 'back_forward';
-
-          // fallback: check session refresh timestamp (set in beforeunload)
-          const lastRefresh = localStorage.getItem('session_refresh_timestamp');
-          const now = Date.now();
-          const isRecentRefresh = lastRefresh && (now - parseInt(lastRefresh, 10) < 5000);
-
-          if ((isReload || isRecentRefresh) && this.auth.isLoggedIn()) {
-            event.restoredState = { navigationId: 0 }; // prevent flicker
-          }
-        } catch (err) {
-          console.warn('⚠️ reload detection error:', err);
-        }
-      }
+    this.auth.ensureInitialized().then(() => {
+      console.log('✅ Auth session restored');
     });
-  }
-}
 
+    if (isPlatformBrowser(this.platformId)) {
+      this.router.events.subscribe(event => {
+        if (event instanceof NavigationStart) {
+          try {
+            // Clean up old refresh timestamp if it's too old
+            const lastRefresh = localStorage.getItem('session_refresh_timestamp');
+            const now = Date.now();
+            if (lastRefresh && (now - parseInt(lastRefresh, 10) > 30000)) { // 30 seconds old
+              localStorage.removeItem('session_refresh_timestamp');
+            }
+          } catch (err) {
+            console.warn('⚠️ refresh cleanup error:', err);
+          }
+        }
+      });
+    }
+  }
 }
