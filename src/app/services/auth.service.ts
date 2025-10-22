@@ -7,7 +7,7 @@ import * as CryptoJS from 'crypto-js';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../environments/environment';
 
-interface Storage {
+interface StorageLike {
   length: number;
   clear(): void;
   getItem(key: string): string | null;
@@ -40,8 +40,10 @@ export class AuthService {
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       this.currentTabId = this.generateTabId();
+      // Set our active tab id on load
       localStorage.setItem('active_tab_id', this.currentTabId);
 
+      // start restore and then set up listeners
       this.restorePromise = this.restoreFromStorage().then(() => {
         this.setupInactivityTracking();
         this.setupSessionSync();
@@ -68,8 +70,8 @@ export class AuthService {
     } catch { return null; }
   }
 
-  // ===== Storage =====
-  private get storage(): Storage {
+  // ===== Storage accessor =====
+  private get storage(): StorageLike {
     if (!isPlatformBrowser(this.platformId)) {
       return {
         length: 0,
@@ -78,8 +80,9 @@ export class AuthService {
         key: () => null,
         removeItem: () => {},
         setItem: () => {},
-      } as unknown as Storage;
+      } as unknown as StorageLike;
     }
+    // allow choosing persistent or session storage via env flag
     return this.persist ? localStorage : sessionStorage;
   }
 
@@ -90,46 +93,53 @@ export class AuthService {
 
   private restoreTokenFromStorage(): string | null {
     if (this.inMemoryToken) return this.inMemoryToken;
-    const encrypted = this.storage.getItem('token');
-    const dec = this.decryptData(encrypted);
-    if (!dec || typeof dec !== 'string') return null;
-    this.inMemoryToken = dec;
-    return dec;
+    try {
+      const encrypted = this.storage.getItem('token');
+      const dec = this.decryptData(encrypted);
+      if (dec && typeof dec === 'string') { this.inMemoryToken = dec; return dec; }
+    } catch {}
+    return null;
   }
 
   private restoreUserFromStorage(): any {
     if (this.inMemoryUser) return this.inMemoryUser;
-    const encrypted = this.storage.getItem('userDetails');
-    const dec = this.decryptData(encrypted);
-    if (!dec || typeof dec !== 'object') return null;
-    this.inMemoryUser = dec;
-    return dec;
+    try {
+      const encrypted = this.storage.getItem('userDetails');
+      const dec = this.decryptData(encrypted);
+      if (dec && typeof dec === 'object') { this.inMemoryUser = dec; return dec; }
+    } catch {}
+    return null;
   }
 
   private clearStorage(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     this.storage.removeItem('token');
     this.storage.removeItem('userDetails');
+    // keep authToken fallback removal (if used)
     localStorage.removeItem('authToken');
-    localStorage.removeItem('active_tab_id');
+    // DO NOT blindly remove active_tab_id here (other tabs may misinterpret)
   }
 
   // ===== Restore session =====
   private async restoreFromStorage(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const token = this.restoreTokenFromStorage() || localStorage.getItem('authToken');
+    // Try encrypted locations first
+    const tokenFromEncrypted = this.restoreTokenFromStorage();
+    // fallback to plain localStorage key if present (legacy)
+    const tokenFallback = localStorage.getItem('authToken');
+
+    const token = tokenFromEncrypted || tokenFallback || null;
     const user = this.restoreUserFromStorage();
 
     this.inMemoryToken = token;
     this.inMemoryUser = user;
 
+    // done restoring
     this.isRestoringSession$.next(false);
   }
 
-  async ensureInitialized(): Promise<void> {
-    await this.restorePromise;
-  }
+  async ensureInitialized(): Promise<void> { await this.restorePromise; }
 
   // ===== Session Handling =====
   setToken(res: any): void {
@@ -143,6 +153,7 @@ export class AuthService {
 
     this.writeStorage('token', token);
     this.writeStorage('userDetails', user);
+    // keep plain fallback copy for older code if required
     localStorage.setItem('authToken', token);
 
     const isHttps = window.location.protocol === 'https:';
@@ -180,6 +191,7 @@ export class AuthService {
     const token = this.getToken();
     const headers = token ? new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }) : new HttpHeaders({ 'Content-Type': 'application/json' });
 
+    // attempt server logout but always clear local session afterwards
     this.http.post(`${this.baseUrl}Login/Logout`, {}, { headers }).subscribe({
       next: () => this.clearLocalSession(),
       error: () => this.clearLocalSession(),
@@ -192,6 +204,7 @@ export class AuthService {
     this.inMemoryToken = null;
     this.inMemoryUser = null;
     this.clearStorage();
+    // clear cookie
     document.cookie = 'authToken=; path=/; max-age=0';
     this.clearInactivityTimer();
     this.isLoggingOut = false;
@@ -205,7 +218,8 @@ export class AuthService {
   private setupInactivityTracking(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const events = ['mousemove','mousedown','keydown','touchstart','scroll','click'];
-    events.forEach(ev => window.addEventListener(ev, () => this.resetInactivityTimer(), { passive: true }));
+    const handler = () => this.resetInactivityTimer();
+    events.forEach(ev => window.addEventListener(ev, handler, { passive: true }));
     this.resetInactivityTimer();
   }
 
@@ -229,57 +243,81 @@ export class AuthService {
   // ===== Multi-tab & refresh safe =====
   private setupSessionSync(): void {
     if (!isPlatformBrowser(this.platformId)) return;
+
     window.addEventListener('storage', (event) => {
+      // If token removed (explicit logout from another tab) or explicit force_logout key
       if ((event.key === 'authToken' && !event.newValue) || event.key === 'force_logout') {
         if (this.isLoggedIn()) this.clearLocalSession();
       }
     });
+
     document.addEventListener('visibilitychange', () => { if (!document.hidden) this.resetInactivityTimer(); });
   }
 
   private setupTabCloseLogout(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    // Mark refresh in progress
+    // Mark refresh in progress (set in sessionStorage)
     window.addEventListener('beforeunload', () => {
-      sessionStorage.setItem('refresh_in_progress', 'true');
+      // Mark this is a refresh/navigation; pagehide will check this
+      try { sessionStorage.setItem('refresh_in_progress', 'true'); }
+      catch {}
+      // Also set a timestamp so AppComponent can detect quick reloads
+      try { localStorage.setItem('session_refresh_timestamp', Date.now().toString()); }
+      catch {}
     });
 
     window.addEventListener('pagehide', (event) => {
+      // if refresh_in_progress is set, it is a navigation/refresh - do nothing
       const refresh = sessionStorage.getItem('refresh_in_progress');
       if (refresh) {
-        sessionStorage.removeItem('refresh_in_progress'); // normal refresh
-        return; // DO NOT logout
+        // normal refresh: remove flag and keep session/state
+        sessionStorage.removeItem('refresh_in_progress');
+        return;
       }
 
-      // Only logout if tab actually closed
-      if (this.isLoggedIn() && event.persisted === false) {
+      // At this point it's likely a tab close / unload that is not a refresh
+      if (this.isLoggedIn()) {
         try {
           const token = this.getToken();
-          if (token) navigator.sendBeacon(`${this.baseUrl}Login/Logout`, JSON.stringify({ token }));
+          if (token) {
+            // use sendBeacon to notify server
+            navigator.sendBeacon(`${this.baseUrl}Login/Logout`, JSON.stringify({ token }));
+          }
         } catch {}
-        this.clearStorage();
       }
+
+      // Remove active_tab_id only on actual close (not refresh)
+      try { localStorage.removeItem('active_tab_id'); } catch {}
+      // clear encrypted local storage items for safety
+      this.clearStorage();
     });
   }
 
   private setupSingleTabEnforcement(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
+    // Only treat active_tab_id *set* to a different id as session takeover.
     window.addEventListener('storage', (event) => {
-      if (event.key === 'active_tab_id' && event.newValue !== this.currentTabId && this.isLoggedIn()) {
-        this.toastr?.warning('Your session opened in another tab. Logging out.', 'Session Ended');
-        this.logout('another tab login');
+      if (event.key === 'active_tab_id') {
+        // only handle when a new active tab id is set and it's not ours
+        if (event.newValue && event.newValue !== this.currentTabId && this.isLoggedIn()) {
+          this.toastr?.warning('Your session opened in another tab. Logging out.', 'Session Ended');
+          this.logout('another tab login');
+        }
       }
     });
 
+    // Double-check on load (but only if an *existing* active_tab_id exists and isn't us)
     const activeTabId = localStorage.getItem('active_tab_id');
     if (activeTabId && activeTabId !== this.currentTabId && this.isLoggedIn()) {
+      // Another tab is active — force logout
       this.toastr?.warning('Your session opened in another tab. Logging out.', 'Session Ended');
       this.logout('another tab login');
     }
 
-    window.addEventListener('beforeunload', () => { localStorage.removeItem('active_tab_id'); });
+    // do not remove active_tab_id in a beforeunload listener (this caused refresh -> removal -> other tabs logout)
+    // we handle removal only in pagehide above when it's not a refresh
   }
 
   private generateTabId(): string {
