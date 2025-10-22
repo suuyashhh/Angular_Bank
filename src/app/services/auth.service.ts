@@ -72,19 +72,22 @@ export class AuthService {
 
   // ===== Storage accessor =====
   private get storage(): StorageLike {
-    if (!isPlatformBrowser(this.platformId)) {
-      return {
-        length: 0,
-        clear: () => {},
-        getItem: () => null,
-        key: () => null,
-        removeItem: () => {},
-        setItem: () => {},
-      } as unknown as StorageLike;
-    }
-    // allow choosing persistent or session storage via env flag
-    return this.persist ? localStorage : sessionStorage;
+  if (!isPlatformBrowser(this.platformId)) {
+    return {
+      length: 0,
+      clear: () => {},
+      getItem: () => null,
+      key: () => null,
+      removeItem: () => {},
+      setItem: () => {},
+    } as unknown as StorageLike;
   }
+
+  // Force localStorage in production to persist login across refresh
+  const isHosted = window.location.hostname.includes('netlify.app') || window.location.protocol === 'https:';
+  return isHosted ? localStorage : (this.persist ? localStorage : sessionStorage);
+}
+
 
   private writeStorage(key: string, value: any): void {
     const encrypted = this.encryptData(value);
