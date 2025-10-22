@@ -29,10 +29,10 @@ export class AppComponent implements OnInit {
         if (event instanceof NavigationStart) {
           try {
             // Clean up old refresh timestamp if it's too old
-            const lastRefresh = localStorage.getItem('session_refresh_timestamp');
+            const lastRefresh = localStorage.getItem('last_unload_time');
             const now = Date.now();
-            if (lastRefresh && (now - parseInt(lastRefresh, 10) > 30000)) { // 30 seconds old
-              localStorage.removeItem('session_refresh_timestamp');
+            if (lastRefresh && (now - parseInt(lastRefresh, 10) > 10000)) {
+              localStorage.removeItem('last_unload_time');
             }
           } catch (err) {
             console.warn('⚠️ refresh cleanup error:', err);
