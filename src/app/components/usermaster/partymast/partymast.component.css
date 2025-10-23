@@ -1,0 +1,199 @@
+/* Wizard container: no page scroll; confine inside the card */
+.wizard-card {
+  border-radius: 20px;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+}
+.wizard-panels .panel { max-height: calc(100vh - 210px); overflow: hidden; }
+
+/* Radios for step control (hidden) */
+.wizard-state { position: absolute; opacity: 0; pointer-events: none; }
+
+/* Stepper */
+.wizard-steps { margin: 6px 0 20px; }
+.wizard-steps .steps { display: flex; align-items: center; gap: 10px; justify-content: center; }
+.wizard-steps .divider { height: 2px; flex: 1 1 64px; background: #e5e7eb; border-radius: 999px; max-width: 160px; }
+.wizard-steps .step {
+  width: 40px; height: 40px; border-radius: 999px; border: 2px solid #e5e7eb;
+  background: #fafafa; color: #6b7280; display: grid; place-items: center;
+  font-weight: 700; cursor: pointer; user-select: none; transition: all .25s ease;
+}
+.wizard-steps .step:hover { border-color: #c4b5fd; }
+
+/* Active/complete state */
+#step-1:checked ~ .wizard-steps label[for="step-1"],
+#step-2:checked ~ .wizard-steps label[for="step-2"] {
+  background: linear-gradient(135deg, #8c57ff 0%, #a855f7 100%);
+  color: #fff; border-color: transparent; box-shadow: 0 6px 18px rgba(140,87,255,.25);
+  transform: translateY(-1px);
+}
+#step-2:checked ~ .wizard-steps label[for="step-1"] {
+  background: #f3edff; color: #8c57ff; border-color: #8c57ff;
+}
+
+/* Panels visibility */
+.wizard-panels .panel { display: none; }
+#step-1:checked ~ .wizard-panels .panel[data-step="1"] { display: block; }
+#step-2:checked ~ .wizard-panels .panel[data-step="2"] { display: block; }
+
+/* Actions row */
+.wizard-actions { display: flex; gap: 12px; justify-content: space-between; align-items: center; }
+.wizard-actions .placeholder { width: 1px; }
+.wizard-actions .actions-right { display: flex; gap: 10px; }
+
+/* Buttons (light additions to your theme) */
+.btn-outline-secondary { background: #f3f4f6; color: #374151; border: 2px solid #e5e7eb; }
+.btn-outline-secondary:hover { background: #e5e7eb; }
+.btn-danger { background: #ef4444; border: 0; color: #fff; box-shadow: 0 6px 18px rgba(239,68,68,.25); }
+.btn-danger:hover { background: #dc2626; }
+
+/* KYC tabs (Address/Personal/Other/KYC) */
+.kvctab-state { position: absolute; opacity: 0; pointer-events: none; }
+.kvctab-controls {
+  display: inline-flex; gap: 8px; padding: 6px; background: #f6f7fb; border: 1px solid #ececf2;
+  border-radius: 12px; margin-bottom: 12px;
+}
+.kvctab-btn {
+  padding: 8px 14px; border-radius: 10px; font-weight: 600; color: #6b7280; cursor: pointer;
+  border: 1px solid transparent; transition: all .2s ease;
+}
+.kvctab-btn:hover { color: #4b5563; }
+#tab-address:checked ~ .kvctab-controls label[for="tab-address"],
+#tab-personal:checked ~ .kvctab-controls label[for="tab-personal"],
+#tab-other:checked ~ .kvctab-controls label[for="tab-other"],
+#tab-KYC:checked     ~ .kvctab-controls label[for="tab-KYC"] {
+  background: #f3edff; color: #8c57ff; border-color: #8c57ff;
+}
+
+/* Panels visibility for tabs (IMPORTANT: includes KYC) */
+.kvctab-panels .kvctab-panel { display: none; padding: 8px 0 2px; }
+#tab-address:checked ~ .kvctab-panels #tab-panel-address { display: block; }
+#tab-personal:checked ~ .kvctab-panels #tab-panel-personal { display: block; }
+#tab-other:checked   ~ .kvctab-panels #tab-panel-other { display: block; }
+#tab-KYC:checked     ~ .kvctab-panels #tab-panel-KYC { display: block; }
+
+/* Small forms layout */
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Images table: horizontal cards, no vertical page scroll */
+.images-table-wrap {
+  border: 1px solid #ececf2; border-radius: 14px; background: #fff; overflow: hidden;
+}
+.images-table.horizontal thead { display: none; }
+.images-table.horizontal tbody {
+  display: flex; gap: 12px; padding: 12px;
+  overflow-x: auto; overflow-y: hidden; /* horizontal scroll only */
+  scroll-snap-type: x mandatory;
+}
+.images-table.horizontal tbody tr {
+  display: grid; grid-template-columns: 1fr; row-gap: 10px;
+  min-width: 320px; max-width: 360px; scroll-snap-align: start;
+  background: #ffffff; border: 1px solid #ececf2; border-radius: 12px;
+  padding: 12px;
+}
+.images-table.horizontal tbody td { padding: 0; border: 0; }
+
+/* File input */
+.file-input {
+  width: 100%;
+  border: 2px dashed #d8d6ff; border-radius: 12px; padding: 10px 12px;
+  background: #fafbff; color: #4b5563;
+}
+.file-input:hover { border-color: #b9b3ff; }
+
+/* Preview box + image */
+.preview-box {
+  width: 100%; aspect-ratio: 4/3; border: 2px solid #e5e7eb;
+  border-radius: 12px; background: linear-gradient(145deg, #fafafa, #ffffff);
+  position: relative; overflow: hidden; display: grid; place-items: center;
+  color: #9ca3af; font-weight: 600;
+}
+.preview-box img {
+  width: 100%; height: 100%; object-fit: contain; display: none;
+}
+.preview-box .ph { font-size: 14px; color: #a3a3a3; }
+.preview-box.has-image img { display: block; }
+.preview-box.has-image .ph { display: none; }
+
+/* Inputs spacing within wizard */
+.wizard-panels .form-floating-outline .form-control { padding: 14px 16px; }
+
+/* Compact on small screens */
+@media (max-width: 576px) {
+  .wizard-steps .divider { max-width: 72px; }
+  .wizard-steps .step { width: 36px; height: 36px; }
+  .wizard-actions { flex-direction: column; align-items: stretch; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* enables horizontal scroll */
+.images-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* smooth on mobile */
+  padding-bottom: 6px;               /* keeps scrollbar off content */
+  /* optional: show a subtle bottom border so the scroll bar looks intentional */
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* let the table be wider than the container */
+.images-table.horizontal {
+  width: max-content;   /* key: keeps natural width so wrapper must scroll */
+  table-layout: auto;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+}
+
+/* prevent the “Document / Upload / Preview” columns from shrinking too much */
+.images-table.horizontal th,
+.images-table.horizontal td {
+  white-space: nowrap;
+  vertical-align: top;
+  padding: 10px 14px;
+}
+
+/* give each preview a fixed, consistent size so columns line up */
+.preview-box {
+  width: 320px;        /* adjust as you like */
+  height: 220px;
+  border: 1px dashed #cfc9ff;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+}
+
+.preview-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* optional: small PDF indicator styling */
+.pdf-preview {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+}

@@ -1,0 +1,227 @@
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-6 py-8">
+  <div class="card p-7 wizard-card" style="padding-top: 0px!important;">
+    <div class="card-body mt-1">
+      <div class="wizard">
+        <input class="wizard-state" type="radio" name="wizard2" id="step-1" checked />
+        <input class="wizard-state" type="radio" name="wizard2" id="step-2" />
+
+        <div class="wizard-steps" role="tablist" aria-label="Steps">
+          <div class="steps">
+            <label class="step" for="step-1" aria-controls="panel-1"><span>1</span></label>
+            <div class="divider" aria-hidden="true"></div>
+            <label class="step" for="step-2" aria-controls="panel-2"><span>2</span></label>
+          </div>
+        </div>
+
+        <div class="wizard-panels">
+          <section class="panel" id="panel-1" data-step="1" role="tabpanel" aria-labelledby="step-1">
+            <h4 class="mb-3">Basic Details</h4>
+
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="widgetName" placeholder="Widget Name" />
+              <label for="widgetName">Widget Name</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-5">
+              <input type="text" class="form-control" id="widgetCode" placeholder="Widget Code" />
+              <label for="widgetCode">Widget Code</label>
+            </div>
+
+            <div class="wizard-actions">
+              <span class="placeholder"></span>
+              <label for="step-2" class="btn btn-primary">Next</label>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-2" data-step="2" role="tabpanel" aria-labelledby="step-2">
+
+            <div class="kvctabs">
+              <input type="radio" name="kycTab" id="tab-address" class="kvctab-state" checked />
+              <input type="radio" name="kycTab" id="tab-personal" class="kvctab-state" />
+              <input type="radio" name="kycTab" id="tab-other" class="kvctab-state" />
+              <input type="radio" name="kycTab" id="tab-KYC" class="kvctab-state" />
+
+              <div class="kvctab-controls" role="tablist" aria-label="KYC Sections">
+                <label class="kvctab-btn" for="tab-address" role="tab" aria-controls="tab-panel-address">Address
+                  Details</label>
+                <label class="kvctab-btn" for="tab-personal" role="tab" aria-controls="tab-panel-personal">Personal
+                  Details</label>
+                <label class="kvctab-btn" for="tab-other" role="tab" aria-controls="tab-panel-other">Other
+                  Details</label>
+                <label class="kvctab-btn" for="tab-KYC" role="tab" aria-controls="tab-panel-KYC">KYC Details</label>
+              </div>
+
+              <div class="kvctab-panels">
+                <div id="tab-panel-address" class="kvctab-panel" role="tabpanel">
+                  <div class="grid-2">
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" class="form-control" id="addr1" placeholder="Address Line 1" />
+                      <label for="addr1">Address Line 1</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" class="form-control" id="addr2" placeholder="Address Line 2 (optional)" />
+                      <label for="addr2">Address Line 2 (optional)</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" class="form-control" id="city" placeholder="City" />
+                      <label for="city">City</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" class="form-control" id="pincode" placeholder="Pincode" />
+                      <label for="pincode">Pincode</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="tab-panel-personal" class="kvctab-panel" role="tabpanel">
+                  <div class="grid-2">
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" class="form-control" id="fname" placeholder="First Name" />
+                      <label for="fname">First Name</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" class="form-control" id="lname" placeholder="Last Name" />
+                      <label for="lname">Last Name</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="date" class="form-control" id="dob" placeholder="Date of Birth" />
+                      <label for="dob">Date of Birth</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" class="form-control" id="mobile" placeholder="Mobile Number" />
+                      <label for="mobile">Mobile Number</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="tab-panel-other" class="kvctab-panel" role="tabpanel">
+                  <div class="grid-2">
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" class="form-control" id="occupation" placeholder="Occupation" />
+                      <label for="occupation">Occupation</label>
+                    </div>
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" class="form-control" id="income" placeholder="Annual Income" />
+                      <label for="income">Annual Income</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="tab-panel-KYC" class="kvctab-panel" role="tabpanel">
+                  <div class="images-table-wrap">
+                    <table class="images-table horizontal" role="table" aria-label="KYC Images">
+                      <thead>
+                        <tr role="row">
+                          <th role="columnheader">Document</th>
+                          <th role="columnheader">Upload</th>
+                          <th role="columnheader">Preview</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr role="row">
+                          <td role="cell"><strong>Photo</strong></td>
+                          <td role="cell">
+                            <input type="file" class="file-input" accept="image/*" aria-label="Upload Photo"
+                              (change)="onFileChange($event, 'photo')" />
+                          </td>
+                          <td role="cell">
+                            <div class="preview-box" [class.has-image]="previews.photo">
+                              <img [src]="previews.photo || ''" alt="Photo preview" *ngIf="previews.photo" />
+                              <span class="ph" *ngIf="!previews.photo">Preview</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr role="row">
+                          <td role="cell"><strong>Sign</strong></td>
+                          <td role="cell">
+                            <input type="file" class="file-input" accept="image/*" aria-label="Upload Signature"
+                              (change)="onFileChange($event, 'sign')" />
+                          </td>
+                          <td role="cell">
+                            <div class="preview-box" [class.has-image]="previews.sign">
+                              <img [src]="previews.sign || ''" alt="Signature preview" *ngIf="previews.sign" />
+                              <span class="ph" *ngIf="!previews.sign">Preview</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr role="row">
+                          <td role="cell"><strong>ID Proof (PAN)</strong></td>
+                          <td role="cell">
+                            <input type="file" class="file-input" accept="image/*,.pdf" aria-label="Upload PAN"
+                              (change)="onFileChange($event, 'pan')" />
+                          </td>
+                          <td role="cell">
+                            <div class="preview-box" [class.has-image]="previews.pan">
+                              <img [src]="previews.pan || ''" alt="PAN preview"
+                                *ngIf="previews.pan && isImage(previews.pan)" />
+                              <div class="pdf-preview" *ngIf="previews.pan && !isImage(previews.pan)">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>PDF Document</span>
+                              </div>
+                              <span class="ph" *ngIf="!previews.pan">Preview</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr role="row">
+                          <td role="cell"><strong>Address Proof (Aadhaar Front)</strong></td>
+                          <td role="cell">
+                            <input type="file" class="file-input" accept="image/*,.pdf"
+                              aria-label="Upload Aadhaar Front" (change)="onFileChange($event, 'aadhaarFront')" />
+                          </td>
+                          <td role="cell">
+                            <div class="preview-box" [class.has-image]="previews.aadhaarFront">
+                              <img [src]="previews.aadhaarFront || ''" alt="Aadhaar front preview"
+                                *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" />
+                              <div class="pdf-preview" *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>PDF Document</span>
+                              </div>
+                              <span class="ph" *ngIf="!previews.aadhaarFront">Preview</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr role="row">
+                          <td role="cell"><strong>Address Proof (Aadhaar Back)</strong></td>
+                          <td role="cell">
+                            <input type="file" class="file-input" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
+                              (change)="onFileChange($event, 'aadhaarBack')" />
+                          </td>
+                          <td role="cell">
+                            <div class="preview-box" [class.has-image]="previews.aadhaarBack">
+                              <img [src]="previews.aadhaarBack || ''" alt="Aadhaar back preview"
+                                *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" />
+                              <div class="pdf-preview" *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>PDF Document</span>
+                              </div>
+                              <span class="ph" *ngIf="!previews.aadhaarBack">Preview</span>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <div class="wizard-actions mt-4">
+  <label for="step-1" class="btn btn-outline-secondary">Previous</label>
+  <div class="actions-right">
+    <!-- FIX: removed the conflicting id and the tabpanel role -->
+    <button type="button" id="cancel-images" class="btn btn-danger">Cancel Images</button>
+    <button type="button" class="btn btn-primary">Finish</button>
+  </div>
+</div>
+
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

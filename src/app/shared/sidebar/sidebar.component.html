@@ -1,187 +1,350 @@
-<div class="layout-wrapper layout-content-navbar ">
+<nav #layoutMenu id="layout-menu">
+  <div class="layout-wrapper layout-content-navbar ">
     <div class="layout-container ">
-        <!-- Menu -->
+      <!-- Menu -->
 
-        <aside id="layout-menu" style="position: fixed;"
-            class="layout-menu menu-vertical menu shadow-xs bg-white rounded m-3">
+      <aside id="layout-menu" style="position: fixed;"
+        class="layout-menu menu-vertical menu shadow-xs bg-white rounded m-3">
 
-            <div class="app-brand demo ">
-                <a href="index.html" class="app-brand-link">
-                    <span class="app-brand-logo demo">
-                        <img src="../../../assets/img/ProBank/TSIIcon.png" alt="Pro Bank Logo" width="60" height="44">
-                    </span>
-                    <span class="app-brand-text demo menu-text fw-semibold ms-2">Pro Bank</span>
+        <div class="app-brand demo ">
+          <a href="index.html" class="app-brand-link">
+             <span class="app-brand-logo demo">
+                          <img src="../../../assets/img/ProBank/TSIIcon.png" alt="Pro Bank Logo" width="60" height="44">
+                      </span>
+            <span class="app-brand-text demo menu-text fw-semibold ms-2">Pro Bank</span>
+          </a>
+
+          <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <i class="menu-toggle-icon d-xl-block align-middle"></i>
+          </a>
+        </div>
+
+        <div class="menu-inner-shadow"></div>
+
+        <ul class="menu-inner py-1 ">
+
+          <li class="menu-item" routerLinkActive="active"
+            >
+            <a routerLink="/USERMASTER/dashboard" class="menu-link">
+              <i class="menu-icon tf-icons ri-home-smile-line"></i>
+              <div data-i18n="dashboard">Home</div>
+            </a>
+          </li>
+
+          <!-- <li class="menu-item" routerLinkActive="active"
+            >
+            <a routerLink="/USERMASTER/partymast" class="menu-link">
+              <i class="menu-icon ri-profile-line"></i>
+              <div data-i18n="casepaper">CasePaper</div>
+
+            </a>
+          </li> -->
+
+
+          <!-- ACCOUNTS -->
+          <li class="menu-item active close"
+            >
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+              <i class="menu-icon ri-wallet-3-line"></i>
+              <div data-i18n="Dashboards">Accounts</div>
+              <!-- <div class="badge bg-danger rounded-pill ms-auto">5</div> -->
+            </a>
+            <ul class="menu-sub">
+
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/add-test" class="menu-link">
+                  <div data-i18n="add-test">Deposit Account Opening</div>
                 </a>
-
-                <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-                    <i class="menu-toggle-icon d-xl-block align-middle"></i>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/doctor" class="menu-link">
+                  <div data-i18n="doctor">Loan Account Opening</div>
                 </a>
-            </div>
-
-            <div class="menu-inner-shadow"></div>
-
-            <ul class="menu-inner py-1 ">
-
-                <li class="menu-item active">
-                    <a href="/USERMASTER/dashboard" class="menu-link">
-                        <i class="menu-icon tf-icons ri-home-smile-line"></i>
-                        <div data-i18n="dashboard">Home</div>
-                    </a>
-                </li>
-
-                <li class="menu-item">
-                    <a href="/LABADMIN/casepaper" class="menu-link">
-                        <i class="menu-icon ri-profile-line"></i>
-                        <div data-i18n="casepaper">Party Master</div>
-                    </a>
-                </li>
-
-                <!-- Master -->
-                <li class="menu-item active close">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <i class="menu-icon ri-bar-chart-horizontal-fill "></i>
-                        <div data-i18n="Dashboards">Master</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item">
-                            <a href="/LABADMIN/add-test" class="menu-link">
-                                <div data-i18n="add-test">Test</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="/LABADMIN/doctor" class="menu-link">
-                                <div data-i18n="doctor">Doctor</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="/LABADMIN/create-employee" class="menu-link">
-                                <div data-i18n="create-employee"> Create Employee</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- Liabilities START!! -->
-                <li class="menu-item active close">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <i class="menu-icon tf-icons ri-uninstall-fill"></i>
-                        <div data-i18n="Dashboards">Liabilities</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item">
-                            <a href="lab-materials" class="menu-link">
-                                <div data-i18n="casepaper">Lab Materials</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="bike-fule" class="menu-link">
-                                <div data-i18n="#">Bike Fule</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="employee-salary" class="menu-link">
-                                <div data-i18n="#"> Employee Salary</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="ele-bill" class="menu-link">
-                                <div data-i18n="#"> Electricity Bill </div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="other-expense" class="menu-link">
-                                <div data-i18n="#">Other Expance</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="doctor-commission" class="menu-link">
-                                <div data-i18n="#">Doctors</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- Liabilities END!! -->
-
-                <li class="menu-header mt-7"><span class="menu-header-text">Finance</span></li>
-
-                <!-- Finance -->
-                <li class="menu-item">
-                    <a href="/LABADMIN/finance" class="menu-link">
-                        <i class="menu-icon ri-money-dollar-circle-line"></i>
-                        <div data-i18n="Finance">Finance</div>
-                    </a>
-                </li>
-
-                <!-- Charts -->
-                <li class="menu-item">
-                    <a href="/LABADMIN/charts" class="menu-link">
-                        <i class="menu-icon ri-stock-line"></i>
-                        <div data-i18n="Charts">Charts</div>
-                    </a>
-                </li>
-
-                <li class="menu-header mt-7"><span class="menu-header-text">APPROVE</span></li>
-
-                <!-- APPROVE -->
-                <li class="menu-item active close">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <i class="menu-icon ri-checkbox-circle-line"></i>
-                        <div data-i18n="Dashboards">Approve</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item">
-                            <a href="/LABADMIN/app-approve-casepaper" class="menu-link">
-                                <div data-i18n="app-approve-casepaper">CasePaper</div>
-                                <div class="badge bg-danger rounded-pill ms-auto">3</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="/LABADMIN/approve/test" class="menu-link">
-                                <div data-i18n="approve/test">Test</div>
-                                <div class="badge bg-danger rounded-pill ms-auto">1</div>
-                            </a>
-                        </li>
-
-                        <!--Approve Master -->
-                        <li class="menu-item active close mb-7">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon ri-bar-chart-horizontal-fill "></i>
-                                <div data-i18n="Dashboards">Master</div>
-                            </a>
-                            <ul class="menu-sub">
-                                <li class="menu-item">
-                                    <a href="/LABADMIN/add-test" class="menu-link">
-                                        <div data-i18n="add-test">Test</div>
-                                        <div class="badge bg-danger rounded-pill ms-auto">6</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/LABADMIN/doctor" class="menu-link">
-                                        <div data-i18n="doctor">Doctor</div>
-                                        <div class="badge bg-danger rounded-pill ms-auto">0</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/LABADMIN/create-employee" class="menu-link">
-                                        <div data-i18n="create-employee"> Create Employee</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- Companies -->
-                <li class="menu-item">
-                    <a href="/ADMIN/users" class="menu-link">
-                        <i class="menu-icon ri-money-dollar-circle-line"></i>
-                        <div data-i18n="Finance">Companies</div>
-                    </a>
-                </li>
-
-                <li class="mt-7"></li>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/USERMASTER/partymast" class="menu-link">
+                  <div data-i18n="create-employee"> Customer Account Opening</div>
+                </a>
+              </li>
+               <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/create-employee" class="menu-link">
+                  <div data-i18n="create-employee">Share Suspence Account Opening</div>
+                </a>
+              </li>
+               <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/create-employee" class="menu-link">
+                  <div data-i18n="create-employee">Other Subsidiary Account Opening</div>
+                </a>
+              </li>
             </ul>
-        </aside>
-        <!-- / Menu -->
+          </li>
+
+
+   <!-- Daily Work -->
+          <li class="menu-item active close"
+            >
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+              <i class="menu-icon ri-calendar-check-line"></i>
+              <div data-i18n="Dashboards">Daily Work</div>
+              <!-- <div class="badge bg-danger rounded-pill ms-auto">5</div> -->
+            </a>
+            <ul class="menu-sub">
+
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/add-test" class="menu-link">
+                  <div data-i18n="add-test">Deposit Account Opening</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/doctor" class="menu-link">
+                  <div data-i18n="doctor">Loan Account Opening</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active"
+                >
+                <a routerLink="/LABADMIN/create-employee" class="menu-link">
+                  <div data-i18n="create-employee"> Customer Account Opening</div>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+  <!-- Mobile Banking -->
+          <li class="menu-item active close"
+            >
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+             <i class="menu-icon ri-smartphone-line"></i>
+              <div data-i18n="Dashboards">Mobile Banking</div>
+              <!-- <div class="badge bg-danger rounded-pill ms-auto">5</div> -->
+            </a>
+            <ul class="menu-sub">
+
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/add-test" class="menu-link">
+                  <div data-i18n="add-test">Deposit Account Opening</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/doctor" class="menu-link">
+                  <div data-i18n="doctor">Loan Account Opening</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active"
+                >
+                <a routerLink="/LABADMIN/create-employee" class="menu-link">
+                  <div data-i18n="create-employee"> Customer Account Opening</div>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- pigmy Work -->
+          <li class="menu-item active close"
+            >
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+             <i class="menu-icon ri-funds-line"></i>
+              <div data-i18n="Dashboards">Pigmy Work</div>
+              <!-- <div class="badge bg-danger rounded-pill ms-auto">5</div> -->
+            </a>
+            <ul class="menu-sub">
+
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/add-test" class="menu-link">
+                  <div data-i18n="add-test">Deposit Account Opening</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/doctor" class="menu-link">
+                  <div data-i18n="doctor">Loan Account Opening</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active"
+                >
+                <a routerLink="/LABADMIN/create-employee" class="menu-link">
+                  <div data-i18n="create-employee"> Customer Account Opening</div>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+
+          <!-- Daily Reports -->
+          <li class="menu-item active close"
+            >
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+             <i class="menu-icon ri-time-line"></i>
+              <div data-i18n="Dashboards">Daily Reorts</div>
+              <!-- <div class="badge bg-danger rounded-pill ms-auto">5</div> -->
+            </a>
+            <ul class="menu-sub">
+
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/add-test" class="menu-link">
+                  <div data-i18n="add-test">Deposit Account Opening</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/doctor" class="menu-link">
+                  <div data-i18n="doctor">Loan Account Opening</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active"
+                >
+                <a routerLink="/LABADMIN/create-employee" class="menu-link">
+                  <div data-i18n="create-employee"> Customer Account Opening</div>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Liabilities START!! -->
+          <li class="menu-item active close"
+          >
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+              <i class="menu-icon tf-icons ri-uninstall-fill"></i>
+              <div data-i18n="Dashboards">Liabilities</div>
+
+            </a>
+            <ul class="menu-sub">
+
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="lab-materials" class="menu-link">
+                  <div data-i18n="casepaper">Lab Materials</div>
+
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="bike-fule" class="menu-link">
+                  <div data-i18n="#">Bike Fule</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="employee-salary" class="menu-link">
+                  <div data-i18n="#"> Employee Salary</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="ele-bill" class="menu-link">
+                  <div data-i18n="#"> Electricity Bill </div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="other-expense" class="menu-link">
+                  <div data-i18n="#">Other Expance</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="doctor-commission" class="menu-link">
+                  <div data-i18n="#">Doctors</div>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Liabilities END!! -->
+
+
+          <li class="menu-header mt-7" ><span
+              class="menu-header-text">Finance</span></li>
+
+          <!-- Finance -->
+          <li class="menu-item" routerLinkActive="active" >
+            <a routerLink="/LABADMIN/finance" class="menu-link">
+              <i class="menu-icon ri-money-dollar-circle-line"></i>
+              <div data-i18n="Finance">Finance</div>
+
+            </a>
+          </li>
+
+          <!-- Charts -->
+          <li class="menu-item" routerLinkActive="active" >
+            <a routerLink="/LABADMIN/charts" class="menu-link">
+              <i class="menu-icon ri-stock-line"></i>
+              <div data-i18n="Charts">Charts</div>
+
+            </a>
+          </li>
+
+
+
+          <li class="menu-header mt-7" ><span
+              class="menu-header-text">APPROVE</span></li>
+
+          <!-- APPROVE -->
+          <li class="menu-item active close" >
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+              <i class="menu-icon ri-checkbox-circle-line"></i>
+              <div data-i18n="Dashboards">Approve</div>
+
+            </a>
+            <ul class="menu-sub">
+
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/app-approve-casepaper" class="menu-link">
+                  <div data-i18n="app-approve-casepaper">CasePaper</div>
+                  <div class="badge bg-danger rounded-pill ms-auto">3</div>
+                </a>
+              </li>
+              <li class="menu-item" routerLinkActive="active">
+                <a routerLink="/LABADMIN/approve/test" class="menu-link">
+                  <div data-i18n="approve/test">Test</div>
+                  <div class="badge bg-danger rounded-pill ms-auto">1</div>
+                </a>
+              </li>
+
+              <!--Approve Master -->
+              <li class="menu-item active close mb-7"
+                >
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon ri-bar-chart-horizontal-fill "></i>
+                  <div data-i18n="Dashboards">Master</div>
+                  <!-- <div class="badge bg-danger rounded-pill ms-auto">5</div> -->
+                </a>
+                <ul class="menu-sub">
+
+                  <li class="menu-item" routerLinkActive="active">
+                    <a routerLink="/LABADMIN/add-test" class="menu-link">
+                      <div data-i18n="add-test">Test</div>
+                      <div class="badge bg-danger rounded-pill ms-auto">6</div>
+                      <!-- <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto">Pro</div> -->
+                    </a>
+                  </li>
+                  <li class="menu-item" routerLinkActive="active">
+                    <a routerLink="/LABADMIN/doctor" class="menu-link">
+                      <div data-i18n="doctor">Doctor</div>
+                      <div class="badge bg-danger rounded-pill ms-auto">0</div>
+                      <!-- <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto">Pro</div> -->
+                    </a>
+                  </li>
+                  <li class="menu-item" routerLinkActive="active"
+                >
+                    <a routerLink="/LABADMIN/create-employee" class="menu-link">
+                      <div data-i18n="create-employee"> Create Employee</div>
+                    </a>
+                  </li>
+
+                </ul>
+              </li>
+
+            </ul>
+          </li>
+
+          <!-- Finance -->
+          <li class="menu-item" routerLinkActive="active"
+           >
+            <a routerLink="/ADMIN/users" class="menu-link">
+              <i class="menu-icon ri-money-dollar-circle-line"></i>
+              <div data-i18n="Finance">Companies</div>
+
+            </a>
+          </li>
+
+          <li class="mt-7"></li>
+
+        </ul>
+      </aside>
+      <!-- / Menu -->
     </div>
-</div>
+  </div>
+  <!-- Sidebar items here -->
+</nav>
