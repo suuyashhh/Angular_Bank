@@ -251,6 +251,28 @@ export class AuthService {
     this.resetInactivityTimer();
   }
 
+  /** Persist the user’s selected branch into userDetails (and memory) */
+setSelectedBranch(code: number, name: string): void {
+  if (!isPlatformBrowser(this.platformId)) return;
+
+  // Start from the currently stored userDetails (or a blank object)
+  const current = this.getUser() ?? {};
+
+  // Merge (don’t drop any other existing fields)
+  const updated = {
+    ...current,
+    selectedBranchCode: code,
+    selectedBranchName: name,
+  };
+
+  // Save in memory
+  this.inMemoryUser = updated;
+
+  // Save encrypted in storage (same key you already use for userDetails)
+  this.writeStorage('userDetails', updated);
+}
+
+
   getToken(): string | null {
     if (!this.inMemoryToken) {
       this.inMemoryToken = this.restoreTokenFromStorage();
