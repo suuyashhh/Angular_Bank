@@ -38,8 +38,10 @@
                 <div class="input-group input-group-merge">
                   <div class="form-floating form-floating-outline" style="flex:1;">
                     <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control"
-                      name="password" [(ngModel)]="loginObj.CODE" placeholder="············"
-                      aria-describedby="password" />
+                      name="new-password" [(ngModel)]="loginObj.CODE" placeholder="Password" autocomplete="new-password"
+                      autocapitalize="none" spellcheck="false" [readonly]="pwReadonly" (focus)="pwReadonly = false"
+                      (paste)="blockInput($event)" (drop)="blockInput($event)" (copy)="blockInput($event)"
+                      (cut)="blockInput($event)" (contextmenu)="blockInput($event)" />
                     <label for="password">Password</label>
                   </div>
 
@@ -61,13 +63,14 @@
               </a>
             </div>
             <div class="mb-5 position-relative">
-              <button class="btn btn-primary d-grid w-100" type="submit" [disabled]="isLoading">
-                <span *ngIf="!isLoading">Login</span>
-                <span *ngIf="isLoading">
+              <button class="btn btn-primary d-grid w-100" type="submit" [disabled]="(loading$ | async) ?? false">
+                <span *ngIf="!(loading$ | async)">Login</span>
+                <span *ngIf="loading$ | async">
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   Logging in...
                 </span>
               </button>
+
             </div>
 
           </form>

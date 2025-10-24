@@ -1,5 +1,6 @@
 <ng-container *ngIf="!(auth.isRestoringSession$ | async); else restoring">
   <router-outlet></router-outlet>
+  <app-loader></app-loader>
 </ng-container>
 
 <ng-template #restoring>
