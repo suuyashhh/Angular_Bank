@@ -35,8 +35,26 @@
 
             <div class="space-y-1.5">
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" class="form-control" id="accountType" placeholder="A/C Type" />
+                <select id="title" class="form-select">
+                  <option value="0">Individual</option>
+                  <option value="1">Co.Op.Soc.</option>
+                  <option value="2">Propriter Ship</option>
+                  <option value="3">PartnerShip Firm</option>
+                  <option value="4">Private Limited</option>
+                  <option value="5">Public Limited</option>
+                  <option value="6">H.U.F.</option>
+                  <option value="7">Trust</option>
+                  <option value="8">Other Legal Entity</option>
+                </select>
                 <label for="accountType">A/C Type</label>
+              </div>
+
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" class="form-control" id="panNo" placeholder="Pan Card No" />
+                <label for="panNo">Pan Card No</label>
               </div>
             </div>
 
@@ -49,24 +67,11 @@
 
             <div class="space-y-1.5">
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" class="form-control" id="panNo" placeholder="Pan Card No" />
-                <label for="panNo">Pan Card No</label>
-              </div>
-            </div>
-
-            <div class="space-y-1.5">
-              <div class="form-floating form-floating-outline mb-4">
                 <input type="text" class="form-control" id="gstNo" placeholder="GST No" />
                 <label for="gstNo">GST No</label>
               </div>
             </div>
 
-            <div class="space-y-1.5">
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" class="form-control" id="memberType" placeholder="Member Type" />
-                <label for="memberType">Member Type</label>
-              </div>
-            </div>
           </div>
 
           <div class="mt-4 flex items-center gap-3">
@@ -126,61 +131,219 @@
             <div class="kvctab-panels">
               <!-- Address -->
               <div id="tab-panel-address" class="kvctab-panel">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
                   <div class="form-floating form-floating-outline mb-4">
-                    <input type="text" class="form-control" id="addrLine1" placeholder="Address Line 1" />
-                    <label for="addrLine1">Address Line 1</label>
+                    <input type="text" class="form-control" id="addrLine1" placeholder="Permanent Address" />
+                    <label for="addrLine1">Permanent Address</label>
                   </div>
+
                   <div class="form-floating form-floating-outline mb-4">
                     <input type="text" class="form-control" id="addrLine2" placeholder="Address Line 2" />
-                    <label for="addrLine2">Address Line 2</label>
                   </div>
+
+                  <div class="form-floating form-floating-outline mb-4">
+                    <input type="text" class="form-control" id="addrLine3" placeholder="Address Line 3" />
+                  </div>
+
                   <div class="form-floating form-floating-outline mb-4">
                     <input type="text" class="form-control" id="city2" placeholder="City" />
                     <label for="city2">City</label>
                   </div>
+
+                  <div class="form-floating form-floating-outline mb-4">
+                    <input type="text" class="form-control" id="taluka" placeholder="Taluka" />
+                    <label for="taluka">Taluka</label>
+                  </div>
+
+                  <div class="form-floating form-floating-outline mb-4">
+                    <input type="text" class="form-control" id="district" placeholder="District" />
+                    <label for="district">District</label>
+                  </div>
+
+                  <div class="form-floating form-floating-outline mb-4">
+                    <input type="text" class="form-control" id="state" placeholder="State" />
+                    <label for="state">State</label>
+                  </div>
+
+                  <div class="form-floating form-floating-outline mb-4">
+                    <input type="text" class="form-control" id="country" placeholder="Country" />
+                    <label for="country">Country</label>
+                  </div>
+
+                  <div class="form-floating form-floating-outline mb-4">
+                    <input type="text" class="form-control" id="area" placeholder="Area" />
+                    <label for="area">Area</label>
+                  </div>
+
                   <div class="form-floating form-floating-outline mb-4">
                     <input type="text" class="form-control" id="pincode2" placeholder="PinCode" />
                     <label for="pincode2">PinCode</label>
                   </div>
+
+                  <div class="form-floating form-floating-outline mb-4">
+                    <input type="text" class="form-control" id="phone" placeholder="Phone no" />
+                    <label for="phone">Phone no</label>
+                  </div>
+
+                  <div class="form-floating form-floating-outline mb-4">
+                    <input type="text" class="form-control" id="mobile" placeholder="Mobile no" />
+                    <label for="mobile">Mobile no</label>
+                  </div>
+                  <div class="flex items-center gap-2 mt-2 mb-4">
+                    <input id="diffAddress" type="checkbox"
+                      class="w-5 h-5 text-violet-600 border-gray-300 rounded focus:ring-violet-500" />
+                    <label for="diffAddress" class="text-sm font-medium text-gray-700 select-none">
+                      Do You Want Fill Different Corresponding Address?
+                    </label>
+                  </div>
+
                 </div>
               </div>
+
 
               <!-- Personal -->
               <div id="tab-panel-personal" class="kvctab-panel">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div class="form-floating form-floating-outline mb-4">
-                    <input type="text" class="form-control" id="firstName" placeholder="First Name" />
-                    <label for="firstName">First Name</label>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+                  <!-- Row 1: Religion Code | Cast Code | Occupation -->
+                  <div class="form-floating form-floating-outline mb-0">
+                    <input type="text" class="form-control" id="religionCode" placeholder="Religion Code" />
+                    <label for="religionCode">Religion Code</label>
                   </div>
-                  <div class="form-floating form-floating-outline mb-4">
-                    <input type="text" class="form-control" id="lastName" placeholder="Last Name" />
-                    <label for="lastName">Last Name</label>
+
+                  <div class="form-floating form-floating-outline mb-0">
+                    <input type="text" class="form-control" id="castCode" placeholder="Cast Code" />
+                    <label for="castCode">Cast Code</label>
                   </div>
-                  <div class="form-floating form-floating-outline mb-4">
-                    <input type="date" class="form-control" id="dob2" placeholder="Date of Birth" />
-                    <label for="dob2">Date of Birth</label>
+
+                  <div class="form-floating form-floating-outline mb-0">
+                    <input type="text" class="form-control" id="occupation" placeholder="Occupation" />
+                    <label for="occupation">Occupation</label>
                   </div>
-                  <div class="form-floating form-floating-outline mb-4">
-                    <input type="text" class="form-control" id="mobile2" placeholder="Mobile No" />
-                    <label for="mobile2">Mobile No</label>
+
+                  <!-- Row 2: Passport No. | Passport Exp. Date (span 2 cols on small screens) -->
+                  <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                    <input type="text" class="form-control" id="passportNo" placeholder="Passport No." />
+                    <label for="passportNo">Passport No.</label>
                   </div>
+
+                  <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
+                    <input type="date" class="form-control" id="passportExp" placeholder="Passport Exp.Date" />
+                    <label for="passportExp">Passport Exp. Date</label>
+                  </div>
+
+                  <!-- Row 3: Passport Issue Authority (full width across 3 cols) -->
+                  <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
+                    <input type="text" class="form-control" id="passportIssueAuth"
+                      placeholder="Passport Issue Authority" />
+                    <label for="passportIssueAuth">Passport Issue Authority</label>
+                  </div>
+
+                  <!-- Row 4: Election Card No. | Birth Date | Age -->
+                  <div class="form-floating form-floating-outline mb-0">
+                    <input type="text" class="form-control" id="electionCardNo" placeholder="Election Card No." />
+                    <label for="electionCardNo">Election Card No.</label>
+                  </div>
+
+                  <div class="form-floating form-floating-outline mb-0">
+                    <input type="date" class="form-control" id="birthDate" placeholder="Birth Date" />
+                    <label for="birthDate">Birth Date</label>
+                  </div>
+
+                  <div class="form-floating form-floating-outline mb-0">
+                    <input type="number" class="form-control" id="age" placeholder="Age" min="0" />
+                    <label for="age">Age</label>
+                  </div>
+
+                  <!-- Row 5: Gender (single row with inline radio buttons styled like the image) -->
+                  <div class="sm:col-span-3">
+                    <div class="flex items-center gap-4 py-2">
+                      <span class="text-sm font-medium mr-2">Gender :</span>
+
+                      <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                        <input type="radio" name="gender" value="male"
+                          class="w-4 h-4 text-violet-600 border-gray-300" />
+                        <span>Male</span>
+                      </label>
+
+                      <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                        <input type="radio" name="gender" value="female"
+                          class="w-4 h-4 text-violet-600 border-gray-300" />
+                        <span>Female</span>
+                      </label>
+
+                      <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                        <input type="radio" name="gender" value="other"
+                          class="w-4 h-4 text-violet-600 border-gray-300" />
+                        <span>Other</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Row 6: Other/Staff (full width) -->
+                  <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
+                    <input type="text" class="form-control" id="otherStaff" placeholder="Other / Staff" />
+                    <label for="otherStaff">Other / Staff</label>
+                  </div>
+
                 </div>
               </div>
 
+
               <!-- Other -->
-              <div id="tab-panel-other" class="kvctab-panel">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div class="form-floating form-floating-outline mb-4">
-                    <input type="text" class="form-control" id="occupation2" placeholder="Occupation" />
-                    <label for="occupation2">Occupation</label>
-                  </div>
-                  <div class="form-floating form-floating-outline mb-4">
-                    <input type="text" class="form-control" id="income2" placeholder="Annual Income" />
-                    <label for="income2">Annual Income</label>
-                  </div>
-                </div>
-              </div>
+            <div id="tab-panel-other" class="kvctab-panel">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+    <!-- Row 1: Office Name | PinCode -->
+    <div class="form-floating form-floating-outline mb-0">
+      <input type="text" class="form-control" id="officeName" placeholder="Office Name" />
+      <label for="officeName">Office Name</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-0">
+      <input type="text" class="form-control" id="officePin" placeholder="PinCode" />
+      <label for="officePin">PinCode</label>
+    </div>
+
+    <!-- filler to keep grid alignment if needed -->
+    <div class="hidden lg:block"></div>
+
+    <!-- Row 2: Office Address (Line 1–3) -->
+    <div class="form-floating form-floating-outline mb-0">
+      <input type="text" class="form-control" id="officeAddr1" placeholder="Address Line 1" />
+      <label for="officeAddr1">Office Address</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-0">
+      <input type="text" class="form-control" id="officeAddr2" placeholder="Address Line 2" />
+      <label for="officeAddr2">Address Line 2</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-0">
+      <input type="text" class="form-control" id="officeAddr3" placeholder="Address Line 3" />
+      <label for="officeAddr3">Address Line 3</label>
+    </div>
+
+    <!-- Row 3: Office Phone No | Fax No | E-Mail ID -->
+    <div class="form-floating form-floating-outline mb-0">
+      <input type="text" class="form-control" id="officePhone" placeholder="Office Phone No" />
+      <label for="officePhone">Office Phone No</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-0">
+      <input type="text" class="form-control" id="faxNo" placeholder="Fax No" />
+      <label for="faxNo">Fax No.</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-0">
+      <input type="email" class="form-control" id="emailId" placeholder="E-Mail ID" />
+      <label for="emailId">E-Mail ID</label>
+    </div>
+
+  </div>
+</div>
+
 
               <!-- KYC (fixed: moved inside kvctab-panels as tab-panel-KYC) -->
               <div id="tab-panel-KYC" class="kvctab-panel">
@@ -191,15 +354,18 @@
                       <div class="text-sm font-semibold text-gray-800">Photo</div>
                       <div class="mt-3">
                         <input type="file" accept="image/*" aria-label="Upload Photo"
-                               (change)="onFileChange($event, 'photo')"
-                               class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
-                               #photoInput data-key="photo">
+                          (change)="onFileChange($event, 'photo')"
+                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
+                          #photoInput data-key="photo">
                       </div>
                       <div class="mt-3">
-                        <div class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                             (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')" (keydown.space)="$event.preventDefault(); openPreview('photo')"
-                             role="button" aria-label="Preview Photo">
-                          <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)" alt="Photo preview" class="w-full h-full object-contain"/>
+                        <div
+                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                          (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
+                          (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
+                          aria-label="Preview Photo">
+                          <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
+                            alt="Photo preview" class="w-full h-full object-contain" />
                           <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
                         </div>
                       </div>
@@ -210,15 +376,18 @@
                       <div class="text-sm font-semibold text-gray-800">Sign</div>
                       <div class="mt-3">
                         <input type="file" accept="image/*" aria-label="Upload Signature"
-                               (change)="onFileChange($event, 'sign')"
-                               class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
-                               #signInput data-key="sign">
+                          (change)="onFileChange($event, 'sign')"
+                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
+                          #signInput data-key="sign">
                       </div>
                       <div class="mt-3">
-                        <div class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                             (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')" (keydown.space)="$event.preventDefault(); openPreview('sign')"
-                             role="button" aria-label="Preview Signature">
-                          <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)" alt="Signature preview" class="w-full h-full object-contain"/>
+                        <div
+                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                          (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
+                          (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
+                          aria-label="Preview Signature">
+                          <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
+                            alt="Signature preview" class="w-full h-full object-contain" />
                           <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
                         </div>
                       </div>
@@ -229,16 +398,20 @@
                       <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
                       <div class="mt-3">
                         <input type="file" accept="image/*,.pdf" aria-label="Upload PAN"
-                               (change)="onFileChange($event, 'pan')"
-                               class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
-                               #panInput data-key="pan">
+                          (change)="onFileChange($event, 'pan')"
+                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
+                          #panInput data-key="pan">
                       </div>
                       <div class="mt-3">
-                        <div class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                             (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')" (keydown.space)="$event.preventDefault(); openPreview('pan')"
-                             role="button" aria-label="Preview PAN">
-                          <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)" alt="PAN preview" class="w-full h-full object-contain"/>
-                          <div class="flex flex-col items-center gap-1 text-gray-500" *ngIf="previews.pan && !isImage(previews.pan)">
+                        <div
+                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                          (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
+                          (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button"
+                          aria-label="Preview PAN">
+                          <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)"
+                            alt="PAN preview" class="w-full h-full object-contain" />
+                          <div class="flex flex-col items-center gap-1 text-gray-500"
+                            *ngIf="previews.pan && !isImage(previews.pan)">
                             <i class="fa-solid fa-file-pdf text-3xl"></i>
                             <span class="text-sm">PDF Document</span>
                           </div>
@@ -252,16 +425,22 @@
                       <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
                       <div class="mt-3">
                         <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
-                               (change)="onFileChange($event, 'aadhaarFront')"
-                               class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
-                               #aadhaarFrontInput data-key="aadhaarFront">
+                          (change)="onFileChange($event, 'aadhaarFront')"
+                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
+                          #aadhaarFrontInput data-key="aadhaarFront">
                       </div>
                       <div class="mt-3">
-                        <div class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                             (click)="openPreview('aadhaarFront')" tabindex="0" (keydown.enter)="openPreview('aadhaarFront')" (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')"
-                             role="button" aria-label="Preview Aadhaar front">
-                          <img [src]="previews.aadhaarFront || ''" *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview" class="w-full h-full object-contain"/>
-                          <div class="flex flex-col items-center gap-1 text-gray-500" *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
+                        <div
+                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                          (click)="openPreview('aadhaarFront')" tabindex="0"
+                          (keydown.enter)="openPreview('aadhaarFront')"
+                          (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
+                          aria-label="Preview Aadhaar front">
+                          <img [src]="previews.aadhaarFront || ''"
+                            *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
+                            class="w-full h-full object-contain" />
+                          <div class="flex flex-col items-center gap-1 text-gray-500"
+                            *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
                             <i class="fa-solid fa-file-pdf text-3xl"></i>
                             <span class="text-sm">PDF Document</span>
                           </div>
@@ -275,16 +454,21 @@
                       <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
                       <div class="mt-3">
                         <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
-                               (change)="onFileChange($event, 'aadhaarBack')"
-                               class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
-                               #aadhaarBackInput data-key="aadhaarBack">
+                          (change)="onFileChange($event, 'aadhaarBack')"
+                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60"
+                          #aadhaarBackInput data-key="aadhaarBack">
                       </div>
                       <div class="mt-3">
-                        <div class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                             (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')" (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')"
-                             role="button" aria-label="Preview Aadhaar back">
-                          <img [src]="previews.aadhaarBack || ''" *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" alt="Aadhaar back preview" class="w-full h-full object-contain"/>
-                          <div class="flex flex-col items-center gap-1 text-gray-500" *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
+                        <div
+                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                          (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
+                          (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
+                          aria-label="Preview Aadhaar back">
+                          <img [src]="previews.aadhaarBack || ''"
+                            *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" alt="Aadhaar back preview"
+                            class="w-full h-full object-contain" />
+                          <div class="flex flex-col items-center gap-1 text-gray-500"
+                            *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
                             <i class="fa-solid fa-file-pdf text-3xl"></i>
                             <span class="text-sm">PDF Document</span>
                           </div>
@@ -328,10 +512,14 @@
         <span class="text-sm text-gray-500" *ngIf="activeKey">{{ activeKey }}</span>
       </div>
       <div class="flex items-center gap-2">
-        <button type="button" class="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-100 hover:bg-gray-200" (click)="removeCurrent()" title="Remove this file">
+        <button type="button"
+          class="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-100 hover:bg-gray-200"
+          (click)="removeCurrent()" title="Remove this file">
           <i class="fa-solid fa-trash-can"></i>
         </button>
-        <button type="button" class="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-100 hover:bg-gray-200" (click)="closePreview()" title="Close">
+        <button type="button"
+          class="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-100 hover:bg-gray-200"
+          (click)="closePreview()" title="Close">
           <i class="fa-solid fa-x"></i>
         </button>
       </div>
@@ -339,8 +527,10 @@
 
     <div class="p-4">
       <ng-container *ngIf="activeKey && previews?.[activeKey]; else noFile">
-        <img *ngIf="isImage(previews[activeKey])" [src]="previews[activeKey]" alt="Preview" class="mx-auto max-h-[72vh] w-auto rounded" />
-        <embed *ngIf="!isImage(previews[activeKey])" [src]="previews[activeKey]" type="application/pdf" style="width:100%;height:72vh;border-radius:6px" />
+        <img *ngIf="isImage(previews[activeKey])" [src]="previews[activeKey]" alt="Preview"
+          class="mx-auto max-h-[72vh] w-auto rounded" />
+        <embed *ngIf="!isImage(previews[activeKey])" [src]="previews[activeKey]" type="application/pdf"
+          style="width:100%;height:72vh;border-radius:6px" />
       </ng-container>
 
       <ng-template #noFile>
@@ -352,42 +542,80 @@
   </div>
 </div>
 
-<!-- Minimal CSS only for “checked → target” cases Tailwind can't express elegantly -->
+
 <style>
+  
   /* No page scroll inside the card */
-  .wizard-card { max-height: calc(100vh - 48px); }
+  .wizard-card {
+    max-height: calc(100vh - 48px);
+  }
 
   /* Hide control radios */
-  .wizard-state, .kvctab-state { position: absolute; opacity: 0; pointer-events: none; }
+  .wizard-state,
+  .kvctab-state {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
 
   /* Show only the active wizard panel */
-  .wizard-panels .panel { display: none; }
-  #step-1:checked ~ .wizard-panels #panel-1 { display: block; }
-  #step-2:checked ~ .wizard-panels #panel-2 { display: block; }
+  .wizard-panels .panel {
+    display: none;
+  }
+
+  #step-1:checked~.wizard-panels #panel-1 {
+    display: block;
+  }
+
+  #step-2:checked~.wizard-panels #panel-2 {
+    display: block;
+  }
 
   /* Step active styles */
-  #step-1:checked ~ .wizard-steps label[for="step-1"],
-  #step-2:checked ~ .wizard-steps label[for="step-2"] {
+  #step-1:checked~.wizard-steps label[for="step-1"],
+  #step-2:checked~.wizard-steps label[for="step-2"] {
     background: linear-gradient(135deg, #8c57ff 0%, #a855f7 100%);
-    color: #fff; border-color: transparent; box-shadow: 0 6px 18px rgba(140,87,255,.25);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 6px 18px rgba(140, 87, 255, .25);
     transform: translateY(-1px);
   }
-  #step-2:checked ~ .wizard-steps label[for="step-1"] {
-    background: #f3edff; color: #8c57ff; border-color: #8c57ff;
+
+  #step-2:checked~.wizard-steps label[for="step-1"] {
+    background: #f3edff;
+    color: #8c57ff;
+    border-color: #8c57ff;
   }
 
   /* Tabs: show only the active tab panel */
-  .kvctab-panels .kvctab-panel { display: none; padding: 8px 0 2px; }
-  #tab-address:checked ~ .kvctab-panels #tab-panel-address { display: block; }
-  #tab-personal:checked ~ .kvctab-panels #tab-panel-personal { display: block; }
-  #tab-other:checked   ~ .kvctab-panels #tab-panel-other   { display: block; }
-  #tab-KYC:checked     ~ .kvctab-panels #tab-panel-KYC     { display: block; }
+  .kvctab-panels .kvctab-panel {
+    display: none;
+    padding: 8px 0 2px;
+  }
+
+  #tab-address:checked~.kvctab-panels #tab-panel-address {
+    display: block;
+  }
+
+  #tab-personal:checked~.kvctab-panels #tab-panel-personal {
+    display: block;
+  }
+
+  #tab-other:checked~.kvctab-panels #tab-panel-other {
+    display: block;
+  }
+
+  #tab-KYC:checked~.kvctab-panels #tab-panel-KYC {
+    display: block;
+  }
 
   /* Tabs: active label look */
-  #tab-address:checked ~ .kvctab-controls label[for="tab-address"],
-  #tab-personal:checked ~ .kvctab-controls label[for="tab-personal"],
-  #tab-other:checked ~ .kvctab-controls label[for="tab-other"],
-  #tab-KYC:checked ~ .kvctab-controls label[for="tab-KYC"]{
-    background:#f3edff; color:#8c57ff; border-color:#8c57ff;
+  #tab-address:checked~.kvctab-controls label[for="tab-address"],
+  #tab-personal:checked~.kvctab-controls label[for="tab-personal"],
+  #tab-other:checked~.kvctab-controls label[for="tab-other"],
+  #tab-KYC:checked~.kvctab-controls label[for="tab-KYC"] {
+    background: #f3edff;
+    color: #8c57ff;
+    border-color: #8c57ff;
   }
 </style>
