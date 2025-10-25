@@ -1,17 +1,23 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../services/auth.service';
-import { ApiService } from '../../../services/api.service';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
+type PreviewKey = 'photo' | 'sign' | 'pan' | 'aadhaarFront' | 'aadhaarBack';
 
 @Component({
   selector: 'app-partymast',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule,RouterModule],
   templateUrl: './partymast.component.html',
   styleUrl: './partymast.component.css'
 })
 export class PartymastComponent implements OnInit {
-  previews: any = {
+  // '0' = Individual
+  accountType = '0';
+
+  // explicit preview keys so TypeScript + Angular template checker are happy
+  previews: Record<PreviewKey, string | null> = {
     photo: null,
     sign: null,
     pan: null,
@@ -19,81 +25,40 @@ export class PartymastComponent implements OnInit {
     aadhaarBack: null
   };
 
-  // Modal state
+  // activeKey must be one of the preview keys (or null)
+  activeKey: PreviewKey | null = null;
   modalOpen = false;
-  activeKey: string | null = null;
 
-  // ViewChild references for file inputs (so we can clear them cleanly)
   @ViewChild('photoInput') photoInput!: ElementRef<HTMLInputElement>;
   @ViewChild('signInput') signInput!: ElementRef<HTMLInputElement>;
   @ViewChild('panInput') panInput!: ElementRef<HTMLInputElement>;
   @ViewChild('aadhaarFrontInput') aadhaarFrontInput!: ElementRef<HTMLInputElement>;
   @ViewChild('aadhaarBackInput') aadhaarBackInput!: ElementRef<HTMLInputElement>;
 
-  constructor(private auth: AuthService, private api: ApiService) {}
+  constructor() {}
 
-  ngOnInit(): void {
-    console.log(this.auth.getUser());
-    this.api.get('BranchMast/GetAllBranches').subscribe({
-      next: (res: any) => {
-        console.log(res);
-      },
-    });
-  }
+  ngOnInit(): void {}
 
-  onFileChange(event: any, key: string) {
-    const file = event.target.files[0];
-    console.log(file);
-
+  // accept only keys that exist in previews
+  onFileChange(event: Event, key: PreviewKey) {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = () => {
-      // Using data URLs for compatibility with current isImage() logic
       this.previews[key] = reader.result as string;
     };
     reader.readAsDataURL(file);
   }
 
   isImage(preview: string | null): boolean {
-    return preview ? preview.startsWith('data:image/') : false;
+    return !!preview && preview.startsWith('data:image/');
   }
 
-  clearAllImages() {
-    this.previews = {
-      photo: null,
-      sign: null,
-      pan: null,
-      aadhaarFront: null,
-      aadhaarBack: null
-    };
-
-    // Reset file inputs
-    const fileInputs = document.querySelectorAll('.file-input') as NodeListOf<HTMLInputElement>;
-    fileInputs.forEach(input => {
-      input.value = '';
-    });
-
-    // Also clear ViewChild inputs if present
-    try {
-      if (this.photoInput) this.photoInput.nativeElement.value = '';
-      if (this.signInput) this.signInput.nativeElement.value = '';
-      if (this.panInput) this.panInput.nativeElement.value = '';
-      if (this.aadhaarFrontInput) this.aadhaarFrontInput.nativeElement.value = '';
-      if (this.aadhaarBackInput) this.aadhaarBackInput.nativeElement.value = '';
-    } catch (err) {
-      // ignore if ViewChild not ready
-    }
-  }
-
-  // ---------------------------
-  // Modal related methods
-  // ---------------------------
-
-  openPreview(key: string) {
+  openPreview(key: PreviewKey) {
     this.activeKey = key;
     this.modalOpen = true;
-    // prevent body scroll when modal open
     document.body.style.overflow = 'hidden';
   }
 
@@ -106,42 +71,26 @@ export class PartymastComponent implements OnInit {
   removeCurrent() {
     if (!this.activeKey) return;
     const key = this.activeKey;
+    this.previews[key] = null;
 
-    // Clear the preview data
-    if (this.previews && this.previews[key]) {
-      this.previews[key] = null;
-    }
-
-    // Clear the file input - prefer ViewChild if available
+    // try clearing actual file input element (best-effort)
     try {
       switch (key) {
-        case 'photo':
-          if (this.photoInput) this.photoInput.nativeElement.value = '';
-          break;
-        case 'sign':
-          if (this.signInput) this.signInput.nativeElement.value = '';
-          break;
-        case 'pan':
-          if (this.panInput) this.panInput.nativeElement.value = '';
-          break;
-        case 'aadhaarFront':
-          if (this.aadhaarFrontInput) this.aadhaarFrontInput.nativeElement.value = '';
-          break;
-        case 'aadhaarBack':
-          if (this.aadhaarBackInput) this.aadhaarBackInput.nativeElement.value = '';
-          break;
-        default:
-          // fallback: query selector by data-key
-          const el = document.querySelector(`input[data-key="${key}"]`) as HTMLInputElement | null;
-          if (el) el.value = '';
+        case 'photo': if (this.photoInput) this.photoInput.nativeElement.value = ''; break;
+        case 'sign': if (this.signInput) this.signInput.nativeElement.value = ''; break;
+        case 'pan': if (this.panInput) this.panInput.nativeElement.value = ''; break;
+        case 'aadhaarFront': if (this.aadhaarFrontInput) this.aadhaarFrontInput.nativeElement.value = ''; break;
+        case 'aadhaarBack': if (this.aadhaarBackInput) this.aadhaarBackInput.nativeElement.value = ''; break;
       }
-    } catch (err) {
-      // fallback to DOM query if any error
-      const el = document.querySelector(`input[data-key="${key}"]`) as HTMLInputElement | null;
-      if (el) el.value = '';
+    } catch {
+      // ignore if ViewChild not available
     }
 
-    // close modal after removal
     this.closePreview();
+  }
+
+  @HostListener('window:keydown.escape', ['$event'])
+  onEscKey(_: KeyboardEvent) {
+    if (this.modalOpen) this.closePreview();
   }
 }
