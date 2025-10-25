@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { on } from 'events';
 import { AuthService } from '../../../services/auth.service';
 import { ApiService } from '../../../services/api.service';
 
@@ -20,13 +19,24 @@ export class PartymastComponent implements OnInit {
     aadhaarBack: null
   };
 
-  constructor(private auth:AuthService,private api: ApiService) {}
+  // Modal state
+  modalOpen = false;
+  activeKey: string | null = null;
+
+  // ViewChild references for file inputs (so we can clear them cleanly)
+  @ViewChild('photoInput') photoInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('signInput') signInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('panInput') panInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('aadhaarFrontInput') aadhaarFrontInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('aadhaarBackInput') aadhaarBackInput!: ElementRef<HTMLInputElement>;
+
+  constructor(private auth: AuthService, private api: ApiService) {}
+
   ngOnInit(): void {
     console.log(this.auth.getUser());
     this.api.get('BranchMast/GetAllBranches').subscribe({
       next: (res: any) => {
         console.log(res);
-
       },
     });
   }
@@ -39,6 +49,7 @@ export class PartymastComponent implements OnInit {
 
     const reader = new FileReader();
     reader.onload = () => {
+      // Using data URLs for compatibility with current isImage() logic
       this.previews[key] = reader.result as string;
     };
     reader.readAsDataURL(file);
@@ -62,5 +73,75 @@ export class PartymastComponent implements OnInit {
     fileInputs.forEach(input => {
       input.value = '';
     });
+
+    // Also clear ViewChild inputs if present
+    try {
+      if (this.photoInput) this.photoInput.nativeElement.value = '';
+      if (this.signInput) this.signInput.nativeElement.value = '';
+      if (this.panInput) this.panInput.nativeElement.value = '';
+      if (this.aadhaarFrontInput) this.aadhaarFrontInput.nativeElement.value = '';
+      if (this.aadhaarBackInput) this.aadhaarBackInput.nativeElement.value = '';
+    } catch (err) {
+      // ignore if ViewChild not ready
+    }
+  }
+
+  // ---------------------------
+  // Modal related methods
+  // ---------------------------
+
+  openPreview(key: string) {
+    this.activeKey = key;
+    this.modalOpen = true;
+    // prevent body scroll when modal open
+    document.body.style.overflow = 'hidden';
+  }
+
+  closePreview() {
+    this.modalOpen = false;
+    this.activeKey = null;
+    document.body.style.overflow = '';
+  }
+
+  removeCurrent() {
+    if (!this.activeKey) return;
+    const key = this.activeKey;
+
+    // Clear the preview data
+    if (this.previews && this.previews[key]) {
+      this.previews[key] = null;
+    }
+
+    // Clear the file input - prefer ViewChild if available
+    try {
+      switch (key) {
+        case 'photo':
+          if (this.photoInput) this.photoInput.nativeElement.value = '';
+          break;
+        case 'sign':
+          if (this.signInput) this.signInput.nativeElement.value = '';
+          break;
+        case 'pan':
+          if (this.panInput) this.panInput.nativeElement.value = '';
+          break;
+        case 'aadhaarFront':
+          if (this.aadhaarFrontInput) this.aadhaarFrontInput.nativeElement.value = '';
+          break;
+        case 'aadhaarBack':
+          if (this.aadhaarBackInput) this.aadhaarBackInput.nativeElement.value = '';
+          break;
+        default:
+          // fallback: query selector by data-key
+          const el = document.querySelector(`input[data-key="${key}"]`) as HTMLInputElement | null;
+          if (el) el.value = '';
+      }
+    } catch (err) {
+      // fallback to DOM query if any error
+      const el = document.querySelector(`input[data-key="${key}"]`) as HTMLInputElement | null;
+      if (el) el.value = '';
+    }
+
+    // close modal after removal
+    this.closePreview();
   }
 }
