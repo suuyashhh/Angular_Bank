@@ -1,13 +1,8 @@
-<ng-container *ngIf="!(auth.isRestoringSession$ | async); else restoring">
-  <router-outlet></router-outlet>
+<!-- app.component.html -->
+<div *ngIf="!sessionRestored" class="d-flex align-items-center justify-content-center vh-100">
   <app-loader></app-loader>
-</ng-container>
+</div>
 
-<ng-template #restoring>
-  <div class="vh-100 d-flex justify-content-center align-items-center text-muted">
-    <div class="text-center">
-      <div class="spinner-border text-primary" role="status"></div>
-      <div class="mt-3">Restoring session...</div>
-    </div>
-  </div>
-</ng-template>
+<div *ngIf="sessionRestored">
+  <router-outlet></router-outlet>
+</div>

@@ -25,11 +25,17 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // Wait for session restoration before rendering sensitive UI
     this.auth.isRestoringSession$.subscribe(restoring => {
-      if (!restoring) {
-        this.sessionRestored = true;
-        console.log('✅ Auth session restored');
-      }
-    });
+  if (!restoring) {
+    this.sessionRestored = true;
+    console.log('✅ Auth session restored');
+
+    // Auto-navigate if session exists
+    if (this.auth.isLoggedIn() && this.router.url === '/') {
+      this.router.navigate(['USERMASTER'], { replaceUrl: true });
+    }
+  }
+});
+
 
     // Clean old refresh timestamps
     if (isPlatformBrowser(this.platformId)) {
