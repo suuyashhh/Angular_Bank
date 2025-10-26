@@ -1,5 +1,5 @@
 <!-- app.component.html -->
-<div *ngIf="sessionRestored" class="d-flex align-items-center justify-content-center">
+<div *ngIf="!sessionRestored" class="d-flex align-items-center justify-content-center">
   <app-loader></app-loader>
 </div>
 <div *ngIf="sessionRestored">
