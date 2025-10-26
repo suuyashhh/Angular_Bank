@@ -1,8 +1,8 @@
 <!-- app.component.html -->
+<div *ngIf="sessionRestored" class="d-flex align-items-center justify-content-center">
+  <app-loader></app-loader>
+</div>
 <div *ngIf="sessionRestored">
   <router-outlet></router-outlet>
-</div>
-<div *ngIf="!sessionRestored" class="d-flex align-items-center justify-content-center">
-  <app-loader></app-loader>
 </div>
 

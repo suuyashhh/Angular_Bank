@@ -1,162 +1,188 @@
 <div class="position-relative">
   <div class="position-absolute top-0 end-0 m-3">
-    <!-- <button class="btn btn-icon btn-outline-primary" type="button"
-          data-bs-toggle="tooltip" data-bs-placement="left"
-          title="Important login information" >
-    <i class="ri-information-line ri-lg"></i>
-  </button> -->
+    <!-- Optional info button -->
   </div>
+
   <div class="authentication-wrapper authentication-basic container-p-y">
     <div class="authentication-inner py-6 mx-4">
       <!-- Login -->
       <div class="card p-7">
         <!-- Logo -->
         <div class="app-brand justify-content-center mt-5">
-          <a href="index.html" class="app-brand-link gap-3">
+          <a class="app-brand-link gap-3">
             <span class="app-brand-logo demo">
               <img src="../../../assets/img/ProBank/TSIIcon.png" alt="Pro Bank Logo" width="60" height="44" />
             </span>
             <span class="app-brand-text demo text-heading fw-semibold">Pro Bank</span>
           </a>
         </div>
-        <!-- /Logo -->
 
         <div class="card-body mt-1">
           <h4 class="mb-1">Welcome to Pro Bank! 👋🏻</h4>
-          <p class="mb-5">Please sign-in to your account and start the adventure</p>
+          <p class="mb-5">Please sign in to your account and start your session</p>
 
-          <form id="formAuthentication" class="mb-5" action="index.html" method="POST" #loginForm="ngForm"
-            (ngSubmit)="login()">
+          <form #loginForm="ngForm" (ngSubmit)="login()" class="mb-5">
+            <!-- Username -->
             <div class="form-floating form-floating-outline mb-5">
-              <input type="text" class="form-control" id="email" name="email-username" [(ngModel)]="loginObj.INI"
-                placeholder="Enter your email or username" autofocus />
+              <input
+                type="text"
+                class="form-control"
+                id="email"
+                name="email-username"
+                [(ngModel)]="loginObj.INI"
+                placeholder="Enter your email or username"
+                required
+                autofocus
+              />
               <label for="email">Email or Username</label>
             </div>
-            <!-- Password input -->
+
+            <!-- Password -->
             <div class="mb-5">
               <div class="form-password-toggle">
                 <div class="input-group input-group-merge">
-                  <div class="form-floating form-floating-outline" style="flex:1;">
-                    <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control"
-                      name="new-password" [(ngModel)]="loginObj.CODE" placeholder="Password" autocomplete="new-password"
-                      autocapitalize="none" spellcheck="false" [readonly]="pwReadonly" (focus)="pwReadonly = false"
-                      (paste)="blockInput($event)" (drop)="blockInput($event)" (copy)="blockInput($event)"
-                      (cut)="blockInput($event)" (contextmenu)="blockInput($event)" />
+                  <div class="form-floating form-floating-outline flex-grow-1">
+                    <input
+                      [type]="showPassword ? 'text' : 'password'"
+                      id="password"
+                      class="form-control"
+                      name="password"
+                      [(ngModel)]="loginObj.CODE"
+                      placeholder="Password"
+                      autocomplete="off"
+                      [readonly]="pwReadonly"
+                      (focus)="pwReadonly = false"
+                      (paste)="blockInput($event)"
+                      (drop)="blockInput($event)"
+                      (copy)="blockInput($event)"
+                      (cut)="blockInput($event)"
+                      (contextmenu)="blockInput($event)"
+                    />
                     <label for="password">Password</label>
                   </div>
 
-                  <!-- Toggle button: uses ngClass to swap icons -->
-                  <span class="input-group-text cursor-pointer" (click)="togglePasswordVisibility()"
-                    style="user-select: none;">
+                  <!-- Eye icon toggle -->
+                  <span class="input-group-text cursor-pointer" (click)="togglePasswordVisibility()">
                     <i [ngClass]="showPassword ? 'ri-eye-line ri-20px' : 'ri-eye-off-line ri-20px'"></i>
                   </span>
                 </div>
               </div>
             </div>
 
-            <div class="mb-5 pb-2 d-flex justify-content-between pt-2 align-items-center">
-              <div class="form-check mb-0">
-
-              </div>
-              <a href="auth-forgot-password-basic.html" class="float-end mb-1">
-                <span>Forgot Password?</span>
-              </a>
+            <!-- Forgot password link -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div></div>
+              <a href="#" class="text-primary small">Forgot Password?</a>
             </div>
-            <div class="mb-5 position-relative">
-              <button class="btn btn-primary d-grid w-100" type="submit" [disabled]="(loading$ | async) ?? false">
+
+            <!-- Login button -->
+            <div class="mb-4">
+              <button
+                class="btn btn-primary d-grid w-100"
+                type="submit"
+                [disabled]="(loading$ | async) ?? false"
+              >
                 <span *ngIf="!(loading$ | async)">Login</span>
                 <span *ngIf="loading$ | async">
-                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span
+                    class="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
                   Logging in...
                 </span>
               </button>
-
             </div>
-
           </form>
-
         </div>
       </div>
       <!-- /Login -->
-      <img src="../assets/img/illustrations/tree-3.png" alt="auth-tree"
-        class="authentication-image-object-left d-none d-lg-block" />
-      <img src="../assets/img/illustrations/auth-basic-mask-light.png" class="authentication-image d-none d-lg-block"
-        height="172" alt="triangle-bg" data-app-light-img="illustrations/auth-basic-mask-light.png"
-        data-app-dark-img="illustrations/auth-basic-mask-dark.png" />
-      <img src="../assets/img/illustrations/tree.png" alt="auth-tree"
-        class="authentication-image-object-right d-none d-lg-block" />
     </div>
   </div>
 </div>
 
-<!-- Modal -->
-<div class="modal custom-modal-fade" id="labMatFormModal" tabindex="-1" aria-labelledby="labMatFormModalLabel"
-  [class.show]="showModel" [style.display]="showModel ? 'block' : 'none'">
-
-  <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
+<!-- ============ BRANCH SELECTION MODAL ============ -->
+<div
+  class="modal custom-modal-fade"
+  tabindex="-1"
+  [class.show]="showModel"
+  [style.display]="showModel ? 'block' : 'none'"
+>
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
     <div class="modal-content custom-modal-content">
       <div class="modal-header custom-modal-header">
-        <div class="modal-title-wrapper">
-          <div class="modal-icon">
-            <img src="../../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
-          </div>
-          <h5 class="modal-title custom-modal-title">{{ userName }}</h5>
+        <div class="modal-title-wrapper d-flex align-items-center">
+          <img src="../../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle me-2" />
+          <h5 class="modal-title">{{ userName }}</h5>
         </div>
-        <button type="button" class="btn-close custom-btn-close" (click)="closeModal()" aria-label="Close"></button>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
       </div>
 
-      <div class="modal-body custom-modal-body">
-        <form class="custom-form" novalidate>
-          <div class="form-group-wrapper">
-            <div class="custom-form-group">
-              <!-- Faux input that opens the dropdown -->
-              <div class="form-floating form-floating-outline mb-4 position-relative">
-                <input type="text" id="branch-input" class="form-control branch-input" placeholder="Branch"
-                  [(ngModel)]="branchSearch" name="branchSearch" (focus)="dropdownOpen = true"
-                  (input)="onSearchChange()" autocomplete="off" />
-                <label for="branch-input">
-                  <i class="ri-box-3-line"></i>Branch <span class="text-danger">*</span>
-                </label>
+      <div class="modal-body">
+        <form novalidate>
+          <!-- Branch Search Input -->
+          <div class="form-floating form-floating-outline mb-4 position-relative">
+            <input
+              type="text"
+              id="branch-input"
+              class="form-control"
+              placeholder="Branch"
+              [(ngModel)]="branchSearch"
+              name="branchSearch"
+              (focus)="dropdownOpen = true"
+              (input)="onSearchChange()"
+              autocomplete="off"
+            />
+            <label for="branch-input">
+              <i class="ri-box-3-line"></i> Branch <span class="text-danger">*</span>
+            </label>
 
-                <!-- Caret button on the right -->
-                <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
-                  aria-label="Toggle branches">
-                  <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
-                </button>
+            <!-- Dropdown Toggle Button -->
+            <button
+              type="button"
+              class="dropdown-caret-button"
+              (click)="toggleDropdown()"
+              aria-label="Toggle branches"
+            >
+              <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+            </button>
 
-                <!-- Dropdown list -->
-                <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
-                  <div class="dropdown-list">
-                    <div class="dropdown-item" *ngFor="let b of filteredBranches; trackBy: trackByCode"
-                      (click)="pickBranch(b)" [ngClass]="{ 'is-selected': selectedBranch?.code === b.code }">
-                      <span class="item-name">{{ b.name }}</span>
-                    </div>
+            <!-- Dropdown List -->
+            <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
+              <div class="dropdown-list">
+                <div
+                  class="dropdown-item"
+                  *ngFor="let b of filteredBranches; trackBy: trackByCode"
+                  (click)="pickBranch(b)"
+                  [ngClass]="{ 'is-selected': selectedBranch?.code === b.code }"
+                >
+                  <span class="item-name">{{ b.name }}</span>
+                </div>
 
-
-                    <div class="dropdown-empty" *ngIf="filteredBranches.length === 0">
-                      No branches found
-                    </div>
-                  </div>
+                <div class="dropdown-empty" *ngIf="filteredBranches.length === 0">
+                  No branches found
                 </div>
               </div>
             </div>
-
           </div>
 
+          <!-- Continue Button -->
           <div class="modal-footer custom-modal-footer">
-            <button type="button" class="custom-btn custom-btn-save" (click)="continue()" [disabled]="!selectedBranch">
+            <button
+              type="button"
+              class="btn btn-primary w-100"
+              (click)="continue()"
+              [disabled]="!selectedBranch"
+            >
               <i class="ri-save-line"></i> Continue
             </button>
           </div>
         </form>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- Simple backdrop -->
-<div *ngIf="showModel" class="modal-backdrop fade show" (click)="closeModal()">
-</div>
-<!-- click outside to close dropdown (but keep modal) -->
-<div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen=false"></div>
+<!-- Backdrop layers -->
+<div *ngIf="showModel" class="modal-backdrop fade show" (click)="closeModal()"></div>
+<div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>

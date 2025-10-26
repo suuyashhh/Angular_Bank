@@ -25,6 +25,7 @@ export class AuthService {
   private toastr = inject(ToastrService, { optional: true });
 
   private STORAGE_KEY = 'authData';
+  private LAST_ROUTE_KEY = 'last_route';
   private inMemoryToken: string | null = null;
   private inMemoryUser: any = null;
 
@@ -261,5 +262,12 @@ export class AuthService {
 
   private generateTabId(): string {
     return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  }
+    setLastRoute(url: string) {
+    this.safeSetStorage(this.LAST_ROUTE_KEY, url);
+  }
+
+  getLastRoute(): string | null {
+    return this.safeGetStorage(this.LAST_ROUTE_KEY);
   }
 }
