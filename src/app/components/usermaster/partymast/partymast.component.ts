@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { ApiService } from '../../../services/api.service';
 
 type PreviewKey = 'photo' | 'sign' | 'pan' | 'aadhaarFront' | 'aadhaarBack';
 
@@ -35,9 +36,18 @@ export class PartymastComponent implements OnInit {
   @ViewChild('aadhaarFrontInput') aadhaarFrontInput!: ElementRef<HTMLInputElement>;
   @ViewChild('aadhaarBackInput') aadhaarBackInput!: ElementRef<HTMLInputElement>;
 
-  constructor() {}
+  constructor(private api:ApiService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.api.get('BranchMast/GetAllBranches').subscribe({
+  next: (res: any) => {
+    console.log('Account Types:', res);
+  },
+  error: (err: any) => {
+    console.error('Error fetching account types:', err);
+  }
+});
+  }
 
   // accept only keys that exist in previews
   onFileChange(event: Event, key: PreviewKey) {
