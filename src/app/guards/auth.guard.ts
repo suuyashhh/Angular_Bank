@@ -14,13 +14,14 @@ export const authGuard: CanActivateFn = async () => {
 
   console.log('🛡️ Auth guard checking...');
 
+  // Wait until AuthService has restored session from storage
   await auth.ensureInitialized();
 
   if (auth.isRestoringSession$.value) {
     console.log('⏳ Auth guard waiting for session restoration...');
-    await firstValueFrom(auth.isRestoringSession$.pipe(
-      filter(restoring => !restoring)
-    ));
+    await firstValueFrom(
+      auth.isRestoringSession$.pipe(filter(restoring => !restoring))
+    );
   }
 
   const isLoggedIn = auth.isLoggedIn();
