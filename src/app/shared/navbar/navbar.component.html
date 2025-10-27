@@ -38,8 +38,141 @@
 
   <div class="navbar-nav-right d-flex align-items-center no-print" id="navbar-collapse">
     <ul class="navbar-nav flex-row align-items-center ms-auto">
-      <!-- Language, Style Switcher, etc. (kept unchanged) -->
-      <!-- ... existing markup here, unchanged ... -->
+      <!-- Language -->
+      <li class="nav-item dropdown-language dropdown">
+        <a class="nav-link btn btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow waves-effect waves-light"
+          href="javascript:void(0);" data-bs-toggle="dropdown">
+          <i class="ri-translate-2 ri-22px"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end py-2">
+          <li>
+            <a class="dropdown-item waves-effect active" href="javascript:void(0);" data-language="en"
+              data-text-direction="ltr">
+              <span class="align-middle">English</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item waves-effect" href="javascript:void(0);" data-language="fr"
+              data-text-direction="ltr">
+              <span class="align-middle">French</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item waves-effect" href="javascript:void(0);" data-language="ar"
+              data-text-direction="rtl">
+              <span class="align-middle">Arabic</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item waves-effect" href="javascript:void(0);" data-language="de"
+              data-text-direction="ltr">
+              <span class="align-middle">German</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <!--/ Language -->
+
+      <!-- Style Switcher -->
+      <li class="nav-item dropdown-style-switcher dropdown">
+        <a class="nav-link btn btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow waves-effect waves-light"
+          href="javascript:void(0);" data-bs-toggle="dropdown">
+          <i class="ri-22px ri-sun-line"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end dropdown-styles">
+          <li>
+            <a class="dropdown-item waves-effect active" href="javascript:void(0);" data-theme="light">
+              <span class="align-middle"><i class="ri-sun-line ri-22px me-3"></i>Light</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item waves-effect" href="javascript:void(0);" data-theme="dark">
+              <span class="align-middle"><i class="ri-moon-clear-line ri-22px me-3"></i>Dark</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item waves-effect" href="javascript:void(0);" data-theme="system">
+              <span class="align-middle"><i class="ri-computer-line ri-22px me-3"></i>System</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <!-- / Style Switcher-->
+
+      <!-- Notification -->
+      <!-- <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-4 me-xl-1 position-relative">
+        <a class="nav-link btn btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow waves-effect waves-light"
+          href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+          <i class="ri-notification-2-line ri-22px"></i>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end py-0">
+          <li class="dropdown-menu-header border-bottom">
+            <div class="dropdown-header d-flex align-items-center py-3">
+              <h6 class="mb-0 me-auto">Notification</h6>
+              <div class="d-flex align-items-center">
+                <span class="badge rounded-pill bg-label-primary me-2">8 New</span>
+                <a href="javascript:void(0)"
+                  class="btn btn-text-secondary rounded-pill btn-icon dropdown-notifications-all waves-effect waves-light"
+                  data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Mark all as read"
+                  data-bs-original-title="Mark all as read"><i class="ri-mail-open-line ri-20px text-body"></i></a>
+              </div>
+            </div>
+          </li>
+          <li class="dropdown-notifications-list scrollable-container ps">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item list-group-item-action dropdown-notifications-item waves-effect">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <img src="../../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-1">Congratulation Lettie 🎉</h6>
+                    <small class="mb-1 d-block text-body">Won the monthly best seller gold badge</small>
+                    <small class="text-muted">1h ago</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span
+                        class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
+                        class="ri-close-line"></span></a>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item list-group-item-action dropdown-notifications-item waves-effect">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <span class="avatar-initial rounded-circle bg-label-danger">CF</span>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="mb-1 small">Charles Franklin</h6>
+                    <small class="mb-1 d-block text-body">Accepted your connection</small>
+                    <small class="text-muted">12hr ago</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span
+                        class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
+                        class="ri-close-line"></span></a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="border-top">
+            <div class="d-grid p-4">
+              <a class="btn btn-primary btn-sm d-flex waves-effect waves-light" href="javascript:void(0);">
+                <small class="align-middle">View all notifications</small>
+              </a>
+            </div>
+          </li>
+        </ul>
+      </li> -->
+      <!--/ Notification -->
 
       <!-- User -->
       <li class="nav-item navbar-dropdown dropdown-user dropdown">
