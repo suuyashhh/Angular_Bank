@@ -1,12 +1,21 @@
-import { Component, Output, EventEmitter, Input, OnDestroy, HostListener } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  HostListener
+} from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { interval, Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -16,10 +25,14 @@ export class NavbarComponent implements OnDestroy {
 
   user: any;
 
-  private totalSeconds = 20 * 60;            // 20 minutes
+  private totalSeconds = 20 * 60; // 20 minutes
   remainingSeconds = this.totalSeconds;
   private tickSub?: Subscription;
   private isLoggedOut = false;
+
+  // --- Auto-hide feature state ---
+  autoHide = false;          // whether auto-hide is enabled (controlled by switch)
+  hovering = false;          // true when mouse is over hotspot or navbar (keeps it shown)
 
   constructor(private auth: AuthService, private toster: ToastrService) {}
 
@@ -53,7 +66,6 @@ export class NavbarComponent implements OnDestroy {
     this.resetTimer();
   }
 
-
   private resetTimer() {
     this.remainingSeconds = this.totalSeconds;
   }
@@ -66,4 +78,31 @@ export class NavbarComponent implements OnDestroy {
   }
 
   private pad(n: number) { return n < 10 ? `0${n}` : `${n}`; }
+
+  // --- Auto-hide controls (hotspot and navbar mouse events call these) ---
+  onHotspotEnter() {
+    this.hovering = true;
+  }
+  onHotspotLeave() {
+    // small timeout not necessary as requirement says hide immediately
+    this.hovering = false;
+  }
+  onNavbarEnter() {
+    this.hovering = true;
+  }
+  onNavbarLeave() {
+    this.hovering = false;
+  }
+
+  // Optional: expose a toggle method for external control if needed
+  toggleAutoHide() {
+    this.autoHide = !this.autoHide;
+    // when enabling autoHide, start hidden; when disabling, show navbar
+    if (!this.autoHide) {
+      this.hovering = true; // keep visible if autoHide turned off
+      setTimeout(()=> this.hovering = true, 0);
+    } else {
+      this.hovering = false;
+    }
+  }
 }
