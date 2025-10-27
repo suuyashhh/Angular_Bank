@@ -1,18 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { on } from 'events';
-import { AuthService } from '../../../services/auth.service';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
+
+type PreviewKey = 'photo' | 'sign' | 'pan' | 'aadhaarFront' | 'aadhaarBack';
 
 @Component({
   selector: 'app-partymast',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule,RouterModule],
   templateUrl: './partymast.component.html',
   styleUrl: './partymast.component.css'
 })
 export class PartymastComponent implements OnInit {
-  previews: any = {
+  // '0' = Individual
+  accountType = '0';
+
+  // explicit preview keys so TypeScript + Angular template checker are happy
+  previews: Record<PreviewKey, string | null> = {
     photo: null,
     sign: null,
     pan: null,
@@ -20,21 +26,33 @@ export class PartymastComponent implements OnInit {
     aadhaarBack: null
   };
 
-  constructor(private auth:AuthService,private api: ApiService) {}
-  ngOnInit(): void {
-    console.log(this.auth.getUser());
-    this.api.get('BranchMast/GetAllBranches').subscribe({
-      next: (res: any) => {
-        console.log(res);
+  // activeKey must be one of the preview keys (or null)
+  activeKey: PreviewKey | null = null;
+  modalOpen = false;
 
-      },
-    });
+  @ViewChild('photoInput') photoInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('signInput') signInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('panInput') panInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('aadhaarFrontInput') aadhaarFrontInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('aadhaarBackInput') aadhaarBackInput!: ElementRef<HTMLInputElement>;
+
+  constructor(private api:ApiService) {}
+
+  ngOnInit(): void {
+    this.api.get('BranchMast/GetAllBranches').subscribe({
+  next: (res: any) => {
+    console.log('Account Types:', res);
+  },
+  error: (err: any) => {
+    console.error('Error fetching account types:', err);
+  }
+});
   }
 
-  onFileChange(event: any, key: string) {
-    const file = event.target.files[0];
-    console.log(file);
-
+  // accept only keys that exist in previews
+  onFileChange(event: Event, key: PreviewKey) {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
@@ -45,22 +63,44 @@ export class PartymastComponent implements OnInit {
   }
 
   isImage(preview: string | null): boolean {
-    return preview ? preview.startsWith('data:image/') : false;
+    return !!preview && preview.startsWith('data:image/');
   }
 
-  clearAllImages() {
-    this.previews = {
-      photo: null,
-      sign: null,
-      pan: null,
-      aadhaarFront: null,
-      aadhaarBack: null
-    };
+  openPreview(key: PreviewKey) {
+    this.activeKey = key;
+    this.modalOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
 
-    // Reset file inputs
-    const fileInputs = document.querySelectorAll('.file-input') as NodeListOf<HTMLInputElement>;
-    fileInputs.forEach(input => {
-      input.value = '';
-    });
+  closePreview() {
+    this.modalOpen = false;
+    this.activeKey = null;
+    document.body.style.overflow = '';
+  }
+
+  removeCurrent() {
+    if (!this.activeKey) return;
+    const key = this.activeKey;
+    this.previews[key] = null;
+
+    // try clearing actual file input element (best-effort)
+    try {
+      switch (key) {
+        case 'photo': if (this.photoInput) this.photoInput.nativeElement.value = ''; break;
+        case 'sign': if (this.signInput) this.signInput.nativeElement.value = ''; break;
+        case 'pan': if (this.panInput) this.panInput.nativeElement.value = ''; break;
+        case 'aadhaarFront': if (this.aadhaarFrontInput) this.aadhaarFrontInput.nativeElement.value = ''; break;
+        case 'aadhaarBack': if (this.aadhaarBackInput) this.aadhaarBackInput.nativeElement.value = ''; break;
+      }
+    } catch {
+      // ignore if ViewChild not available
+    }
+
+    this.closePreview();
+  }
+
+  @HostListener('window:keydown.escape', ['$event'])
+  onEscKey(_: KeyboardEvent) {
+    if (this.modalOpen) this.closePreview();
   }
 }

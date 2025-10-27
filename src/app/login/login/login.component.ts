@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
+import { LoaderService } from '../../services/loader.service';
 
 type Branch = { code: number; name: string };
 
@@ -17,23 +18,24 @@ type Branch = { code: number; name: string };
 })
 export class LoginComponent {
   loginObj = { INI: '', CODE: '' };
-  isLoading = false;
   showPassword = false;
 
   showModel = false;
   userName = '';
-
   branches: Branch[] = [];
   filteredBranches: Branch[] = [];
   branchSearch = '';
   dropdownOpen = false;
   selectedBranch: Branch | null = null;
 
+  loading$ = this.loader.loading$;
+
   constructor(
     private router: Router,
     private auth: AuthService,
     private toastr: ToastrService,
-    private api: ApiService
+    private api: ApiService,
+    private loader: LoaderService
   ) {}
 
   login(): void {
@@ -42,46 +44,62 @@ export class LoginComponent {
       return;
     }
 
-    this.isLoading = true;
+    this.loader.show();
 
-    // Perform login first
     this.auth.login(this.loginObj).subscribe({
       next: (res: any) => {
-        // AES + in-memory storage
         this.auth.setToken(res);
+        this.userName = res?.userDetails?.name ?? 'User';
+        const user = this.auth.getUser() || {};
 
-        const name = res?.userDetails?.name ?? 'User';
-        this.userName = name;
+        // Branch selection flags
+        const allowAll = String(user.alloW_BR_SELECTION ?? 'N').toUpperCase() === 'Y';
+        const workingCode = Number(user.workinG_BRANCH ?? 0);
 
-        // Load branches after login success
+        // Fetch all branches
         this.api.get('BranchMast/GetAllBranches').subscribe({
           next: (branches: any) => {
             const list: any[] = Array.isArray(branches) ? branches : Object.values(branches || {});
-            this.branches = (list || [])
+            let mapped: Branch[] = (list || [])
               .filter(x => x && (x.name ?? x.Name))
               .map(x => ({
                 code: Number(x.code ?? x.Code),
                 name: String(x.name ?? x.Name).trim(),
               }))
               .sort((a, b) => a.name.localeCompare(b.name));
+
+            // Filter by user permission
+            if (!allowAll) {
+              mapped = mapped.filter(b => b.code === workingCode);
+              if (mapped.length === 0 && workingCode) {
+                mapped = [{ code: workingCode, name: `Branch ${workingCode}` }];
+              }
+              this.selectedBranch = mapped[0] ?? null;
+              this.branchSearch = this.selectedBranch?.name ?? '';
+            }
+
+            this.branches = mapped;
             this.filteredBranches = [...this.branches];
-            this.isLoading = false;
+
+            // ✅ Always show the branch selection modal after login
             this.showModel = true;
+
+            this.loader.hide();
           },
           error: () => {
-            this.isLoading = false;
+            this.loader.hide();
             this.toastr.error('Unable to load branches.', 'Error');
           },
         });
       },
       error: () => {
-        this.isLoading = false;
+        this.loader.hide();
         this.toastr.error('Invalid username or password.', 'Login failed');
       },
     });
   }
 
-  // Branch selection dropdown
+  // Dropdown and filtering
   toggleDropdown(): void {
     this.dropdownOpen = !this.dropdownOpen;
     if (this.dropdownOpen) this.filteredBranches = this.filterBy(this.branchSearch);
@@ -103,6 +121,7 @@ export class LoginComponent {
     this.dropdownOpen = false;
   }
 
+  // When user clicks Continue
   continue(): void {
     if (!this.selectedBranch) {
       this.toastr.warning('Please select a branch.', 'Required');
@@ -110,6 +129,8 @@ export class LoginComponent {
     }
 
     sessionStorage.setItem('branchCode', String(this.selectedBranch.code));
+    this.auth.setSelectedBranch(this.selectedBranch.code, this.selectedBranch.name);
+
     this.showModel = false;
     this.toastr.success('Login successful!', 'Login');
     this.router.navigate(['USERMASTER']);
@@ -119,11 +140,16 @@ export class LoginComponent {
     this.showModel = false;
   }
 
-  trackByCode(index: number, item: { code: number }): number {
+  trackByCode(_: number, item: { code: number }) {
     return item.code;
   }
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  pwReadonly = true;
+  blockInput(e: Event) {
+    e.preventDefault();
   }
 }

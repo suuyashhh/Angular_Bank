@@ -1,227 +1,636 @@
-<!-- Main Content -->
-<main class="max-w-7xl mx-auto px-6 py-8">
-  <div class="card p-7 wizard-card" style="padding-top: 0px!important;">
-    <div class="card-body mt-1">
-      <div class="wizard">
-        <input class="wizard-state" type="radio" name="wizard2" id="step-1" checked />
-        <input class="wizard-state" type="radio" name="wizard2" id="step-2" />
+<!-- Full-bleed Wizard Page (complete) -->
+<!-- Put this into your Angular template (component .html) -->
+<main class="w-full px-6 py-8">
+  <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
+    <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
 
-        <div class="wizard-steps" role="tablist" aria-label="Steps">
-          <div class="steps">
-            <label class="step" for="step-1" aria-controls="panel-1"><span>1</span></label>
-            <div class="divider" aria-hidden="true"></div>
-            <label class="step" for="step-2" aria-controls="panel-2"><span>2</span></label>
-          </div>
-        </div>
+      <!-- HEADER: page path (left) + Edit Names button (right) -->
+      <div class="mb-4 flex items-center justify-between">
+        <!-- Left: breadcrumb / page path -->
+        <nav class="text-sm text-gray-600" aria-label="Breadcrumb">
+          <ol class="flex items-center gap-2">
+            <li class="flex items-center gap-2">
+              <span class="text-gray-400">/</span>
+              <a class="hover:underline" routerLink="/USERMASTER/dashboard">Home</a>
+            </li>
+            <li class="text-gray-300">/</li>
+            <li class="font-semibold text-gray-800">Party Master</li>
+          </ol>
+        </nav>
 
-        <div class="wizard-panels">
-          <section class="panel" id="panel-1" data-step="1" role="tabpanel" aria-labelledby="step-1">
-            <h4 class="mb-3">Basic Details</h4>
-
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="widgetName" placeholder="Widget Name" />
-              <label for="widgetName">Widget Name</label>
-            </div>
-
-            <div class="form-floating form-floating-outline mb-5">
-              <input type="text" class="form-control" id="widgetCode" placeholder="Widget Code" />
-              <label for="widgetCode">Widget Code</label>
-            </div>
-
-            <div class="wizard-actions">
-              <span class="placeholder"></span>
-              <label for="step-2" class="btn btn-primary">Next</label>
-            </div>
-          </section>
-
-          <section class="panel" id="panel-2" data-step="2" role="tabpanel" aria-labelledby="step-2">
-
-            <div class="kvctabs">
-              <input type="radio" name="kycTab" id="tab-address" class="kvctab-state" checked />
-              <input type="radio" name="kycTab" id="tab-personal" class="kvctab-state" />
-              <input type="radio" name="kycTab" id="tab-other" class="kvctab-state" />
-              <input type="radio" name="kycTab" id="tab-KYC" class="kvctab-state" />
-
-              <div class="kvctab-controls" role="tablist" aria-label="KYC Sections">
-                <label class="kvctab-btn" for="tab-address" role="tab" aria-controls="tab-panel-address">Address
-                  Details</label>
-                <label class="kvctab-btn" for="tab-personal" role="tab" aria-controls="tab-panel-personal">Personal
-                  Details</label>
-                <label class="kvctab-btn" for="tab-other" role="tab" aria-controls="tab-panel-other">Other
-                  Details</label>
-                <label class="kvctab-btn" for="tab-KYC" role="tab" aria-controls="tab-panel-KYC">KYC Details</label>
-              </div>
-
-              <div class="kvctab-panels">
-                <div id="tab-panel-address" class="kvctab-panel" role="tabpanel">
-                  <div class="grid-2">
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" class="form-control" id="addr1" placeholder="Address Line 1" />
-                      <label for="addr1">Address Line 1</label>
-                    </div>
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" class="form-control" id="addr2" placeholder="Address Line 2 (optional)" />
-                      <label for="addr2">Address Line 2 (optional)</label>
-                    </div>
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" class="form-control" id="city" placeholder="City" />
-                      <label for="city">City</label>
-                    </div>
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" class="form-control" id="pincode" placeholder="Pincode" />
-                      <label for="pincode">Pincode</label>
-                    </div>
-                  </div>
-                </div>
-
-                <div id="tab-panel-personal" class="kvctab-panel" role="tabpanel">
-                  <div class="grid-2">
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" class="form-control" id="fname" placeholder="First Name" />
-                      <label for="fname">First Name</label>
-                    </div>
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" class="form-control" id="lname" placeholder="Last Name" />
-                      <label for="lname">Last Name</label>
-                    </div>
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="date" class="form-control" id="dob" placeholder="Date of Birth" />
-                      <label for="dob">Date of Birth</label>
-                    </div>
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" class="form-control" id="mobile" placeholder="Mobile Number" />
-                      <label for="mobile">Mobile Number</label>
-                    </div>
-                  </div>
-                </div>
-
-                <div id="tab-panel-other" class="kvctab-panel" role="tabpanel">
-                  <div class="grid-2">
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" class="form-control" id="occupation" placeholder="Occupation" />
-                      <label for="occupation">Occupation</label>
-                    </div>
-                    <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" class="form-control" id="income" placeholder="Annual Income" />
-                      <label for="income">Annual Income</label>
-                    </div>
-                  </div>
-                </div>
-
-                <div id="tab-panel-KYC" class="kvctab-panel" role="tabpanel">
-                  <div class="images-table-wrap">
-                    <table class="images-table horizontal" role="table" aria-label="KYC Images">
-                      <thead>
-                        <tr role="row">
-                          <th role="columnheader">Document</th>
-                          <th role="columnheader">Upload</th>
-                          <th role="columnheader">Preview</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr role="row">
-                          <td role="cell"><strong>Photo</strong></td>
-                          <td role="cell">
-                            <input type="file" class="file-input" accept="image/*" aria-label="Upload Photo"
-                              (change)="onFileChange($event, 'photo')" />
-                          </td>
-                          <td role="cell">
-                            <div class="preview-box" [class.has-image]="previews.photo">
-                              <img [src]="previews.photo || ''" alt="Photo preview" *ngIf="previews.photo" />
-                              <span class="ph" *ngIf="!previews.photo">Preview</span>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr role="row">
-                          <td role="cell"><strong>Sign</strong></td>
-                          <td role="cell">
-                            <input type="file" class="file-input" accept="image/*" aria-label="Upload Signature"
-                              (change)="onFileChange($event, 'sign')" />
-                          </td>
-                          <td role="cell">
-                            <div class="preview-box" [class.has-image]="previews.sign">
-                              <img [src]="previews.sign || ''" alt="Signature preview" *ngIf="previews.sign" />
-                              <span class="ph" *ngIf="!previews.sign">Preview</span>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr role="row">
-                          <td role="cell"><strong>ID Proof (PAN)</strong></td>
-                          <td role="cell">
-                            <input type="file" class="file-input" accept="image/*,.pdf" aria-label="Upload PAN"
-                              (change)="onFileChange($event, 'pan')" />
-                          </td>
-                          <td role="cell">
-                            <div class="preview-box" [class.has-image]="previews.pan">
-                              <img [src]="previews.pan || ''" alt="PAN preview"
-                                *ngIf="previews.pan && isImage(previews.pan)" />
-                              <div class="pdf-preview" *ngIf="previews.pan && !isImage(previews.pan)">
-                                <i class="fas fa-file-pdf"></i>
-                                <span>PDF Document</span>
-                              </div>
-                              <span class="ph" *ngIf="!previews.pan">Preview</span>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr role="row">
-                          <td role="cell"><strong>Address Proof (Aadhaar Front)</strong></td>
-                          <td role="cell">
-                            <input type="file" class="file-input" accept="image/*,.pdf"
-                              aria-label="Upload Aadhaar Front" (change)="onFileChange($event, 'aadhaarFront')" />
-                          </td>
-                          <td role="cell">
-                            <div class="preview-box" [class.has-image]="previews.aadhaarFront">
-                              <img [src]="previews.aadhaarFront || ''" alt="Aadhaar front preview"
-                                *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" />
-                              <div class="pdf-preview" *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
-                                <i class="fas fa-file-pdf"></i>
-                                <span>PDF Document</span>
-                              </div>
-                              <span class="ph" *ngIf="!previews.aadhaarFront">Preview</span>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr role="row">
-                          <td role="cell"><strong>Address Proof (Aadhaar Back)</strong></td>
-                          <td role="cell">
-                            <input type="file" class="file-input" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
-                              (change)="onFileChange($event, 'aadhaarBack')" />
-                          </td>
-                          <td role="cell">
-                            <div class="preview-box" [class.has-image]="previews.aadhaarBack">
-                              <img [src]="previews.aadhaarBack || ''" alt="Aadhaar back preview"
-                                *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" />
-                              <div class="pdf-preview" *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
-                                <i class="fas fa-file-pdf"></i>
-                                <span>PDF Document</span>
-                              </div>
-                              <span class="ph" *ngIf="!previews.aadhaarBack">Preview</span>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          <div class="wizard-actions mt-4">
-  <label for="step-1" class="btn btn-outline-secondary">Previous</label>
-  <div class="actions-right">
-    <!-- FIX: removed the conflicting id and the tabpanel role -->
-    <button type="button" id="cancel-images" class="btn btn-danger">Cancel Images</button>
-    <button type="button" class="btn btn-primary">Finish</button>
-  </div>
-</div>
-
-          </section>
+        <!-- Right: Edit Names button -->
+        <div>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50"
+             title="Edit display names">
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Edit Names
+          </button>
         </div>
       </div>
+      <!-- /HEADER -->
+
+      <!-- STEP radios (hidden) -->
+      <input class="wizard-state" type="radio" name="wizard" id="step-1" checked />
+      <input class="wizard-state" type="radio" name="wizard" id="step-2" />
+      <input class="wizard-state" type="radio" name="wizard" id="step-3" />
+      <input class="wizard-state" type="radio" name="wizard" id="step-4" />
+      <input class="wizard-state" type="radio" name="wizard" id="step-5" />
+
+      <!-- Stepper (full width centered content) -->
+      <div class="wizard-steps my-6 w-full">
+        <div class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
+          <label for="step-1"
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
+            1
+          </label>
+          <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+          <label for="step-2"
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
+            2
+          </label>
+          <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+          <label for="step-3"
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
+            3
+          </label>
+          <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+          <label for="step-4"
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
+            4
+          </label>
+          <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+          <label for="step-5"
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
+            5
+          </label>
+        </div>
+      </div>
+
+      <!-- Panels -->
+      <div class="wizard-panels">
+        <!-- STEP 1: Basic Details -->
+        <section id="panel-1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step-1">
+          <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="customerId" placeholder="Customer Id" />
+              <label for="customerId">Customer Id</label>
+            </div>
+
+            <!-- A/C Type: bound to accountType -->
+            <div class="form-floating form-floating-outline mb-4">
+              <select id="accountType" class="form-select" [(ngModel)]="accountType" name="accountType">
+                <option value="0">Individual</option>
+                <option value="1">Co.Op.Soc.</option>
+                <option value="2">Propriter Ship</option>
+                <option value="3">PartnerShip Firm</option>
+                <option value="4">Private Limited</option>
+                <option value="5">Public Limited</option>
+                <option value="6">H.U.F.</option>
+                <option value="7">Trust</option>
+                <option value="8">Other Legal Entity</option>
+              </select>
+              <label for="accountType">A/C Type</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="panNo" placeholder="Pan Card No" />
+              <label for="panNo">Pan Card No</label>
+            </div>
+
+            <!-- Aadhaar shown only for Individual -->
+            <div *ngIf="accountType === '0'" class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="aadhaarNo" placeholder="Aadhaar Card No" />
+              <label for="aadhaarNo">Aadhaar Card No</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="gstNo" placeholder="GST No" />
+              <label for="gstNo">GST No</label>
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center gap-3">
+            <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
+              <select id="title" class="form-select">
+                <option>Mr</option>
+                <option>Mrs</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="flex-1">
+              <div class="form-floating form-floating-outline flex-1">
+                <input type="text" class="form-control" id="widgetName" placeholder="Widget Name" />
+                <label for="widgetName">Name</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 flex items-center justify-between gap-3">
+            <label for="step-1"
+              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Cancel</label>
+            <label for="step-2"
+              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
+          </div>
+        </section>
+
+        <!-- STEP 2: Address Details -->
+        <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
+          <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="addrLine1" placeholder="Permanent Address" />
+              <label for="addrLine1">Permanent Address</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-4 always-float">
+              <input type="text" class="form-control" id="addrLine2" placeholder="Permanent Address II" />
+            </div>
+
+            <div class="form-floating form-floating-outline mb-4 always-float">
+              <input type="text" class="form-control" id="addrLine3" placeholder="Permanent Address III" />
+            </div>
+
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="city2" placeholder="City" />
+              <label for="city2">City</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="taluka" placeholder="Taluka" />
+              <label for="taluka">Taluka</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="district" placeholder="District" />
+              <label for="district">District</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="state" placeholder="State" />
+              <label for="state">State</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="country" placeholder="Country" />
+              <label for="country">Country</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="area" placeholder="Area" />
+              <label for="area">Area</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="pincode2" placeholder="PinCode" />
+              <label for="pincode2">PinCode</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="phone" placeholder="Phone no" />
+              <label for="phone">Phone no</label>
+            </div>
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="mobile" placeholder="Mobile no" />
+              <label for="mobile">Mobile no</label>
+            </div>
+
+          </div>
+
+          <div class="mt-6 flex items-center justify-between gap-3">
+            <label for="step-1"
+              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+            <label for="step-3"
+              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
+          </div>
+        </section>
+
+        <!-- STEP 3: Personal + Company/Firm conditional content -->
+        <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
+
+          <!-- PERSONAL DETAILS: shown only for Individual -->
+          <div *ngIf="accountType === '0'">
+            <h4 class="mb-4 text-lg font-semibold">Personal Details</h4>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="religionCode" placeholder="Religion Code" />
+                <label for="religionCode">Religion Code</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="castCode" placeholder="Cast Code" />
+                <label for="castCode">Cast Code</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="occupation" placeholder="Occupation" />
+                <label for="occupation">Occupation</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                <input type="text" class="form-control" id="passportNo" placeholder="Passport No." />
+                <label for="passportNo">Passport No.</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
+                <input type="date" class="form-control" id="passportExp" placeholder="Passport Exp.Date" />
+                <label for="passportExp">Passport Exp. Date</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
+                <input type="text" class="form-control" id="passportIssueAuth" placeholder="Passport Issue Authority" />
+                <label for="passportIssueAuth">Passport Issue Authority</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="electionCardNo" placeholder="Election Card No." />
+                <label for="electionCardNo">Election Card No.</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="date" class="form-control" id="birthDate" placeholder="Birth Date" />
+                <label for="birthDate">Birth Date</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="number" class="form-control" id="age" placeholder="Age" min="0" />
+                <label for="age">Age</label>
+              </div>
+
+              <div class="sm:col-span-3">
+                <div class="flex items-center gap-4 py-2">
+                  <span class="text-sm font-medium mr-2">Gender :</span>
+
+                  <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                    <input type="radio" name="gender" value="male" class="w-4 h-4 text-violet-600 border-gray-300" />
+                    <span>Male</span>
+                  </label>
+
+                  <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                    <input type="radio" name="gender" value="female" class="w-4 h-4 text-violet-600 border-gray-300" />
+                    <span>Female</span>
+                  </label>
+
+                  <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                    <input type="radio" name="gender" value="other" class="w-4 h-4 text-violet-600 border-gray-300" />
+                    <span>Other</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
+                <input type="text" class="form-control" id="otherStaff" placeholder="Other / Staff" />
+                <label for="otherStaff">Other / Staff</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMPANY/FIRM DETAILS: shown only for non-Individual -->
+          <div *ngIf="accountType !== '0'">
+            <h4 class="mb-4 text-lg font-semibold">Company/Firm Details</h4>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="regNo" placeholder="Reg.No." />
+                <label for="regNo">Reg.No.</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="regDate" placeholder="Reg.Date" />
+                <label for="regDate">Reg.Date</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="numBranches" placeholder="No.Of Branches" />
+                <label for="numBranches">No.Of Branches</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="businessNature" placeholder="Business Nature" />
+                <label for="businessNature">Bussiness Nature</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="paidUpCapital" placeholder="Paid Up Capital" />
+                <label for="paidUpCapital">Paid Up Capital</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="lastYearTurnover" placeholder="Last Year TurnOver" />
+                <label for="lastYearTurnover">Last Year TurnOver</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                <input type="text" class="form-control" id="netWorth" placeholder="Net Worth Rs." />
+                <label for="netWorth">Net Worth Rs.</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                <input type="text" class="form-control" id="officerName1" placeholder="Officer Name 1" />
+                <label for="officerName1">Officer Name 1</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                <input type="text" class="form-control" id="officerName2" placeholder="Officer Name 2" />
+                <label for="officerName2">Officer Name 2</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 flex items-center justify-between gap-3">
+            <label for="step-2"
+              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+            <label for="step-4"
+              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
+          </div>
+        </section>
+
+        <!-- STEP 4: Other Details -->
+        <section id="panel-4" class="panel" data-step="4" role="tabpanel" aria-labelledby="step-4">
+          <h4 class="mb-4 text-lg font-semibold">Other Details</h4>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" id="officeName" placeholder="Office Name" />
+              <label for="officeName">Office Name</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" id="officePin" placeholder="PinCode" />
+              <label for="officePin">PinCode</label>
+            </div>
+
+            <div class="hidden lg:block"></div>
+
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" id="officeAddr1" placeholder="Office Address I" />
+              <label for="officeAddr1">Office Address</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" id="officeAddr2" placeholder="Office Address II" />
+              <label for="officeAddr2">Office Address II</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" id="officeAddr3" placeholder="Office Address III" />
+              <label for="officeAddr3">Office Address III</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" id="officePhone" placeholder="Office Phone No" />
+              <label for="officePhone">Office Phone No</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" id="faxNo" placeholder="Fax No" />
+              <label for="faxNo">Fax No.</label>
+            </div>
+
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="email" class="form-control" id="emailId" placeholder="E-Mail ID" />
+              <label for="emailId">E-Mail ID</label>
+            </div>
+          </div>
+
+          <div class="mt-6 flex items-center justify-between gap-3">
+            <label for="step-3"
+              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+            <label for="step-5"
+              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
+          </div>
+        </section>
+
+        <!-- STEP 5: KYC Details -->
+        <section id="panel-5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step-5">
+          <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
+
+          <div class="rounded-xl border border-gray-200 overflow-hidden bg-white">
+            <div class="flex gap-3 p-3 overflow-x-auto">
+              <!-- Photo -->
+              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">Photo</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #photoInput data-key="photo">
+                </div>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
+                    (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
+                    aria-label="Preview Photo">
+                    <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
+                      alt="Photo preview" class="w-full h-full object-contain" />
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sign -->
+              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">Sign</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*" aria-label="Upload Signature"
+                    (change)="onFileChange($event, 'sign')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #signInput data-key="sign">
+                </div>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
+                    (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
+                    aria-label="Preview Signature">
+                    <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
+                      alt="Signature preview" class="w-full h-full object-contain" />
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PAN -->
+              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*,.pdf" aria-label="Upload PAN"
+                    (change)="onFileChange($event, 'pan')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #panInput data-key="pan">
+                </div>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
+                    (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button"
+                    aria-label="Preview PAN">
+                    <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)" alt="PAN preview"
+                      class="w-full h-full object-contain" />
+                    <div class="flex flex-col items-center gap-1 text-gray-500"
+                      *ngIf="previews.pan && !isImage(previews.pan)">
+                      <i class="fa-solid fa-file-pdf text-3xl"></i>
+                      <span class="text-sm">PDF Document</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.pan">Preview</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Aadhaar Front -->
+              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
+                    (change)="onFileChange($event, 'aadhaarFront')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #aadhaarFrontInput data-key="aadhaarFront">
+                </div>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('aadhaarFront')" tabindex="0" (keydown.enter)="openPreview('aadhaarFront')"
+                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
+                    aria-label="Preview Aadhaar front">
+                    <img [src]="previews.aadhaarFront || ''"
+                      *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
+                      class="w-full h-full object-contain" />
+                    <div class="flex flex-col items-center gap-1 text-gray-500"
+                      *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
+                      <i class="fa-solid fa-file-pdf text-3xl"></i>
+                      <span class="text-sm">PDF Document</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarFront">Preview</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Aadhaar Back -->
+              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
+                    (change)="onFileChange($event, 'aadhaarBack')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #aadhaarBackInput data-key="aadhaarBack">
+                </div>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
+                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
+                    aria-label="Preview Aadhaar back">
+                    <img [src]="previews.aadhaarBack || ''"
+                      *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" alt="Aadhaar back preview"
+                      class="w-full h-full object-contain" />
+                    <div class="flex flex-col items-center gap-1 text-gray-500"
+                      *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
+                      <i class="fa-solid fa-file-pdf text-3xl"></i>
+                      <span class="text-sm">PDF Document</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarBack">Preview</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 flex items-center justify-between gap-3">
+            <label for="step-4"
+              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+            <button type="button"
+              class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700">Finish</button>
+          </div>
+        </section>
+
+      </div> <!-- /wizard-panels -->
     </div>
   </div>
 </main>
+
+<!-- Preview Modal -->
+<div *ngIf="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center" aria-modal="true" role="dialog">
+  <div class="absolute inset-0 bg-black/60" (click)="closePreview()" aria-hidden="true"></div>
+
+  <div class="bg-white rounded-xl max-w-[920px] w-full mx-4 overflow-auto z-10" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between px-4 py-3 border-b">
+      <div class="flex items-center gap-3">
+        <h3 class="text-lg font-semibold">Preview</h3>
+        <span class="text-sm text-gray-500" *ngIf="activeKey">{{ activeKey }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button"
+          class="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-100 hover:bg-gray-200"
+          (click)="removeCurrent()" title="Remove this file">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+        <button type="button"
+          class="inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-100 hover:bg-gray-200"
+          (click)="closePreview()" title="Close">
+          <i class="fa-solid fa-x"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="p-4">
+      <ng-container *ngIf="activeKey && previews?.[activeKey]; else noFile">
+        <img *ngIf="isImage(previews[activeKey])" [src]="previews[activeKey]" alt="Preview"
+          class="mx-auto max-h-[72vh] w-auto rounded" />
+        <embed *ngIf="!isImage(previews[activeKey])" [src]="previews[activeKey]" type="application/pdf"
+          style="width:100%;height:72vh;border-radius:6px" />
+      </ng-container>
+
+      <ng-template #noFile>
+        <div class="py-8 text-center text-gray-500">
+          No file selected for preview.
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- Styles -->
+<style>
+  /* Full-bleed card */
+  .wizard-card {
+    max-height: calc(100vh - 48px);
+    width: 100%;
+    max-width: none;
+  }
+
+  /* Hide control radios */
+  .wizard-state {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Show only the active wizard panel */
+  .wizard-panels .panel { display: none; }
+
+  #step-1:checked ~ .wizard-panels #panel-1 { display: block; }
+  #step-2:checked ~ .wizard-panels #panel-2 { display: block; }
+  #step-3:checked ~ .wizard-panels #panel-3 { display: block; }
+  #step-4:checked ~ .wizard-panels #panel-4 { display: block; }
+  #step-5:checked ~ .wizard-panels #panel-5 { display: block; }
+
+  /* Highlight current step */
+  #step-1:checked ~ .wizard-steps label[for="step-1"],
+  #step-2:checked ~ .wizard-steps label[for="step-2"],
+  #step-3:checked ~ .wizard-steps label[for="step-3"],
+  #step-4:checked ~ .wizard-steps label[for="step-4"],
+  #step-5:checked ~ .wizard-steps label[for="step-5"] {
+    background: linear-gradient(135deg, #8c57ff 0%, #a855f7 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 6px 18px rgba(140, 87, 255, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .wizard-steps label { transition: all .18s ease; }
+
+  /* Small helper (allow flex children to shrink) */
+  .min-w-0 { min-width: 0; }
+</style>
