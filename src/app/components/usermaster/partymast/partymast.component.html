@@ -20,12 +20,13 @@
 
         <!-- Right: Edit Names button -->
         <div>
-          <button
-            type="button"
+          <button type="button"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50"
-             title="Edit display names">
-            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            title="Edit display names">
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
             </svg>
             Edit Names
           </button>
@@ -42,7 +43,8 @@
 
       <!-- Stepper (full width centered content) -->
       <div class="wizard-steps my-6 w-full">
-        <div class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
+        <div
+          class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
           <label for="step-1"
             class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
             1
@@ -144,69 +146,213 @@
         </section>
 
         <!-- STEP 2: Address Details -->
-        <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
-          <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="addrLine1" placeholder="Permanent Address" />
-              <label for="addrLine1">Permanent Address</label>
-            </div>
-            <div class="form-floating form-floating-outline mb-4 always-float">
-              <input type="text" class="form-control" id="addrLine2" placeholder="Permanent Address II" />
-            </div>
+       <!-- STEP 2: Address Details -->
+<section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
+  <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
-            <div class="form-floating form-floating-outline mb-4 always-float">
-              <input type="text" class="form-control" id="addrLine3" placeholder="Permanent Address III" />
-            </div>
+    <div class="form-floating form-floating-outline mb-4">
+      <input type="text" class="form-control" id="addrLine1" placeholder="Permanent Address" />
+      <label for="addrLine1">Permanent Address</label>
+    </div>
+    <div class="form-floating form-floating-outline mb-4 always-float">
+      <input type="text" class="form-control" id="addrLine2" placeholder="Permanent Address II" />
+    </div>
+    <div class="form-floating form-floating-outline mb-4 always-float">
+      <input type="text" class="form-control" id="addrLine3" placeholder="Permanent Address III" />
+    </div>
 
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="city2" placeholder="City" />
-              <label for="city2">City</label>
-            </div>
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="taluka" placeholder="Taluka" />
-              <label for="taluka">Taluka</label>
-            </div>
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="district" placeholder="District" />
-              <label for="district">District</label>
-            </div>
+    <!-- Country (opens modal) -->
+    <div class="form-floating form-floating-outline mb-4">
+      <input
+        type="text"
+        class="form-control"
+        id="country"
+        placeholder="Country"
+        [value]="selectedCountryName"
+        readonly
+        (click)="openPicker('country')"
+        aria-haspopup="dialog"
+        aria-label="Select country"
+      />
+      <label for="country">Country</label>
+    </div>
 
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="state" placeholder="State" />
-              <label for="state">State</label>
-            </div>
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="country" placeholder="Country" />
-              <label for="country">Country</label>
-            </div>
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="area" placeholder="Area" />
-              <label for="area">Area</label>
-            </div>
+    <!-- State (opens modal) -->
+    <div class="form-floating form-floating-outline mb-4 state-autocomplete">
+      <input
+        type="text"
+        class="form-control"
+        id="state"
+        placeholder="State"
+        [value]="selectedStateName"
+        readonly
+        (click)="openPicker('state')"
+        aria-haspopup="dialog"
+        aria-label="Select state"
+      />
+      <label for="state">State</label>
+    </div>
 
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="pincode2" placeholder="PinCode" />
-              <label for="pincode2">PinCode</label>
-            </div>
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="phone" placeholder="Phone no" />
-              <label for="phone">Phone no</label>
-            </div>
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" class="form-control" id="mobile" placeholder="Mobile no" />
-              <label for="mobile">Mobile no</label>
-            </div>
+    <div class="form-floating form-floating-outline mb-4">
+      <input
+        type="text"
+        class="form-control"
+        id="district"
+        placeholder="District"
+        [value]="selectedDistrictName"
+        readonly
+        (click)="openPicker('district')"
+        aria-haspopup="dialog"
+        aria-label="Select district"
+      />
+      <label for="district">District</label>
+    </div>
 
+    <div class="form-floating form-floating-outline mb-4">
+      <input
+        type="text"
+        class="form-control"
+        id="taluka"
+        placeholder="Taluka"
+        [value]="selectedTalukaName"
+        readonly
+        (click)="openPicker('taluka')"
+        aria-haspopup="dialog"
+        aria-label="Select taluka"
+      />
+      <label for="taluka">Taluka</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-4">
+      <input
+        type="text"
+        class="form-control"
+        id="city2"
+        placeholder="City"
+        [value]="selectedCityName"
+        readonly
+        (click)="openPicker('city')"
+        aria-haspopup="dialog"
+        aria-label="Select city"
+      />
+      <label for="city2">City</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-4">
+      <input type="text" class="form-control" id="area" placeholder="Area" />
+      <label for="area">Area</label>
+    </div>
+
+    <div class="form-floating form-floating-outline mb-4">
+      <input type="text" class="form-control" id="pincode2" placeholder="PinCode" />
+      <label for="pincode2">PinCode</label>
+    </div>
+    <div class="form-floating form-floating-outline mb-4">
+      <input type="text" class="form-control" id="phone" placeholder="Phone no" />
+      <label for="phone">Phone no</label>
+    </div>
+    <div class="form-floating form-floating-outline mb-4">
+      <input type="text" class="form-control" id="mobile" placeholder="Mobile no" />
+      <label for="mobile">Mobile no</label>
+    </div>
+  </div>
+
+  <div class="mt-6 flex items-center justify-between gap-3">
+    <label for="step-1"
+      class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+    <label for="step-3"
+      class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
+  </div>
+</section>
+
+<!-- Single reusable modal styled like login branch modal -->
+<div class="modal custom-modal-fade" tabindex="-1" role="dialog"
+     [class.show]="pickerOpen" [style.display]="pickerOpen ? 'block' : 'none'">
+  <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content custom-modal-content" role="document">
+      <div class="custom-modal-header">
+        <div class="modal-title-wrapper">
+          <!-- optional avatar left (uncomment if you want) -->
+          <!-- <div class="modal-icon"><img src="../../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle"></div> -->
+          <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
+        </div>
+
+        <!-- Close button on right -->
+        <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
+      </div>
+
+      <div class="custom-modal-body">
+        <form class="custom-form" novalidate (submit)="$event.preventDefault()">
+          <div class="form-group-wrapper">
+            <div class="custom-form-group">
+              <div class="form-floating form-floating-outline mb-0 position-relative">
+                <!-- input that opens dropdown -->
+                <input
+                  type="text"
+                  id="picker-input"
+                  class="form-control branch-input"
+                  placeholder="{{ pickerTitle }}"
+                  [(ngModel)]="pickerSearch"
+                  name="pickerSearch"
+                  (focus)="dropdownOpen = true"
+                  (input)="onSearchChange()"
+                  autocomplete="off"
+                />
+                <label for="picker-input">
+                  <i class="ri-box-3-line"></i>{{ pickerTitle }}
+                  <span class="text-danger">*</span>
+                </label>
+
+                <!-- caret button -->
+                <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()" aria-label="Toggle">
+                  <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+                </button>
+
+                <!-- dropdown panel: NOTE position is static so it grows modal height -->
+                <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
+                  <div class="dropdown-list">
+                    <div
+                      class="dropdown-item"
+                      *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
+                      (click)="pickOption(opt)"
+                      [ngClass]="{ 'is-selected': pickerSelectedCode === opt.code }"
+                    >
+                      <span class="item-name">{{ opt.name }}</span>
+                      <small class="item-code">({{ opt.code }})</small>
+                    </div>
+
+                    <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
+                      No {{ pickerTitle }} found
+                    </div>
+
+                    <div *ngIf="pickerLoading" class="dropdown-empty">Loading...</div>
+                  </div>
+                </div>
+                <!-- end dropdown panel -->
+
+              </div>
+            </div>
           </div>
+        </form>
+      </div>
 
-          <div class="mt-6 flex items-center justify-between gap-3">
-            <label for="step-1"
-              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-            <label for="step-3"
-              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-          </div>
-        </section>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
+        <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode" (click)="confirmPicker()">Continue</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop closes the modal when clicked -->
+<div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
+
+<!-- invisible fullscreen click-catcher while dropdown open -->
+<div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen=false"></div>
+
+
 
         <!-- STEP 3: Personal + Company/Firm conditional content -->
         <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
@@ -608,20 +754,36 @@
   }
 
   /* Show only the active wizard panel */
-  .wizard-panels .panel { display: none; }
+  .wizard-panels .panel {
+    display: none;
+  }
 
-  #step-1:checked ~ .wizard-panels #panel-1 { display: block; }
-  #step-2:checked ~ .wizard-panels #panel-2 { display: block; }
-  #step-3:checked ~ .wizard-panels #panel-3 { display: block; }
-  #step-4:checked ~ .wizard-panels #panel-4 { display: block; }
-  #step-5:checked ~ .wizard-panels #panel-5 { display: block; }
+  #step-1:checked~.wizard-panels #panel-1 {
+    display: block;
+  }
+
+  #step-2:checked~.wizard-panels #panel-2 {
+    display: block;
+  }
+
+  #step-3:checked~.wizard-panels #panel-3 {
+    display: block;
+  }
+
+  #step-4:checked~.wizard-panels #panel-4 {
+    display: block;
+  }
+
+  #step-5:checked~.wizard-panels #panel-5 {
+    display: block;
+  }
 
   /* Highlight current step */
-  #step-1:checked ~ .wizard-steps label[for="step-1"],
-  #step-2:checked ~ .wizard-steps label[for="step-2"],
-  #step-3:checked ~ .wizard-steps label[for="step-3"],
-  #step-4:checked ~ .wizard-steps label[for="step-4"],
-  #step-5:checked ~ .wizard-steps label[for="step-5"] {
+  #step-1:checked~.wizard-steps label[for="step-1"],
+  #step-2:checked~.wizard-steps label[for="step-2"],
+  #step-3:checked~.wizard-steps label[for="step-3"],
+  #step-4:checked~.wizard-steps label[for="step-4"],
+  #step-5:checked~.wizard-steps label[for="step-5"] {
     background: linear-gradient(135deg, #8c57ff 0%, #a855f7 100%);
     color: white;
     border-color: transparent;
@@ -629,8 +791,12 @@
     transform: translateY(-1px);
   }
 
-  .wizard-steps label { transition: all .18s ease; }
+  .wizard-steps label {
+    transition: all .18s ease;
+  }
 
   /* Small helper (allow flex children to shrink) */
-  .min-w-0 { min-width: 0; }
+  .min-w-0 {
+    min-width: 0;
+  }
 </style>
