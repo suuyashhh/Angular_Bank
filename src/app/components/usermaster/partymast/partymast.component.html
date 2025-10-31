@@ -1,12 +1,10 @@
 <!-- Full-bleed Wizard Page (complete) -->
-<!-- Put this into your Angular template (component .html) -->
 <main class="w-full px-6 py-8">
   <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
     <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
 
       <!-- HEADER: page path (left) + Edit Names button (right) -->
       <div class="mb-4 flex items-center justify-between">
-        <!-- Left: breadcrumb / page path -->
         <nav class="text-sm text-gray-600" aria-label="Breadcrumb">
           <ol class="flex items-center gap-2">
             <li class="flex items-center gap-2">
@@ -18,7 +16,6 @@
           </ol>
         </nav>
 
-        <!-- Right: Edit Names button -->
         <div>
           <button type="button"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50"
@@ -41,38 +38,24 @@
       <input class="wizard-state" type="radio" name="wizard" id="step-4" />
       <input class="wizard-state" type="radio" name="wizard" id="step-5" />
 
-      <!-- Stepper (full width centered content) -->
+      <!-- Stepper -->
       <div class="wizard-steps my-6 w-full">
         <div
           class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
           <label for="step-1"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
-            1
-          </label>
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">1</label>
           <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
-
           <label for="step-2"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
-            2
-          </label>
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">2</label>
           <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
-
           <label for="step-3"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
-            3
-          </label>
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">3</label>
           <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
-
           <label for="step-4"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
-            4
-          </label>
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">4</label>
           <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
-
           <label for="step-5"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">
-            5
-          </label>
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">5</label>
         </div>
       </div>
 
@@ -146,218 +129,173 @@
         </section>
 
         <!-- STEP 2: Address Details -->
-       <!-- STEP 2: Address Details -->
-<section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
-  <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
+          <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
 
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" class="form-control" id="addrLine1" placeholder="Permanent Address" />
-      <label for="addrLine1">Permanent Address</label>
-    </div>
-    <div class="form-floating form-floating-outline mb-4 always-float">
-      <input type="text" class="form-control" id="addrLine2" placeholder="Permanent Address II" />
-    </div>
-    <div class="form-floating form-floating-outline mb-4 always-float">
-      <input type="text" class="form-control" id="addrLine3" placeholder="Permanent Address III" />
-    </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="addrLine1" placeholder="Permanent Address" />
+              <label for="addrLine1">Permanent Address</label>
+            </div>
 
-    <!-- Country (opens modal) -->
-    <div class="form-floating form-floating-outline mb-4">
-      <input
-        type="text"
-        class="form-control"
-        id="country"
-        placeholder="Country"
-        [value]="selectedCountryName"
-        readonly
-        (click)="openPicker('country')"
-        aria-haspopup="dialog"
-        aria-label="Select country"
-      />
-      <label for="country">Country</label>
-    </div>
+            <div class="form-floating form-floating-outline mb-4 always-float">
+              <input type="text" class="form-control" id="addrLine2" placeholder="Permanent Address II" />
+              <label for="addrLine2">Permanent Address II</label>
+            </div>
 
-    <!-- State (opens modal) -->
-    <div class="form-floating form-floating-outline mb-4 state-autocomplete">
-      <input
-        type="text"
-        class="form-control"
-        id="state"
-        placeholder="State"
-        [value]="selectedStateName"
-        readonly
-        (click)="openPicker('state')"
-        aria-haspopup="dialog"
-        aria-label="Select state"
-      />
-      <label for="state">State</label>
-    </div>
+            <div class="form-floating form-floating-outline mb-4 always-float">
+              <input type="text" class="form-control" id="addrLine3" placeholder="Permanent Address III" />
+              <label for="addrLine3">Permanent Address III</label>
+            </div>
 
-    <div class="form-floating form-floating-outline mb-4">
-      <input
-        type="text"
-        class="form-control"
-        id="district"
-        placeholder="District"
-        [value]="selectedDistrictName"
-        readonly
-        (click)="openPicker('district')"
-        aria-haspopup="dialog"
-        aria-label="Select district"
-      />
-      <label for="district">District</label>
-    </div>
+            <!-- City (clickable -> opens modal) -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="city2" placeholder="City" [value]="selectedCityName" readonly
+                (click)="openPicker('city')" aria-haspopup="dialog" aria-label="Select city" style="cursor:pointer" />
+              <input type="hidden" id="CityCode" name="CityCode" [(ngModel)]="selectedCityCode" />
+              <input type="hidden" id="CityUnicCode" name="CityUnicCode" [(ngModel)]="selectedCityUnicId" />
+              <label for="city2">City</label>
+            </div>
 
-    <div class="form-floating form-floating-outline mb-4">
-      <input
-        type="text"
-        class="form-control"
-        id="taluka"
-        placeholder="Taluka"
-        [value]="selectedTalukaName"
-        readonly
-        (click)="openPicker('taluka')"
-        aria-haspopup="dialog"
-        aria-label="Select taluka"
-      />
-      <label for="taluka">Taluka</label>
-    </div>
+            <!-- Country (readonly; populated from city dependency) -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="country" placeholder="Country" [value]="selectedCountryName"
+                readonly aria-label="Country (readonly)" />
+              <input type="hidden" id="CountryCode" name="CountryCode" [(ngModel)]="selectedCountryCode" />
+              <label for="country">Country</label>
+            </div>
 
-    <div class="form-floating form-floating-outline mb-4">
-      <input
-        type="text"
-        class="form-control"
-        id="city2"
-        placeholder="City"
-        [value]="selectedCityName"
-        readonly
-        (click)="openPicker('city')"
-        aria-haspopup="dialog"
-        aria-label="Select city"
-      />
-      <label for="city2">City</label>
-    </div>
+            <!-- State -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="state" placeholder="State" [value]="selectedStateName"
+                readonly aria-label="State (readonly)" />
+              <input type="hidden" id="StateCode" name="StateCode" [(ngModel)]="selectedStateCode" />
+              <label for="state">State</label>
+            </div>
 
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" class="form-control" id="area" placeholder="Area" />
-      <label for="area">Area</label>
-    </div>
+            <!-- District -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="district" placeholder="District"
+                [value]="selectedDistrictName" readonly aria-label="District (readonly)" />
+              <input type="hidden" id="DictCode" name="DictCode" [(ngModel)]="selectedDistrictCode" />
+              <label for="district">District</label>
+            </div>
 
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" class="form-control" id="pincode2" placeholder="PinCode" />
-      <label for="pincode2">PinCode</label>
-    </div>
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" class="form-control" id="phone" placeholder="Phone no" />
-      <label for="phone">Phone no</label>
-    </div>
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" class="form-control" id="mobile" placeholder="Mobile no" />
-      <label for="mobile">Mobile no</label>
-    </div>
-  </div>
+            <!-- Taluka -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="taluka" placeholder="Taluka" [value]="selectedTalukaName"
+                readonly aria-label="Taluka (readonly)" />
+              <input type="hidden" id="TalukaCode" name="TalukaCode" [(ngModel)]="selectedTalukaCode" />
+              <label for="taluka">Taluka</label>
+            </div>
 
-  <div class="mt-6 flex items-center justify-between gap-3">
-    <label for="step-1"
-      class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-    <label for="step-3"
-      class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-  </div>
-</section>
 
-<!-- Single reusable modal styled like login branch modal -->
-<div class="modal custom-modal-fade" tabindex="-1" role="dialog"
-     [class.show]="pickerOpen" [style.display]="pickerOpen ? 'block' : 'none'">
-  <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
-    <div class="modal-content custom-modal-content" role="document">
-      <div class="custom-modal-header">
-        <div class="modal-title-wrapper">
-          <!-- optional avatar left (uncomment if you want) -->
-          <!-- <div class="modal-icon"><img src="../../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle"></div> -->
-          <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
-        </div>
 
-        <!-- Close button on right -->
-        <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
-      </div>
+            <!-- Area (readonly) -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="area" placeholder="Area" [value]="selectedAreaName" readonly
+                aria-label="Area (readonly)" />
+              <input type="hidden" id="AreaCode" name="AreaCode" [(ngModel)]="selectedAreaCode" />
+              <label for="area">Area</label>
+            </div>
 
-      <div class="custom-modal-body">
-        <form class="custom-form" novalidate (submit)="$event.preventDefault()">
-          <div class="form-group-wrapper">
-            <div class="custom-form-group">
-              <div class="form-floating form-floating-outline mb-0 position-relative">
-                <!-- input that opens dropdown -->
-                <input
-                  type="text"
-                  id="picker-input"
-                  class="form-control branch-input"
-                  placeholder="{{ pickerTitle }}"
-                  [(ngModel)]="pickerSearch"
-                  name="pickerSearch"
-                  (focus)="dropdownOpen = true"
-                  (input)="onSearchChange()"
-                  autocomplete="off"
-                />
-                <label for="picker-input">
-                  <i class="ri-box-3-line"></i>{{ pickerTitle }}
-                  <span class="text-danger">*</span>
-                </label>
+            <!-- PinCode (readonly) -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="pincode2" placeholder="PinCode" [value]="selectedPincode"
+                readonly aria-label="PinCode (readonly)" />
+              <input type="hidden" id="PinCode" name="PinCode" [(ngModel)]="selectedPincode" />
+              <label for="pincode2">PinCode</label>
+            </div>
 
-                <!-- caret button -->
-                <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()" aria-label="Toggle">
-                  <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
-                </button>
+            <!-- Phone / Mobile -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="phone" placeholder="Phone no" />
+              <label for="phone">Phone no</label>
+            </div>
 
-                <!-- dropdown panel: NOTE position is static so it grows modal height -->
-                <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
-                  <div class="dropdown-list">
-                    <div
-                      class="dropdown-item"
-                      *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
-                      (click)="pickOption(opt)"
-                      [ngClass]="{ 'is-selected': pickerSelectedCode === opt.code }"
-                    >
-                      <span class="item-name">{{ opt.name }}</span>
-                      <small class="item-code">({{ opt.code }})</small>
-                    </div>
-
-                    <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
-                      No {{ pickerTitle }} found
-                    </div>
-
-                    <div *ngIf="pickerLoading" class="dropdown-empty">Loading...</div>
-                  </div>
-                </div>
-                <!-- end dropdown panel -->
-
-              </div>
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" class="form-control" id="mobile" placeholder="Mobile no" />
+              <label for="mobile">Mobile no</label>
             </div>
           </div>
-        </form>
-      </div>
 
-      <div class="custom-modal-footer">
-        <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
-        <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode" (click)="confirmPicker()">Continue</button>
-      </div>
+          <div class="mt-6 flex items-center justify-between gap-3">
+            <label for="step-1"
+              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+            <label for="step-3"
+              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
+          </div>
+        </section>
 
-    </div>
-  </div>
-</div>
+        <!-- City modal (picker used only for cities) -->
+        <div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
+          [style.display]="pickerOpen ? 'block' : 'none'">
+          <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
+            <div class="modal-content custom-modal-content" role="document">
+              <div class="custom-modal-header">
+                <div class="modal-title-wrapper">
+                  <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
+                </div>
+                <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
+              </div>
 
-<!-- Backdrop closes the modal when clicked -->
-<div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
+              <div class="custom-modal-body">
+                <form class="custom-form" novalidate (submit)="$event.preventDefault()">
+                  <div class="form-group-wrapper">
+                    <div class="custom-form-group">
+                      <div class="form-floating form-floating-outline mb-0 position-relative">
+                        <input type="text" id="picker-input" class="form-control branch-input"
+                          placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
+                          (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
+                        <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
 
-<!-- invisible fullscreen click-catcher while dropdown open -->
-<div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen=false"></div>
+                        <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
+                          aria-label="Toggle">
+                          <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+                        </button>
 
+                        <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
+                          <div class="dropdown-list">
+                            <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
+                              (click)="pickOption(opt)"
+                              [ngClass]="{ 'is-selected': pickerSelectedCode === opt.selectId }"
+                              style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;">
+                              <div>
+                                <div class="item-name text-sm font-medium">{{ opt.name }}</div>
+                                <div class="item-code text-xs text-muted">code: {{ opt.code }}</div>
+                              </div>
+                              <div class="text-sm" *ngIf="opt.pin">{{ opt.pin }}</div>
+                            </div>
 
+                            <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
+                              No {{ pickerTitle }} found
+                            </div>
+
+                            <div *ngIf="pickerLoading" class="dropdown-empty">Loading...</div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="custom-modal-footer">
+                <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
+                <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
+                  (click)="confirmPicker()">Continue</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
+        <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen=false"></div>
 
         <!-- STEP 3: Personal + Company/Firm conditional content -->
         <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
-
-          <!-- PERSONAL DETAILS: shown only for Individual -->
           <div *ngIf="accountType === '0'">
             <h4 class="mb-4 text-lg font-semibold">Personal Details</h4>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -493,10 +431,9 @@
           </div>
         </section>
 
-        <!-- STEP 4: Other Details -->
+        <!-- STEP 4: Other Details (omitted lengthy bits for brevity) -->
         <section id="panel-4" class="panel" data-step="4" role="tabpanel" aria-labelledby="step-4">
           <h4 class="mb-4 text-lg font-semibold">Other Details</h4>
-
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="form-floating form-floating-outline mb-0">
               <input type="text" class="form-control" id="officeName" placeholder="Office Name" />
@@ -559,8 +496,7 @@
               <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
                 <div class="text-sm font-semibold text-gray-800">Photo</div>
                 <div class="mt-3">
-                  <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')" class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
                     #photoInput data-key="photo">
                 </div>
                 <div class="mt-3">
@@ -690,7 +626,6 @@
               class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700">Finish</button>
           </div>
         </section>
-
       </div> <!-- /wizard-panels -->
     </div>
   </div>
@@ -739,21 +674,18 @@
 
 <!-- Styles -->
 <style>
-  /* Full-bleed card */
   .wizard-card {
     max-height: calc(110vh - 48px);
     width: 100%;
     max-width: none;
   }
 
-  /* Hide control radios */
   .wizard-state {
     position: absolute;
     opacity: 0;
     pointer-events: none;
   }
 
-  /* Show only the active wizard panel */
   .wizard-panels .panel {
     display: none;
   }
@@ -778,7 +710,6 @@
     display: block;
   }
 
-  /* Highlight current step */
   #step-1:checked~.wizard-steps label[for="step-1"],
   #step-2:checked~.wizard-steps label[for="step-2"],
   #step-3:checked~.wizard-steps label[for="step-3"],
@@ -795,7 +726,6 @@
     transition: all .18s ease;
   }
 
-  /* Small helper (allow flex children to shrink) */
   .min-w-0 {
     min-width: 0;
   }
