@@ -13,8 +13,14 @@ import { SidebarComponent } from '../../../shared/sidebar/sidebar.component';
 })
 export class LandingComponent {
   sidebarCollapsed = false;
+  navbarHidden = false; // <-- new
 
-  onToggleSidebar() {
+   onToggleSidebar() {
     this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
+  // new: receives hidden state from navbar
+  onNavbarHidden(hidden: boolean) {
+    this.navbarHidden = hidden;
   }
 }

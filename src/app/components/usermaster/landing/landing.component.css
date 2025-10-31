@@ -1,0 +1,9 @@
+/* When navbar is hidden by auto-hide, let the main content take its place */
+.layout-page.navbar-hidden {
+  margin-top: 12px !important; /* reduce the top gap so content moves up */
+}
+
+/* If you used margin-left logic for sidebar, keep it */
+.layout-page.navbar-hidden.full-width {
+  margin-left: 0;
+}

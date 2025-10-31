@@ -1,7 +1,21 @@
-<nav 
+<!-- Hotspot (invisible thin area at very top) - only active when autoHide is enabled -->
+<div
+  class="navbar-hotspot"
+  *ngIf="autoHide"
+  (mouseenter)="onHotspotEnter()"
+  (mouseleave)="onHotspotLeave()"
+  aria-hidden="true"
+></div>
+
+<nav
   class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme shadow-xs bg-white p-5 mt-3 no-print"
   id="layout-navbar"
-  [class.full-width]="isFullWidth">
+  [class.full-width]="isFullWidth"
+  [class.auto-hidden]="autoHide"
+  [class.hidden]="autoHide && !hovering"
+  (mouseenter)="onNavbarEnter()"
+  (mouseleave)="onNavbarLeave()"
+>
 
   <!-- Menu Toggle Button -->
   <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0">
@@ -11,6 +25,15 @@
             (click)="toggleSidebar.emit()">
       <i class="ri-menu-3-line ri-24px"></i>
     </button>
+  </div>
+
+  <!-- Auto-hide switch (small; placed next to toggle) -->
+  <div class="navbar-autohide-control ms-2 d-flex align-items-center">
+    <label class="autohide-switch" title="Auto-hide navbar">
+      <input type="checkbox" [(ngModel)]="autoHide" />
+      <span class="autohide-slider"></span>
+    </label>
+    <small class="ms-2 d-none d-md-inline">Auto-hide</small>
   </div>
 
   <div class="navbar-nav-right d-flex align-items-center no-print" id="navbar-collapse">

@@ -1,25 +1,33 @@
 import { Component, Output, EventEmitter, Input, OnDestroy, HostListener } from '@angular/core';
+
 import { AuthService } from '../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { interval, Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnDestroy {
   @Output() toggleSidebar = new EventEmitter<void>();
+  @Output() hiddenChange = new EventEmitter<boolean>(); 
   @Input() isFullWidth: boolean = false;
 
   user: any;
 
-  private totalSeconds = 20 * 60;            // 20 minutes
+  private totalSeconds = 20 * 60; // 20 minutes
   remainingSeconds = this.totalSeconds;
   private tickSub?: Subscription;
   private isLoggedOut = false;
+
+  // --- Auto-hide feature state ---
+  autoHide = false;          // whether auto-hide is enabled (controlled by switch)
+  hovering = false;          // true when mouse is over hotspot or navbar (keeps it shown)
 
   constructor(private auth: AuthService, private toster: ToastrService) {}
 
@@ -53,7 +61,6 @@ export class NavbarComponent implements OnDestroy {
     this.resetTimer();
   }
 
-
   private resetTimer() {
     this.remainingSeconds = this.totalSeconds;
   }
@@ -66,4 +73,39 @@ export class NavbarComponent implements OnDestroy {
   }
 
   private pad(n: number) { return n < 10 ? `0${n}` : `${n}`; }
+
+   // --- Auto-hide controls (hotspot and navbar mouse events call these) ---
+  onHotspotEnter() {
+    this.hovering = true;
+    this.emitHidden();
+  }
+  onHotspotLeave() {
+    this.hovering = false;
+    this.emitHidden();
+  }
+  onNavbarEnter() {
+    this.hovering = true;
+    this.emitHidden();
+  }
+  onNavbarLeave() {
+    this.hovering = false;
+    this.emitHidden();
+  }
+
+  toggleAutoHide() {
+    this.autoHide = !this.autoHide;
+    if (!this.autoHide) {
+      this.hovering = true;
+      setTimeout(()=> this.hovering = true, 0);
+    } else {
+      this.hovering = false;
+    }
+    this.emitHidden();
+  }
+
+  // send the current "hidden" boolean to parent (true means hidden)
+  private emitHidden() {
+    const hidden = this.autoHide && !this.hovering;
+    this.hiddenChange.emit(hidden);
+  }
 }
