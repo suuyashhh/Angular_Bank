@@ -191,13 +191,14 @@
 
 
 
-            <!-- Area (readonly) -->
+            <!-- Area (clickable -> opens Area picker) -->
             <div class="form-floating form-floating-outline mb-4">
               <input type="text" class="form-control" id="area" placeholder="Area" [value]="selectedAreaName" readonly
-                aria-label="Area (readonly)" />
+                (click)="openPicker('area')" aria-haspopup="dialog" aria-label="Select area" style="cursor:pointer" />
               <input type="hidden" id="AreaCode" name="AreaCode" [(ngModel)]="selectedAreaCode" />
               <label for="area">Area</label>
             </div>
+
 
             <!-- PinCode (readonly) -->
             <div class="form-floating form-floating-outline mb-4">
@@ -226,8 +227,7 @@
               class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
           </div>
         </section>
-
-        <!-- City modal (picker used only for cities) -->
+        <!-- Picker modal (used for City OR Area) -->
         <div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
           [style.display]="pickerOpen ? 'block' : 'none'">
           <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
@@ -244,29 +244,43 @@
                   <div class="form-group-wrapper">
                     <div class="custom-form-group">
                       <div class="form-floating form-floating-outline mb-0 position-relative">
+                        <!-- search input -->
                         <input type="text" id="picker-input" class="form-control branch-input"
                           placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
                           (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
-                        <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
+                        <label for="picker-input">
+                          <i class="ri-map-pin-line"></i> {{ pickerTitle }}
+                        </label>
 
+                        <!-- caret toggle -->
                         <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
                           aria-label="Toggle">
                           <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
                         </button>
 
+                        <!-- dropdown panel -->
                         <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
                           <div class="dropdown-list">
+
+                            <!-- list item: name (left) + pin (right). No 'code: ...' text -->
                             <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
                               (click)="pickOption(opt)"
-                              [ngClass]="{ 'is-selected': pickerSelectedCode === opt.selectId }"
+                              [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
                               style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;">
-                              <div>
-                                <div class="item-name text-sm font-medium">{{ opt.name }}</div>
-                                <div class="item-code text-xs text-muted">code: {{ opt.code }}</div>
+                              <div style="min-width:0">
+                                <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
                               </div>
-                              <div class="text-sm" *ngIf="opt.pin">{{ opt.pin }}</div>
+
+                              <!-- show pin or placeholder -->
+                              <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
+                                <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''; else noPin">
+                                  {{ opt.pin }}
+                                </ng-container>
+                                <ng-template #noPin>—</ng-template>
+                              </div>
                             </div>
 
+                            <!-- empty / loading states -->
                             <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
                               No {{ pickerTitle }} found
                             </div>
@@ -274,6 +288,7 @@
                             <div *ngIf="pickerLoading" class="dropdown-empty">Loading...</div>
                           </div>
                         </div>
+                        <!-- /dropdown panel -->
 
                       </div>
                     </div>
@@ -284,15 +299,20 @@
               <div class="custom-modal-footer">
                 <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
                 <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
-                  (click)="confirmPicker()">Continue</button>
+                  (click)="confirmPicker()">
+                  Continue
+                </button>
               </div>
-
             </div>
           </div>
         </div>
 
+        <!-- Backdrop closes the modal when clicked -->
         <div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
-        <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen=false"></div>
+
+        <!-- invisible fullscreen click-catcher while dropdown open -->
+        <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
+
 
         <!-- STEP 3: Personal + Company/Firm conditional content -->
         <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
@@ -496,7 +516,8 @@
               <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
                 <div class="text-sm font-semibold text-gray-800">Photo</div>
                 <div class="mt-3">
-                  <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')" class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
                     #photoInput data-key="photo">
                 </div>
                 <div class="mt-3">

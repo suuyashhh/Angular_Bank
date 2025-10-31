@@ -6,14 +6,14 @@ import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../services/loader.service';
 
-type PickerField = 'city';
+type PickerField = 'city' | 'area';
 type PreviewKey = 'photo' | 'sign' | 'pan' | 'aadhaarFront' | 'aadhaarBack';
 
 type Option = {
-  code: number;
-  name: string;
-  selectId?: number;
-  pin?: string;
+  code: number;         // numeric code if available (not shown in UI)
+  name: string;         // area/city name (display)
+  selectId?: number;    // unic id (used as primary)
+  pin?: string | null;  // pin code (string or null)
 };
 
 @Component({
@@ -27,13 +27,13 @@ export class PartymastComponent implements OnInit {
   // wizard
   accountType = '0'; // default individual
 
-  // picker (city)
+  // picker
   pickerOpen = false;
   pickerField: PickerField | null = null;
   pickerTitle = 'City';
   pickerOptions: Option[] = [];
   pickerOptionsFiltered: Option[] = [];
-  pickerSelectedCode: number | null = null; // stores selected city unic id
+  pickerSelectedCode: number | null = null; // selected option selectId (or code fallback)
   pickerSelectedName: string | null = null;
   pickerLoading = false;
   pickerSearch = '';
@@ -73,17 +73,16 @@ export class PartymastComponent implements OnInit {
   @ViewChild('aadhaarFrontInput') aadhaarFrontInput!: ElementRef<HTMLInputElement>;
   @ViewChild('aadhaarBackInput') aadhaarBackInput!: ElementRef<HTMLInputElement>;
 
-  constructor(private api: ApiService, private toastr: ToastrService, private loader:LoaderService) {}
+  constructor(private api: ApiService, private toastr: ToastrService, private loader: LoaderService) {}
 
   ngOnInit(): void {
-    // intentionally not preloading country/state/district/taluka
+    // intentionally not preloading countries/states/districts/talukas
   }
 
-  // ---------------- City picker methods ----------------
+  // ---------------- Picker open/close ----------------
   openPicker(field: PickerField) {
-    if (field !== 'city') return;
-    this.pickerField = 'city';
-    this.pickerTitle = 'City';
+    this.pickerField = field;
+    this.pickerTitle = field === 'city' ? 'City' : 'Area';
     this.pickerSearch = '';
     this.pickerSelectedCode = null;
     this.pickerSelectedName = null;
@@ -93,7 +92,12 @@ export class PartymastComponent implements OnInit {
     this.pickerOpen = true;
     this.dropdownOpen = false;
     document.body.style.overflow = 'hidden';
-    this.loadCityList();
+
+    if (field === 'city') {
+      this.loadCityList();
+    } else {
+      this.loadAreaList();
+    }
   }
 
   closePicker() {
@@ -109,6 +113,7 @@ export class PartymastComponent implements OnInit {
     document.body.style.overflow = '';
   }
 
+  // ---------------- Load cities ----------------
   private loadCityList() {
     this.pickerLoading = true;
     const apiUrl = `CityMaster/GetAllCities`;
@@ -119,8 +124,8 @@ export class PartymastComponent implements OnInit {
           const unic = Number(x.citY_UNIC_ID ?? x.CitY_UNIC_ID ?? 0);
           const code = Number(x.citY_CODE ?? x.CitY_CODE ?? 0);
           const name = String(x.citY_NAME ?? x.CitY_NAME ?? '').trim();
-          const pin = String(x.piN_CODE ?? x.PIN_CODE ?? x.piN_CODE ?? '').trim();
-          return { code, name, selectId: unic, pin };
+          const pin = x.piN_CODE ?? x.PIN_CODE ?? x.pin_code ?? null;
+          return { code, name, selectId: unic, pin: pin ? String(pin) : null };
         }).sort((a, b) => a.name.localeCompare(b.name));
 
         this.pickerOptions = mapped;
@@ -139,6 +144,48 @@ export class PartymastComponent implements OnInit {
     });
   }
 
+  // ---------------- Load areas (calls AreaMaster/GetAreaById with required codes) ----------------
+  private loadAreaList() {
+    // need country/state/district/taluka/city codes to call area API
+    if (!this.selectedCountryCode || !this.selectedStateCode || !this.selectedDistrictCode || !this.selectedTalukaCode || !this.selectedCityCode) {
+      this.pickerLoading = false;
+      this.pickerOptions = [];
+      this.pickerOptionsFiltered = [];
+      this.pickerOpen = true; // still show modal so user sees message
+      this.toastr.error('Please select a City first (so we have Country/State/District/Taluka/City codes).');
+      return;
+    }
+
+    this.pickerLoading = true;
+    const apiUrl = `AreaMaster/GetAreaById?countryCode=${this.selectedCountryCode}&stateCode=${this.selectedStateCode}&distCode=${this.selectedDistrictCode}&talukaCode=${this.selectedTalukaCode}&cityCode=${this.selectedCityCode}`;
+
+    this.api.get(apiUrl).subscribe({
+      next: (res: any) => {
+        const list: any[] = Array.isArray(res) ? res : (Array.isArray(res?.data) ? res.data : Object.values(res || {}));
+        const mapped: Option[] = (list || []).map(x => {
+          const selectId = Number(x.areA_CODE ?? x.AREA_CODE ?? x.areA_CODE ?? 0);
+          const name = String(x.areA_NAME ?? x.AREA_NAME ?? x.name ?? '').trim();
+          const pin = x.piN_CODE ?? x.PIN_CODE ?? x.pin_code ?? null;
+          return { code: selectId, name, selectId: selectId, pin: pin ? String(pin) : null };
+        }).sort((a, b) => a.name.localeCompare(b.name));
+
+        this.pickerOptions = mapped;
+        this.pickerOptionsFiltered = [...this.pickerOptions];
+        this.pickerLoading = false;
+        this.dropdownOpen = true;
+      },
+      error: (err: any) => {
+        console.error('Error loading areas', err);
+        this.pickerOptions = [];
+        this.pickerOptionsFiltered = [];
+        this.pickerLoading = false;
+        this.dropdownOpen = false;
+        this.toastr.error('Unable to load areas. Please try again.');
+      }
+    });
+  }
+
+  // ---------------- Search/filter ----------------
   onSearchChange() {
     const q = (this.pickerSearch || '').toLowerCase().trim();
     if (!q) {
@@ -147,9 +194,8 @@ export class PartymastComponent implements OnInit {
     }
     this.pickerOptionsFiltered = this.pickerOptions.filter(o =>
       (o.name || '').toLowerCase().includes(q) ||
-      String(o.code).includes(q) ||
-      String(o.selectId ?? '').includes(q) ||
-      (o.pin || '').includes(q)
+      (o.pin || '').includes(q) ||
+      String(o.selectId ?? '').includes(q)
     );
   }
 
@@ -165,52 +211,77 @@ export class PartymastComponent implements OnInit {
     this.dropdownOpen = false;
   }
 
+  // ---------------- Confirm picker (city OR area) ----------------
   confirmPicker() {
-    this.loader.show();
     if (!this.pickerField || !this.pickerSelectedCode) return;
-    const cityUnicId = Number(this.pickerSelectedCode);
-    const depApi = `CityMaster/GetDependencyByCityId?cityUnicId=${cityUnicId}`;
 
-    this.api.get(depApi).subscribe({
-      next: (res: any) => {
-        if (!res) {
-          this.toastr.error('No dependency data returned for selected city.');
-          this.closePicker();
-          return;
-        }
-
-        const resp: any = res;
-        this.selectedCityUnicId = Number(resp.citY_UNIC_ID ?? resp.CitY_UNIC_ID ?? resp.city_unic_id ?? cityUnicId);
-        this.selectedCityCode = Number(resp.citY_CODE ?? resp.CitY_CODE ?? resp.city_code ?? 0);
-        this.selectedCityName = String(resp.citY_NAME ?? resp.CitY_NAME ?? resp.city_name ?? this.pickerSelectedName ?? '').trim();
-
-        this.selectedCountryCode = Number(resp.countrY_CODE ?? resp.COUNTRy_CODE ?? resp.country_code ?? 0);
-        this.selectedCountryName = String(resp.countrY_NAME ?? resp.COUNTRy_NAME ?? resp.country_name ?? '').trim();
-
-        this.selectedStateCode = Number(resp.statE_CODE ?? resp.STATe_CODE ?? resp.state_code ?? 0);
-        this.selectedStateName = String(resp.statE_NAME ?? resp.statE_NAME ?? resp.state_name ?? '').trim();
-
-        this.selectedDistrictCode = Number(resp.disT_CODE ?? resp.DIST_CODE ?? resp.dist_code ?? 0);
-        this.selectedDistrictName = String(resp.disT_NAME ?? resp.disT_NAME ?? resp.dist_name ?? '').trim();
-
-        this.selectedTalukaCode = Number(resp.talukA_CODE ?? resp.TALUKA_CODE ?? resp.taluka_code ?? 0);
-        this.selectedTalukaName = String(resp.talukA_NAME ?? resp.talukA_NAME ?? resp.taluka_name ?? '').trim();
-
-        this.selectedAreaCode = Number(resp.areA_CODE ?? resp.AREA_CODE ?? resp.area_code ?? 0);
-        this.selectedAreaName = String(resp.areA_NAME ?? resp.AREA_NAME ?? resp.area_name ?? '').trim();
-
-        this.selectedPincode = String(resp.piN_CODE ?? resp.PIN_CODE ?? resp.pin_code ?? '').trim();
-
-        this.toastr.success('City selected and address fields updated.');
+    // AREA selection: we already fetched list -> take selected option and update area + pincode
+    if (this.pickerField === 'area') {
+      const selected = this.pickerOptions.find(o => (o.selectId ?? o.code) === this.pickerSelectedCode);
+      if (!selected) {
+        this.toastr.error('Selected area not found.');
         this.closePicker();
-        this.loader.hide();
-      },
-      error: (err: any) => {
-        console.error('Error fetching city dependency', err);
-        this.toastr.error('Unable to fetch city details. Please try again.');
-        this.closePicker();
+        return;
       }
-    });
+
+      this.selectedAreaCode = Number(selected.selectId ?? selected.code ?? 0);
+      this.selectedAreaName = selected.name ?? '';
+      this.selectedPincode = String(selected.pin ?? '').trim();
+
+      this.toastr.success('Area selected and pincode updated.');
+      this.closePicker();
+      return;
+    }
+
+    // CITY selection: call dependency API (unchanged)
+    if (this.pickerField === 'city') {
+      this.loader.show();
+      const cityUnicId = Number(this.pickerSelectedCode);
+      const depApi = `CityMaster/GetDependencyByCityId?cityUnicId=${cityUnicId}`;
+
+      this.api.get(depApi).subscribe({
+        next: (res: any) => {
+          if (!res) {
+            this.toastr.error('No dependency data returned for selected city.');
+            this.closePicker();
+            this.loader.hide();
+            return;
+          }
+
+          const resp: any = res;
+          this.selectedCityUnicId = Number(resp.citY_UNIC_ID ?? resp.CitY_UNIC_ID ?? resp.city_unic_id ?? cityUnicId);
+          this.selectedCityCode = Number(resp.citY_CODE ?? resp.CitY_CODE ?? resp.city_code ?? 0);
+          this.selectedCityName = String(resp.citY_NAME ?? resp.CitY_NAME ?? resp.city_name ?? this.pickerSelectedName ?? '').trim();
+
+          this.selectedCountryCode = Number(resp.countrY_CODE ?? resp.COUNTRy_CODE ?? resp.country_code ?? 0);
+          this.selectedCountryName = String(resp.countrY_NAME ?? resp.COUNTRy_NAME ?? resp.country_name ?? '').trim();
+
+          this.selectedStateCode = Number(resp.statE_CODE ?? resp.STATe_CODE ?? resp.state_code ?? 0);
+          this.selectedStateName = String(resp.statE_NAME ?? resp.statE_NAME ?? resp.state_name ?? '').trim();
+
+          this.selectedDistrictCode = Number(resp.disT_CODE ?? resp.DIST_CODE ?? resp.dist_code ?? 0);
+          this.selectedDistrictName = String(resp.disT_NAME ?? resp.disT_NAME ?? resp.dist_name ?? '').trim();
+
+          this.selectedTalukaCode = Number(resp.talukA_CODE ?? resp.TALUKA_CODE ?? resp.taluka_code ?? 0);
+          this.selectedTalukaName = String(resp.talukA_NAME ?? resp.talukA_NAME ?? resp.taluka_name ?? '').trim();
+
+          // keep area blank — user must pick area separately
+          this.selectedAreaCode = null;
+          this.selectedAreaName = '';
+          this.selectedPincode = String(resp.piN_CODE ?? resp.PIN_CODE ?? resp.pin_code ?? '').trim(); // if API returns a city-level pin, will set; else area selection will overwrite
+
+          this.toastr.success('City selected and address fields updated.');
+          this.closePicker();
+          this.loader.hide();
+        },
+        error: (err: any) => {
+          console.error('Error fetching city dependency', err);
+          this.toastr.error('Unable to fetch city details. Please try again.');
+          this.closePicker();
+          this.loader.hide();
+        }
+      });
+    }
   }
 
   trackByCode(_: number, item: { code: number; selectId?: number }) {
@@ -223,7 +294,6 @@ export class PartymastComponent implements OnInit {
     const file = input?.files?.[0];
     if (!file) return;
 
-    // read as data URL for preview
     const reader = new FileReader();
     reader.onload = () => {
       this.previews[key] = reader.result as string;
@@ -252,7 +322,6 @@ export class PartymastComponent implements OnInit {
     const key = this.activeKey;
     this.previews[key] = null;
 
-    // clear corresponding file input element
     try {
       switch (key) {
         case 'photo': if (this.photoInput?.nativeElement) this.photoInput.nativeElement.value = ''; break;
