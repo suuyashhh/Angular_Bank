@@ -245,12 +245,11 @@
                     <div class="custom-form-group">
                       <div class="form-floating form-floating-outline mb-0 position-relative">
                         <!-- search input -->
-                        <input type="text" id="picker-input" class="form-control branch-input"
+                        <input type="text" id="picker-input" #pickerSearchInput class="form-control branch-input"
                           placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
                           (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
-                        <label for="picker-input">
-                          <i class="ri-map-pin-line"></i> {{ pickerTitle }}
-                        </label>
+                        <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
+
 
                         <!-- caret toggle -->
                         <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
@@ -644,7 +643,7 @@
             <label for="step-4"
               class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
             <button type="button"
-              class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700">Finish</button>
+              class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700">Save</button>
           </div>
         </section>
       </div> <!-- /wizard-panels -->
