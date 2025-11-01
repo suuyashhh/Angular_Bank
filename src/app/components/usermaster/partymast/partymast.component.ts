@@ -6,15 +6,15 @@ import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../services/loader.service';
 
-type PickerField = 'city' | 'area';
+type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation';
 type PickerTarget = 'primary' | 'corr';
 type PreviewKey = 'photo' | 'sign' | 'pan' | 'aadhaarFront' | 'aadhaarBack';
 
 type Option = {
-  code: number;                 // numeric code if available
-  name: string;                 // display name
-  selectId?: number;            // primary id/unic id
-  pin?: string | null;          // pincode string or null
+  code: number;
+  name: string;
+  selectId?: number;
+  pin?: string | null;
 };
 
 @Component({
@@ -25,20 +25,23 @@ type Option = {
   styleUrls: ['./partymast.component.css']
 })
 export class PartymastComponent implements OnInit {
-  // ----- general fields -----
+
+  // ---------- general ----------
   accountType = '0';
 
-  // corresponding address toggle + fields
+  // Corresponding address toggle
   useDifferentCorresponding = false;
+
+  // Corresponding address fields
   corrAddrLine1 = '';
   corrAddrLine2 = '';
   corrAddrLine3 = '';
 
-  // ----- picker state -----
+  // ---------- Picker State ----------
   pickerOpen = false;
   pickerField: PickerField | null = null;
-  pickerTarget: PickerTarget = 'primary'; // current target for picker
-  pickerTitle = 'City';
+  pickerTarget: PickerTarget = 'primary';
+  pickerTitle = '';
   pickerOptions: Option[] = [];
   pickerOptionsFiltered: Option[] = [];
   pickerSelectedCode: number | null = null;
@@ -47,7 +50,7 @@ export class PartymastComponent implements OnInit {
   pickerSearch = '';
   dropdownOpen = false;
 
-  // ----- primary address fields (readonly visible + hidden codes via ngModel) -----
+  // ---------- Primary Address ----------
   selectedCountryCode: number | null = null;
   selectedCountryName = '';
   selectedStateCode: number | null = null;
@@ -63,7 +66,7 @@ export class PartymastComponent implements OnInit {
   selectedAreaName = '';
   selectedPincode = '';
 
-  // ----- corresponding address fields (separate) -----
+  // ---------- Corresponding Address ----------
   corrCityName = '';
   corrSelectedCityCode: number | null = null;
   corrSelectedCityUnicId: number | null = null;
@@ -79,7 +82,15 @@ export class PartymastComponent implements OnInit {
   corrAreaName = '';
   corrPincode = '';
 
-  // ----- file previews & preview modal -----
+  // ---------- Religion / Caste / Occupation ----------
+  religionName = '';
+  religionCode: number | null = null;
+  castName = '';
+  castCode: number | null = null;
+  occupationName = '';
+  occupationCode: number | null = null;
+
+  // ---------- File Previews ----------
   previews: Record<PreviewKey, string | null> = {
     photo: null,
     sign: null,
@@ -90,28 +101,26 @@ export class PartymastComponent implements OnInit {
   activeKey: PreviewKey | null = null;
   modalOpen = false;
 
-  // ----- template refs -----
+  // ---------- Template Refs ----------
   @ViewChild('photoInput') photoInput!: ElementRef<HTMLInputElement>;
   @ViewChild('signInput') signInput!: ElementRef<HTMLInputElement>;
   @ViewChild('panInput') panInput!: ElementRef<HTMLInputElement>;
   @ViewChild('aadhaarFrontInput') aadhaarFrontInput!: ElementRef<HTMLInputElement>;
   @ViewChild('aadhaarBackInput') aadhaarBackInput!: ElementRef<HTMLInputElement>;
-
-  // search input ref in picker modal - used for autofocus
+   // search input ref in picker modal - used for autofocus
   @ViewChild('pickerSearchInput') pickerSearchInput!: ElementRef<HTMLInputElement>;
 
-  constructor(private api: ApiService, private toastr: ToastrService, private loader: LoaderService) {}
+  constructor(
+    private api: ApiService,
+    private toastr: ToastrService,
+    private loader: LoaderService
+  ) {}
 
-  ngOnInit(): void {
-    // Preload or debug calls as needed
-  }
+  ngOnInit(): void {}
 
-  /**
-   * Open the picker modal for city or area, and for the given target ('primary' or 'corr').
-   * If opening area, ensure required codes exist for that target.
-   */
+  // ---------- Picker Handling ----------
   openPicker(field: PickerField, target: PickerTarget = 'primary') {
-    // If opening area, ensure required codes exist for that target
+      // If opening area, ensure required codes exist for that target
     if (field === 'area') {
       const missing = target === 'primary'
         ? (this.selectedCountryCode == null || this.selectedStateCode == null || this.selectedDistrictCode == null || this.selectedTalukaCode == null || this.selectedCityCode == null)
@@ -122,11 +131,9 @@ export class PartymastComponent implements OnInit {
         return;
       }
     }
-
-    // prepare modal
     this.pickerField = field;
     this.pickerTarget = target;
-    this.pickerTitle = field === 'city' ? 'City' : 'Area';
+    this.pickerTitle = this.getPickerTitle(field);
     this.pickerSearch = '';
     this.pickerSelectedCode = null;
     this.pickerSelectedName = null;
@@ -137,15 +144,28 @@ export class PartymastComponent implements OnInit {
     this.dropdownOpen = false;
     document.body.style.overflow = 'hidden';
 
-    // load list
-    if (field === 'city') this.loadCityList();
-    else this.loadAreaList();
+    switch (field) {
+      case 'city': this.loadCityList(); break;
+      case 'area': this.loadAreaList(); break;
+      case 'religion': this.loadReligionList(); break;
+      case 'cast': this.loadCastList(); break;
+      case 'occupation': this.loadOccupationList(); break;
+    }
 
-    // autofocus search input after modal DOM available
     setTimeout(() => {
-      try { this.pickerSearchInput?.nativeElement?.focus(); }
-      catch (e) { /* ignore if not present */ }
+      try { this.pickerSearchInput?.nativeElement?.focus(); } catch {}
     }, 0);
+  }
+
+  private getPickerTitle(field: PickerField): string {
+    switch (field) {
+      case 'city': return 'City';
+      case 'area': return 'Area';
+      case 'religion': return 'Religion';
+      case 'cast': return 'Caste';
+      case 'occupation': return 'Occupation';
+      default: return '';
+    }
   }
 
   closePicker() {
@@ -161,8 +181,8 @@ export class PartymastComponent implements OnInit {
     document.body.style.overflow = '';
   }
 
-  // ---------------- Load city list ----------------
-  private loadCityList() {
+  // ---------- API LOADERS ----------
+private loadCityList() {
     this.pickerLoading = true;
     const apiUrl = `CityMaster/GetAllCities`;
     this.api.get(apiUrl).subscribe({
@@ -231,6 +251,70 @@ export class PartymastComponent implements OnInit {
     });
   }
 
+  private loadReligionList() {
+    this.pickerLoading = true;
+    this.api.get('ReligionMaster/GetAllReligion').subscribe({
+      next: (res: any) => {
+        const list = Array.isArray(res) ? res : Object.values(res || {});
+        const mapped: Option[] = list.map(x => ({
+          code: Number(x.religioN_CODE ?? 0),
+          name: String(x.religioN_NAME ?? '').trim()
+        }));
+        this.pickerOptions = mapped;
+        this.pickerOptionsFiltered = [...mapped];
+        this.pickerLoading = false;
+        this.dropdownOpen = true;
+      },
+      error: () => {
+        this.toastr.error('Failed to load religions.');
+        this.pickerLoading = false;
+      }
+    });
+  }
+
+  private loadCastList() {
+    this.pickerLoading = true;
+    this.api.get('CastMaster/GetAllCast').subscribe({
+      next: (res: any) => {
+        const list = Array.isArray(res) ? res : Object.values(res || {});
+        const mapped: Option[] = list.map(x => ({
+          code: Number(x.casT_CODE ?? 0),
+          name: String(x.casT_NAME ?? '').trim()
+        }));
+        this.pickerOptions = mapped;
+        this.pickerOptionsFiltered = [...mapped];
+        this.pickerLoading = false;
+        this.dropdownOpen = true;
+      },
+      error: () => {
+        this.toastr.error('Failed to load cast list.');
+        this.pickerLoading = false;
+      }
+    });
+  }
+
+  private loadOccupationList() {
+    this.pickerLoading = true;
+    this.api.get('OccupationMaster/GetAllOccupations').subscribe({
+      next: (res: any) => {
+        const list = Array.isArray(res) ? res : Object.values(res || {});
+        const mapped: Option[] = list.map(x => ({
+          code: Number(x.occuP_CODE ?? 0),
+          name: String(x.occuP_NAME ?? '').trim()
+        }));
+        this.pickerOptions = mapped;
+        this.pickerOptionsFiltered = [...mapped];
+        this.pickerLoading = false;
+        this.dropdownOpen = true;
+      },
+      error: () => {
+        this.toastr.error('Failed to load occupations.');
+        this.pickerLoading = false;
+      }
+    });
+  }
+
+  // ---------- Search ----------
   onSearchChange() {
     const q = (this.pickerSearch || '').toLowerCase().trim();
     if (!q) {
@@ -256,120 +340,148 @@ export class PartymastComponent implements OnInit {
     this.dropdownOpen = false;
   }
 
-  /**
-   * confirmPicker: finalizes the selection for the current pickerField and pickerTarget.
-   * - city => fetch dependency and populate (country/state/district/taluka/city codes & names) for target
-   * - area => set area + pincode for target
-   */
+  // ---------- Confirm Selection ----------
   confirmPicker() {
-    if (!this.pickerField || !this.pickerSelectedCode) return;
+  if (!this.pickerField || !this.pickerSelectedCode) return;
 
-    // AREA selection: we already fetched list -> update area + pincode for the chosen target
-    if (this.pickerField === 'area') {
-      const selected = this.pickerOptions.find(o => (o.selectId ?? o.code) === this.pickerSelectedCode);
-      if (!selected) {
-        this.toastr.error('Selected area not found.');
-        this.closePicker();
-        return;
-      }
-
-      if (this.pickerTarget === 'primary') {
-        this.selectedAreaCode = Number(selected.selectId ?? selected.code ?? 0);
-        this.selectedAreaName = selected.name ?? '';
-        this.selectedPincode = String(selected.pin ?? '').trim();
-      } else { // corr
-        this.corrSelectedAreaCode = Number(selected.selectId ?? selected.code ?? 0);
-        this.corrAreaName = selected.name ?? '';
-        this.corrPincode = String(selected.pin ?? '').trim();
-      }
-
-      this.toastr.success('Area selected and pincode updated.');
+  // -------------------- AREA --------------------
+  if (this.pickerField === 'area') {
+    const selected = this.pickerOptions.find(o => (o.selectId ?? o.code) === this.pickerSelectedCode);
+    if (!selected) {
+      this.toastr.error('Selected area not found.');
       this.closePicker();
       return;
     }
 
-    // CITY selection: call dependency API and populate dependent fields for chosen target
-    if (this.pickerField === 'city') {
-      this.loader.show();
-      const cityUnicId = Number(this.pickerSelectedCode);
-      const depApi = `CityMaster/GetDependencyByCityId?cityUnicId=${cityUnicId}`;
-
-      this.api.get(depApi).subscribe({
-        next: (res: any) => {
-          if (!res) {
-            this.toastr.error('No dependency data returned for selected city.');
-            this.closePicker();
-            this.loader.hide();
-            return;
-          }
-
-          const resp: any = res;
-
-          if (this.pickerTarget === 'primary') {
-            this.selectedCityUnicId = Number(resp.citY_UNIC_ID ?? resp.CitY_UNIC_ID ?? resp.city_unic_id ?? cityUnicId);
-            this.selectedCityCode = resp.citY_CODE ?? resp.CitY_CODE ?? resp.city_code ?? null;
-            this.selectedCityName = String(resp.citY_NAME ?? resp.CitY_NAME ?? resp.city_name ?? this.pickerSelectedName ?? '').trim();
-
-            this.selectedCountryCode = resp.countrY_CODE ?? resp.COUNTRy_CODE ?? resp.country_code ?? null;
-            this.selectedCountryName = String(resp.countrY_NAME ?? resp.COUNTRy_NAME ?? resp.country_name ?? '').trim();
-
-            this.selectedStateCode = resp.statE_CODE ?? resp.STATe_CODE ?? resp.state_code ?? null;
-            this.selectedStateName = String(resp.statE_NAME ?? resp.statE_NAME ?? resp.state_name ?? '').trim();
-
-            this.selectedDistrictCode = resp.disT_CODE ?? resp.DIST_CODE ?? resp.dist_code ?? null;
-            this.selectedDistrictName = String(resp.disT_NAME ?? resp.disT_NAME ?? resp.dist_name ?? '').trim();
-
-            this.selectedTalukaCode = resp.talukA_CODE ?? resp.TALUKA_CODE ?? resp.taluka_code ?? null;
-            this.selectedTalukaName = String(resp.talukA_NAME ?? resp.talukA_NAME ?? resp.taluka_name ?? '').trim();
-
-            // keep area blank — user must pick area separately
-            this.selectedAreaCode = null;
-            this.selectedAreaName = '';
-            // set city-level pincode if returned; area selection will overwrite
-            this.selectedPincode = String(resp.piN_CODE ?? resp.PIN_CODE ?? resp.pin_code ?? '').trim();
-          } else { // corr target
-            this.corrSelectedCityUnicId = Number(resp.citY_UNIC_ID ?? resp.CitY_UNIC_ID ?? resp.city_unic_id ?? cityUnicId);
-            this.corrSelectedCityCode = resp.citY_CODE ?? resp.CitY_CODE ?? resp.city_code ?? null;
-            this.corrCityName = String(resp.citY_NAME ?? resp.CitY_NAME ?? resp.city_name ?? this.pickerSelectedName ?? '').trim();
-
-            this.corrSelectedCountryCode = resp.countrY_CODE ?? resp.COUNTRy_CODE ?? resp.country_code ?? null;
-            this.corrCountryName = String(resp.countrY_NAME ?? resp.COUNTRy_NAME ?? resp.country_name ?? '').trim();
-
-            this.corrSelectedStateCode = resp.statE_CODE ?? resp.STATe_CODE ?? resp.state_code ?? null;
-            this.corrStateName = String(resp.statE_NAME ?? resp.statE_NAME ?? resp.state_name ?? '').trim();
-
-            this.corrSelectedDistrictCode = resp.disT_CODE ?? resp.DIST_CODE ?? resp.dist_code ?? null;
-            this.corrDistrictName = String(resp.disT_NAME ?? resp.disT_NAME ?? resp.dist_name ?? '').trim();
-
-            this.corrSelectedTalukaCode = resp.talukA_CODE ?? resp.TALUKA_CODE ?? resp.taluka_code ?? null;
-            this.corrTalukaName = String(resp.talukA_NAME ?? resp.talukA_NAME ?? resp.taluka_name ?? '').trim();
-
-            // keep corr area blank — user must pick area separately
-            this.corrSelectedAreaCode = null;
-            this.corrAreaName = '';
-            // set city-level pincode if returned; area selection will overwrite
-            this.corrPincode = String(resp.piN_CODE ?? resp.PIN_CODE ?? resp.pin_code ?? '').trim();
-          }
-
-          this.toastr.success('City selected and address fields updated.');
-          this.closePicker();
-          this.loader.hide();
-        },
-        error: (err: any) => {
-          console.error('Error fetching city dependency', err);
-          this.toastr.error('Unable to fetch city details. Please try again.');
-          this.closePicker();
-          this.loader.hide();
-        }
-      });
+    if (this.pickerTarget === 'primary') {
+      this.selectedAreaCode = Number(selected.selectId ?? selected.code ?? 0);
+      this.selectedAreaName = selected.name ?? '';
+      this.selectedPincode = String(selected.pin ?? '').trim();
+    } else { // corr
+      this.corrSelectedAreaCode = Number(selected.selectId ?? selected.code ?? 0);
+      this.corrAreaName = selected.name ?? '';
+      this.corrPincode = String(selected.pin ?? '').trim();
     }
+
+    this.toastr.success('Area selected and pincode updated.');
+    this.closePicker();
+    return;
   }
+
+  // -------------------- CITY --------------------
+  if (this.pickerField === 'city') {
+    this.loader.show();
+    const cityUnicId = Number(this.pickerSelectedCode);
+    const depApi = `CityMaster/GetDependencyByCityId?cityUnicId=${cityUnicId}`;
+
+    this.api.get(depApi).subscribe({
+      next: (res: any) => {
+        if (!res) {
+          this.toastr.error('No dependency data returned for selected city.');
+          this.closePicker();
+          this.loader.hide();
+          return;
+        }
+
+        const resp: any = res;
+
+        if (this.pickerTarget === 'primary') {
+          this.selectedCityUnicId = Number(resp.citY_UNIC_ID ?? resp.CitY_UNIC_ID ?? resp.city_unic_id ?? cityUnicId);
+          this.selectedCityCode = resp.citY_CODE ?? resp.CitY_CODE ?? resp.city_code ?? null;
+          this.selectedCityName = String(resp.citY_NAME ?? resp.CitY_NAME ?? resp.city_name ?? this.pickerSelectedName ?? '').trim();
+
+          this.selectedCountryCode = resp.countrY_CODE ?? resp.COUNTRy_CODE ?? resp.country_code ?? null;
+          this.selectedCountryName = String(resp.countrY_NAME ?? resp.COUNTRy_NAME ?? resp.country_name ?? '').trim();
+
+          this.selectedStateCode = resp.statE_CODE ?? resp.STATe_CODE ?? resp.state_code ?? null;
+          this.selectedStateName = String(resp.statE_NAME ?? resp.statE_NAME ?? resp.state_name ?? '').trim();
+
+          this.selectedDistrictCode = resp.disT_CODE ?? resp.DIST_CODE ?? resp.dist_code ?? null;
+          this.selectedDistrictName = String(resp.disT_NAME ?? resp.disT_NAME ?? resp.dist_name ?? '').trim();
+
+          this.selectedTalukaCode = resp.talukA_CODE ?? resp.TALUKA_CODE ?? resp.taluka_code ?? null;
+          this.selectedTalukaName = String(resp.talukA_NAME ?? resp.talukA_NAME ?? resp.taluka_name ?? '').trim();
+
+          // keep area blank — user must pick area separately
+          this.selectedAreaCode = null;
+          this.selectedAreaName = '';
+          // set city-level pincode if returned; area selection will overwrite
+          this.selectedPincode = String(resp.piN_CODE ?? resp.PIN_CODE ?? resp.pin_code ?? '').trim();
+        } else { // corr target
+          this.corrSelectedCityUnicId = Number(resp.citY_UNIC_ID ?? resp.CitY_UNIC_ID ?? resp.city_unic_id ?? cityUnicId);
+          this.corrSelectedCityCode = resp.citY_CODE ?? resp.CitY_CODE ?? resp.city_code ?? null;
+          this.corrCityName = String(resp.citY_NAME ?? resp.CitY_NAME ?? resp.city_name ?? this.pickerSelectedName ?? '').trim();
+
+          this.corrSelectedCountryCode = resp.countrY_CODE ?? resp.COUNTRy_CODE ?? resp.country_code ?? null;
+          this.corrCountryName = String(resp.countrY_NAME ?? resp.COUNTRy_NAME ?? resp.country_name ?? '').trim();
+
+          this.corrSelectedStateCode = resp.statE_CODE ?? resp.STATe_CODE ?? resp.state_code ?? null;
+          this.corrStateName = String(resp.statE_NAME ?? resp.statE_NAME ?? resp.state_name ?? '').trim();
+
+          this.corrSelectedDistrictCode = resp.disT_CODE ?? resp.DIST_CODE ?? resp.dist_code ?? null;
+          this.corrDistrictName = String(resp.disT_NAME ?? resp.disT_NAME ?? resp.dist_name ?? '').trim();
+
+          this.corrSelectedTalukaCode = resp.talukA_CODE ?? resp.TALUKA_CODE ?? resp.taluka_code ?? null;
+          this.corrTalukaName = String(resp.talukA_NAME ?? resp.talukA_NAME ?? resp.taluka_name ?? '').trim();
+
+          // keep corr area blank — user must pick area separately
+          this.corrSelectedAreaCode = null;
+          this.corrAreaName = '';
+          // set city-level pincode if returned; area selection will overwrite
+          this.corrPincode = String(resp.piN_CODE ?? resp.PIN_CODE ?? resp.pin_code ?? '').trim();
+        }
+
+        this.toastr.success('City selected and address fields updated.');
+        this.closePicker();
+        this.loader.hide();
+      },
+      error: (err: any) => {
+        console.error('Error fetching city dependency', err);
+        this.toastr.error('Unable to fetch city details. Please try again.');
+        this.closePicker();
+        this.loader.hide();
+      }
+    });
+
+    return;
+  }
+
+  // -------------------- RELIGION / CAST / OCCUPATION --------------------
+  // These types simply return code + name from their respective APIs (already loaded into pickerOptions)
+  switch (this.pickerField) {
+    case 'religion':
+      this.religionCode = Number(this.pickerSelectedCode);
+      this.religionName = this.pickerSelectedName ?? '';
+      this.toastr.success('Religion selected.');
+      break;
+
+    case 'cast':
+      this.castCode = Number(this.pickerSelectedCode);
+      this.castName = this.pickerSelectedName ?? '';
+      this.toastr.success('Caste selected.');
+      break;
+
+    case 'occupation':
+      this.occupationCode = Number(this.pickerSelectedCode);
+      this.occupationName = this.pickerSelectedName ?? '';
+      this.toastr.success('Occupation selected.');
+      break;
+
+    default:
+      // unknown picker field (shouldn't happen)
+      console.warn('confirmPicker: unknown pickerField', this.pickerField);
+      break;
+  }
+
+  this.closePicker();
+}
 
   trackByCode(_: number, item: { code: number; selectId?: number }) {
     return item.selectId ?? item.code;
   }
 
-  // file preview helpers
+
+  // ---------- Preview Handlers ----------
   onFileChange(event: Event, key: PreviewKey) {
     const input = event.target as HTMLInputElement | null;
     const file = input?.files?.[0];

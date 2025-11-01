@@ -427,20 +427,36 @@
           <div *ngIf="accountType === '0'">
             <h4 class="mb-4 text-lg font-semibold">Personal Details</h4>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="religionCode" placeholder="Religion Code" />
-                <label for="religionCode">Religion Code</label>
-              </div>
+             <!-- Religion -->
+<div class="form-floating form-floating-outline mb-0">
+  <input type="text" class="form-control" id="religionCode"
+         placeholder="Religion Code"
+         [value]="religionName" readonly
+         (click)="openPicker('religion')" style="cursor:pointer" />
+  <input type="hidden" name="religionCode" [(ngModel)]="religionCode" />
+  <label for="religionCode">Religion</label>
+</div>
 
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="castCode" placeholder="Cast Code" />
-                <label for="castCode">Cast Code</label>
-              </div>
+<!-- Cast -->
+<div class="form-floating form-floating-outline mb-0">
+  <input type="text" class="form-control" id="castCode"
+         placeholder="Cast Code"
+         [value]="castName" readonly
+         (click)="openPicker('cast')" style="cursor:pointer" />
+  <input type="hidden" name="castCode" [(ngModel)]="castCode" />
+  <label for="castCode">Caste</label>
+</div>
 
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="occupation" placeholder="Occupation" />
-                <label for="occupation">Occupation</label>
-              </div>
+<!-- Occupation -->
+<div class="form-floating form-floating-outline mb-0">
+  <input type="text" class="form-control" id="occupation"
+         placeholder="Occupation"
+         [value]="occupationName" readonly
+         (click)="openPicker('occupation')" style="cursor:pointer" />
+  <input type="hidden" name="occupationCode" [(ngModel)]="occupationCode" />
+  <label for="occupation">Occupation</label>
+</div>
+
 
               <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
                 <input type="text" class="form-control" id="passportNo" placeholder="Passport No." />
