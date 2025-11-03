@@ -427,35 +427,29 @@
           <div *ngIf="accountType === '0'">
             <h4 class="mb-4 text-lg font-semibold">Personal Details</h4>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-             <!-- Religion -->
-<div class="form-floating form-floating-outline mb-0">
-  <input type="text" class="form-control" id="religionCode"
-         placeholder="Religion Code"
-         [value]="religionName" readonly
-         (click)="openPicker('religion')" style="cursor:pointer" />
-  <input type="hidden" name="religionCode" [(ngModel)]="religionCode" />
-  <label for="religionCode">Religion</label>
-</div>
+              <!-- Religion -->
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="religionCode" placeholder="Religion Code"
+                  [value]="religionName" readonly (click)="openPicker('religion')" style="cursor:pointer" />
+                <input type="hidden" name="religionCode" [(ngModel)]="religionCode" />
+                <label for="religionCode">Religion</label>
+              </div>
 
-<!-- Cast -->
-<div class="form-floating form-floating-outline mb-0">
-  <input type="text" class="form-control" id="castCode"
-         placeholder="Cast Code"
-         [value]="castName" readonly
-         (click)="openPicker('cast')" style="cursor:pointer" />
-  <input type="hidden" name="castCode" [(ngModel)]="castCode" />
-  <label for="castCode">Caste</label>
-</div>
+              <!-- Cast -->
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="castCode" placeholder="Cast Code" [value]="castName"
+                  readonly (click)="openPicker('cast')" style="cursor:pointer" />
+                <input type="hidden" name="castCode" [(ngModel)]="castCode" />
+                <label for="castCode">Caste</label>
+              </div>
 
-<!-- Occupation -->
-<div class="form-floating form-floating-outline mb-0">
-  <input type="text" class="form-control" id="occupation"
-         placeholder="Occupation"
-         [value]="occupationName" readonly
-         (click)="openPicker('occupation')" style="cursor:pointer" />
-  <input type="hidden" name="occupationCode" [(ngModel)]="occupationCode" />
-  <label for="occupation">Occupation</label>
-</div>
+              <!-- Occupation -->
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="occupation" placeholder="Occupation"
+                  [value]="occupationName" readonly (click)="openPicker('occupation')" style="cursor:pointer" />
+                <input type="hidden" name="occupationCode" [(ngModel)]="occupationCode" />
+                <label for="occupation">Occupation</label>
+              </div>
 
 
               <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
@@ -509,10 +503,32 @@
                 </div>
               </div>
 
-              <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
-                <input type="text" class="form-control" id="otherStaff" placeholder="Other / Staff" />
-                <label for="otherStaff">Other / Staff</label>
+
+
+              <!-- Other / Staff (fixed small width) -->
+              <div class="sm:col-span-3">
+                <div class="flex items-start gap-4">
+                  <div class="w-36 min-w-[9rem]">
+                    <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
+                      <select id="otherStaffType" class="form-select">
+                        <option value="O">Other</option>
+                        <option value="S">Staff</option>
+                      </select>
+                      <label for="otherStaffType">Other/Staff</label>
+                    </div>
+                  </div>
+
+                  <div class="flex-1">
+                    <div class="form-floating form-floating-outline flex-1">
+                      <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name" />
+                      <label for="Other/Staff Name">Other/Staff</label>
+                    </div>
+                  </div>
+                </div>
               </div>
+
+
+
             </div>
           </div>
 
@@ -633,7 +649,19 @@
         <!-- STEP 5: KYC Details -->
         <section id="panel-5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step-5">
           <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof" />
+              <label for="IDProof">I.D.Proof</label>
+            </div>
 
+            <div class="form-floating form-floating-outline mb-4 always-float">
+              <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
+                name="Address Proof" />
+              <label for="AddressProof">Address Proof</label>
+            </div>
+
+          </div>
           <div class="rounded-xl border border-gray-200 overflow-hidden bg-white">
             <div class="flex gap-3 p-3 overflow-x-auto">
               <!-- Photo -->
