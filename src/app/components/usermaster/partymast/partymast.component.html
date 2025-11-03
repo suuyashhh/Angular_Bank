@@ -651,13 +651,17 @@
           <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof" />
-              <label for="IDProof">I.D.Proof</label>
+              <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof" [value]="idproofName"
+                  readonly (click)="openPicker('idproof')" style="cursor:pointer" />
+                <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode" />
+                <label for="IDProof">I.D.Proof</label>
             </div>
 
             <div class="form-floating form-floating-outline mb-4 always-float">
-              <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
+              <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof" [value]="addrproofName"
+              readonly (click)="openPicker('addrproof')" style="cursor:pointer"
                 name="Address Proof" />
+                <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName" />
               <label for="AddressProof">Address Proof</label>
             </div>
 
