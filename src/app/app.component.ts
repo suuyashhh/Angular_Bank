@@ -12,7 +12,7 @@ import { filter } from 'rxjs/operators';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
   title = 'Angular_Bank';
   sessionRestored = false;
   private devToolsCheckInterval: any;
@@ -55,20 +55,20 @@ export class AppComponent implements OnInit, OnDestroy {
       window.addEventListener('contextmenu', (e) => e.preventDefault());
 
       // ---------- 4️⃣ Disable keyboard shortcuts ----------
-      window.addEventListener('keydown', (e: KeyboardEvent) => {
-        const target = e.target as HTMLElement;
-        const inInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
-        if (inInput) return;
+      // window.addEventListener('keydown', (e: KeyboardEvent) => {
+      //   const target = e.target as HTMLElement;
+      //   const inInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+      //   if (inInput) return;
 
-        if (
-          e.key === 'F12' ||
-          (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key)) ||
-          (e.ctrlKey && ['U','S','H','A'].includes(e.key))
-        ) {
-          e.preventDefault();
-          console.warn('Blocked DevTools shortcut:', e.key);
-        }
-      });
+      //   if (
+      //     e.key === 'F12' ||
+      //     (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key)) ||
+      //     (e.ctrlKey && ['U','S','H','A'].includes(e.key))
+      //   ) {
+      //     e.preventDefault();
+      //     console.warn('Blocked DevTools shortcut:', e.key);
+      //   }
+      // });
 
       // ---------- 5️⃣ Disable mobile long-press context menu ----------
       window.addEventListener('touchstart', (e) => {
@@ -77,26 +77,26 @@ export class AppComponent implements OnInit, OnDestroy {
       window.addEventListener('touchend', () => clearTimeout(this.touchTimeout));
 
       // ---------- 6️⃣ Detect DevTools in real-time ----------
-      this.ngZone.runOutsideAngular(() => {
-        this.devToolsCheckInterval = setInterval(() => {
-          const threshold = 160;
-          const widthDiff = window.outerWidth - window.innerWidth > threshold;
-          const heightDiff = window.outerHeight - window.innerHeight > threshold;
+      // this.ngZone.runOutsideAngular(() => {
+      //   this.devToolsCheckInterval = setInterval(() => {
+      //     const threshold = 160;
+      //     const widthDiff = window.outerWidth - window.innerWidth > threshold;
+      //     const heightDiff = window.outerHeight - window.innerHeight > threshold;
 
-          if (widthDiff || heightDiff) {
-            console.warn('⚠️ DevTools detected!');
-            this.ngZone.run(() => {
-              this.auth.logout();
-              alert('DevTools detected! You have been logged out for security reasons.');
-            });
-          }
-        }, 1000);
-      });
+      //     if (widthDiff || heightDiff) {
+      //       console.warn('⚠️ DevTools detected!');
+      //       this.ngZone.run(() => {
+      //         this.auth.logout();
+      //         alert('DevTools detected! You have been logged out for security reasons.');
+      //       });
+      //     }
+      //   }, 1000);
+      // });
     }
   }
 
-  ngOnDestroy(): void {
-    if (this.devToolsCheckInterval) clearInterval(this.devToolsCheckInterval);
-    clearTimeout(this.touchTimeout);
-  }
+  // ngOnDestroy(): void {
+  //   if (this.devToolsCheckInterval) clearInterval(this.devToolsCheckInterval);
+  //   clearTimeout(this.touchTimeout);
+  // }
 }
