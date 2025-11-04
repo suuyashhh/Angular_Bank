@@ -97,7 +97,7 @@ export class PartymastComponent implements OnInit {
   idproofName = '';
   idproofCode: number | null = null;
   addrproofName = '';
-  addrproofCode : number | null = null;
+  addrproofCode: number | null = null;
 
   // ---------- File Previews ----------
   previews: Record<PreviewKey, string | null> = {
@@ -194,7 +194,7 @@ export class PartymastComponent implements OnInit {
       case 'cast': this.loadCastList(); break;
       case 'occupation': this.loadOccupationList(); break;
       case 'idproof': this.loadIDProofList(); break;
-      case 'addrproof' : this.loadAddrProofList(); break;
+      case 'addrproof': this.loadAddrProofList(); break;
       case 'otherstaff': this.loadOtherStaffList(); break;
     }
 
@@ -211,7 +211,7 @@ export class PartymastComponent implements OnInit {
       case 'cast': return 'Caste';
       case 'occupation': return 'Occupation';
       case 'idproof': return 'IDProof';
-      case 'addrproof' : return 'AddressProof';
+      case 'addrproof': return 'AddressProof';
       case 'otherstaff': return this.otherStaffType === 'O' ? 'Other' : 'Staff';
       default: return '';
     }
@@ -233,14 +233,14 @@ export class PartymastComponent implements OnInit {
   // ---------- API LOADERS ----------
   private loadOtherStaffList() {
     this.pickerLoading = true;
-    
-    const apiUrl = this.otherStaffType === 'O' 
-      ? `DireMast/GetAllOther` 
+
+    const apiUrl = this.otherStaffType === 'O'
+      ? `DireMast/GetAllOther`
       : `StaffMaster/GetAllStaff`;
     this.api.get(apiUrl).subscribe({
       next: (res: any) => {
         const list: any[] = Array.isArray(res) ? res : Object.values(res || {});
-     
+
         // Map based on the type (Other or Staff)
         const mapped: Option[] = (list || []).map(x => {
           if (this.otherStaffType === 'O') {
@@ -250,7 +250,7 @@ export class PartymastComponent implements OnInit {
             return { code, name, selectId: code };
           } else {
             // For Staff type - using KYC_ADDR fields from your example
-            const code = Number(x.stafF_CODE );
+            const code = Number(x.stafF_CODE);
             const name = String(x.stafF_NAME ?? '').trim();
             return { code, name, selectId: code };
           }
@@ -454,12 +454,18 @@ export class PartymastComponent implements OnInit {
       this.pickerOptionsFiltered = [...this.pickerOptions];
       return;
     }
-    this.pickerOptionsFiltered = this.pickerOptions.filter(o =>
-      (o.name || '').toLowerCase().includes(q) ||
-      (o.pin || '').toLowerCase().includes(q) ||
-      String(o.selectId ?? '').includes(q)
-    );
+
+    this.pickerOptionsFiltered = this.pickerOptions.filter(o => {
+      const name = (o.name ?? '').toString().toLowerCase();
+      const pin = (o.pin ?? '').toString().toLowerCase();
+      // code may be numeric or string; use selectId as fallback
+      const codeVal = o.code ?? o.selectId ?? '';
+      const code = (codeVal === null || codeVal === undefined) ? '' : String(codeVal).toLowerCase();
+
+      return name.includes(q) || pin.includes(q) || code.includes(q);
+    });
   }
+
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
@@ -615,11 +621,11 @@ export class PartymastComponent implements OnInit {
         this.toastr.success('I.D.Proof Selected.');
         break;
 
-        case 'addrproof' :
-          this.addrproofCode =Number(this.pickerSelectedCode);
-          this.addrproofName = this.pickerSelectedName ?? '';
-          this.toastr.success('Address Proof Selected.');
-          break;
+      case 'addrproof':
+        this.addrproofCode = Number(this.pickerSelectedCode);
+        this.addrproofName = this.pickerSelectedName ?? '';
+        this.toastr.success('Address Proof Selected.');
+        break;
 
       default:
         // unknown picker field (shouldn't happen)
