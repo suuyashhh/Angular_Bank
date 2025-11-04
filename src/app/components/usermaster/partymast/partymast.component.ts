@@ -6,7 +6,7 @@ import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../services/loader.service';
 
-type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idproof' | 'addrproof';
+type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idproof' | 'addrproof' | 'otherstaff';
 type PickerTarget = 'primary' | 'corr';
 type PreviewKey = 'photo' | 'sign' | 'pan' | 'aadhaarFront' | 'aadhaarBack';
 
@@ -28,6 +28,11 @@ export class PartymastComponent implements OnInit {
 
   // ---------- general ----------
   accountType = '0';
+
+  // Other/Staff fields
+  otherStaffType = 'O'; // Default to 'Other'
+  otherStaffName = '';
+  otherStaffCode: number | null = null;
 
   // Corresponding address toggle
   useDifferentCorresponding = false;
@@ -92,7 +97,7 @@ export class PartymastComponent implements OnInit {
   idproofName = '';
   idproofCode: number | null = null;
   addrproofName = '';
-  addrproofCode : number | null = null;
+  addrproofCode: number | null = null;
 
   // ---------- File Previews ----------
   previews: Record<PreviewKey, string | null> = {
@@ -121,6 +126,40 @@ export class PartymastComponent implements OnInit {
   ) { }
 
   ngOnInit(): void { }
+
+  // ---------- Other/Staff Type Change Handler ----------
+  onOtherStaffTypeChange() {
+    // Reset the name and code when type changes
+    this.otherStaffName = '';
+    this.otherStaffCode = null;
+  }
+
+  // ---------- Open Other/Staff Picker ----------
+  openOtherStaffPicker() {
+    if (!this.otherStaffType) {
+      this.toastr.error('Please select Other or Staff type first.');
+      return;
+    }
+
+    this.pickerField = 'otherstaff';
+    this.pickerTarget = 'primary';
+    this.pickerTitle = this.otherStaffType === 'O' ? 'Other' : 'Staff';
+    this.pickerSearch = '';
+    this.pickerSelectedCode = null;
+    this.pickerSelectedName = null;
+    this.pickerOptions = [];
+    this.pickerOptionsFiltered = [];
+    this.pickerLoading = true;
+    this.pickerOpen = true;
+    this.dropdownOpen = false;
+    document.body.style.overflow = 'hidden';
+
+    this.loadOtherStaffList();
+
+    setTimeout(() => {
+      try { this.pickerSearchInput?.nativeElement?.focus(); } catch { }
+    }, 0);
+  }
 
   // ---------- Picker Handling ----------
   openPicker(field: PickerField, target: PickerTarget = 'primary') {
@@ -155,7 +194,8 @@ export class PartymastComponent implements OnInit {
       case 'cast': this.loadCastList(); break;
       case 'occupation': this.loadOccupationList(); break;
       case 'idproof': this.loadIDProofList(); break;
-      case 'addrproof' : this.loadAddrProofList(); break;
+      case 'addrproof': this.loadAddrProofList(); break;
+      case 'otherstaff': this.loadOtherStaffList(); break;
     }
 
     setTimeout(() => {
@@ -171,7 +211,8 @@ export class PartymastComponent implements OnInit {
       case 'cast': return 'Caste';
       case 'occupation': return 'Occupation';
       case 'idproof': return 'IDProof';
-      case 'addrproof' : return 'AddressProof'
+      case 'addrproof': return 'AddressProof';
+      case 'otherstaff': return this.otherStaffType === 'O' ? 'Other' : 'Staff';
       default: return '';
     }
   }
@@ -190,6 +231,48 @@ export class PartymastComponent implements OnInit {
   }
 
   // ---------- API LOADERS ----------
+  private loadOtherStaffList() {
+    this.pickerLoading = true;
+
+    const apiUrl = this.otherStaffType === 'O'
+      ? `DireMast/GetAllOther`
+      : `StaffMaster/GetAllStaff`;
+    this.api.get(apiUrl).subscribe({
+      next: (res: any) => {
+        const list: any[] = Array.isArray(res) ? res : Object.values(res || {});
+
+        // Map based on the type (Other or Staff)
+        const mapped: Option[] = (list || []).map(x => {
+          if (this.otherStaffType === 'O') {
+            // For Other type
+            const code = Number(x.otheR_CODE ?? x.OTHER_CODE ?? 0);
+            const name = String(x.otheR_NAME ?? x.OTHER_NAME ?? '').trim();
+            return { code, name, selectId: code };
+          } else {
+            // For Staff type - using KYC_ADDR fields from your example
+            const code = Number(x.stafF_CODE);
+            const name = String(x.stafF_NAME ?? '').trim();
+            return { code, name, selectId: code };
+          }
+        }).filter(x => x.name && x.name !== 'null' && x.name !== '') // Filter out empty names
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        this.pickerOptions = mapped;
+        this.pickerOptionsFiltered = [...this.pickerOptions];
+        this.pickerLoading = false;
+        this.dropdownOpen = true;
+      },
+      error: (err: any) => {
+        console.error('Error loading other/staff list', err);
+        this.pickerOptions = [];
+        this.pickerOptionsFiltered = [];
+        this.pickerLoading = false;
+        this.dropdownOpen = false;
+        this.toastr.error(`Unable to load ${this.otherStaffType === 'O' ? 'Other' : 'Staff'} list.`);
+      }
+    });
+  }
+
   private loadCityList() {
     this.pickerLoading = true;
     const apiUrl = `CityMaster/GetAllCities`;
@@ -358,11 +441,12 @@ export class PartymastComponent implements OnInit {
         this.dropdownOpen = true;
       },
       error: () => {
-        this.toastr.error('Failed to load I.D.Proofs.');
+        this.toastr.error('Failed to load Address Proofs.');
         this.pickerLoading = false;
       }
     });
   }
+
   // ---------- Search ----------
   onSearchChange() {
     const q = (this.pickerSearch || '').toLowerCase().trim();
@@ -370,12 +454,18 @@ export class PartymastComponent implements OnInit {
       this.pickerOptionsFiltered = [...this.pickerOptions];
       return;
     }
-    this.pickerOptionsFiltered = this.pickerOptions.filter(o =>
-      (o.name || '').toLowerCase().includes(q) ||
-      (o.pin || '').toLowerCase().includes(q) ||
-      String(o.selectId ?? '').includes(q)
-    );
+
+    this.pickerOptionsFiltered = this.pickerOptions.filter(o => {
+      const name = (o.name ?? '').toString().toLowerCase();
+      const pin = (o.pin ?? '').toString().toLowerCase();
+      // code may be numeric or string; use selectId as fallback
+      const codeVal = o.code ?? o.selectId ?? '';
+      const code = (codeVal === null || codeVal === undefined) ? '' : String(codeVal).toLowerCase();
+
+      return name.includes(q) || pin.includes(q) || code.includes(q);
+    });
   }
+
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
@@ -392,6 +482,15 @@ export class PartymastComponent implements OnInit {
   // ---------- Confirm Selection ----------
   confirmPicker() {
     if (!this.pickerField || !this.pickerSelectedCode) return;
+
+    // -------------------- OTHER/STAFF --------------------
+    if (this.pickerField === 'otherstaff') {
+      this.otherStaffCode = Number(this.pickerSelectedCode);
+      this.otherStaffName = this.pickerSelectedName ?? '';
+      this.toastr.success(`${this.otherStaffType === 'O' ? 'Other' : 'Staff'} selected.`);
+      this.closePicker();
+      return;
+    }
 
     // -------------------- AREA --------------------
     if (this.pickerField === 'area') {
@@ -522,11 +621,11 @@ export class PartymastComponent implements OnInit {
         this.toastr.success('I.D.Proof Selected.');
         break;
 
-        case 'addrproof' :
-          this.addrproofCode =Number(this.pickerSelectedCode);
-          this.addrproofName = this.pickerSelectedName ?? '';
-          this.toastr.success('Address Proof Selected.');
-          break;
+      case 'addrproof':
+        this.addrproofCode = Number(this.pickerSelectedCode);
+        this.addrproofName = this.pickerSelectedName ?? '';
+        this.toastr.success('Address Proof Selected.');
+        break;
 
       default:
         // unknown picker field (shouldn't happen)

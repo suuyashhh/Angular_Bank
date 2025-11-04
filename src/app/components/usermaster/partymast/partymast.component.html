@@ -65,10 +65,10 @@
         <section id="panel-1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step-1">
           <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="form-floating form-floating-outline mb-4">
+            <!-- <div class="form-floating form-floating-outline mb-4">
               <input type="text" id="basic_customerId" class="form-control" placeholder="Customer Id" />
               <label for="basic_customerId">Customer Id</label>
-            </div>
+            </div> -->
 
             <!-- A/C Type: bound to accountType -->
             <div class="form-floating form-floating-outline mb-4">
@@ -333,7 +333,8 @@
           </div>
         </section>
 
-        <!-- Picker modal (used for City OR Area; target depends on how openPicker was called) -->
+
+        <!-- Picker modal (used for City OR Area OR Religion OR Cast OR Occupation OR IDProof OR AddressProof OR Other/Staff) -->
         <div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
           [style.display]="pickerOpen ? 'block' : 'none'">
           <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
@@ -374,13 +375,25 @@
                                 <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
                               </div>
 
-                              <!-- show pin or placeholder -->
-                              <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
+                              <!-- show pin or placeholder (only for city/area) -->
+                              <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;"
+                                *ngIf="pickerField === 'city' || pickerField === 'area'; else noPinTemplate">
                                 <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''; else noPin">
                                   {{ opt.pin }}
                                 </ng-container>
                                 <ng-template #noPin>—</ng-template>
                               </div>
+                              <ng-template #noPinTemplate>
+                                <!-- For non-city/area fields, show code (same null/empty handling as pin) -->
+                                <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
+                                  <ng-container
+                                    *ngIf="opt.code !== null && opt.code !== undefined && (opt.code + '') !== 'null' && (opt.code + '') !== '' ; else noCode">
+                                    {{ opt.code }}
+                                  </ng-container>
+                                  <ng-template #noCode>—</ng-template>
+                                </div>
+                              </ng-template>
+
                             </div>
 
                             <!-- empty / loading states -->
@@ -419,8 +432,6 @@
 
         <!-- invisible fullscreen click-catcher while dropdown open -->
         <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
-
-
 
         <!-- STEP 3: Personal + Company/Firm conditional content -->
         <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
@@ -510,7 +521,8 @@
                 <div class="flex items-start gap-4">
                   <div class="w-36 min-w-[9rem]">
                     <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
-                      <select id="otherStaffType" class="form-select">
+                      <select id="otherStaffType" class="form-select" [(ngModel)]="otherStaffType"
+                        (change)="onOtherStaffTypeChange()">
                         <option value="O">Other</option>
                         <option value="S">Staff</option>
                       </select>
@@ -520,13 +532,14 @@
 
                   <div class="flex-1">
                     <div class="form-floating form-floating-outline flex-1">
-                      <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name" />
-                      <label for="Other/Staff Name">Other/Staff</label>
+                      <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name"
+                        [(ngModel)]="otherStaffName" readonly (click)="openOtherStaffPicker()"
+                        style="cursor: pointer;" />
+                      <label for="otherStaffName">Other/Staff Name</label>
                     </div>
                   </div>
                 </div>
               </div>
-
 
 
             </div>
@@ -651,17 +664,17 @@
           <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof" [value]="idproofName"
-                  readonly (click)="openPicker('idproof')" style="cursor:pointer" />
-                <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode" />
-                <label for="IDProof">I.D.Proof</label>
+              <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
+                [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" />
+              <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode" />
+              <label for="IDProof">I.D.Proof</label>
             </div>
 
             <div class="form-floating form-floating-outline mb-4 always-float">
-              <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof" [value]="addrproofName"
-              readonly (click)="openPicker('addrproof')" style="cursor:pointer"
+              <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
+                [value]="addrproofName" readonly (click)="openPicker('addrproof')" style="cursor:pointer"
                 name="Address Proof" />
-                <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName" />
+              <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName" />
               <label for="AddressProof">Address Proof</label>
             </div>
 
