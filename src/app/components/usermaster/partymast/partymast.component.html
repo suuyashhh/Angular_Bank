@@ -65,10 +65,10 @@
         <section id="panel-1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step-1">
           <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="form-floating form-floating-outline mb-4">
+            <!-- <div class="form-floating form-floating-outline mb-4">
               <input type="text" id="basic_customerId" class="form-control" placeholder="Customer Id" />
               <label for="basic_customerId">Customer Id</label>
-            </div>
+            </div> -->
 
             <!-- A/C Type: bound to accountType -->
             <div class="form-floating form-floating-outline mb-4">
@@ -333,94 +333,100 @@
           </div>
         </section>
 
-        <!-- Picker modal (used for City OR Area; target depends on how openPicker was called) -->
-        <div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
-          [style.display]="pickerOpen ? 'block' : 'none'">
-          <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
-            <div class="modal-content custom-modal-content" role="document">
-              <div class="custom-modal-header">
-                <div class="modal-title-wrapper">
-                  <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
-                </div>
-                <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
-              </div>
+      
+<!-- Picker modal (used for City OR Area OR Religion OR Cast OR Occupation OR IDProof OR AddressProof OR Other/Staff) -->
+<div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
+  [style.display]="pickerOpen ? 'block' : 'none'">
+  <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content custom-modal-content" role="document">
+      <div class="custom-modal-header">
+        <div class="modal-title-wrapper">
+          <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
+        </div>
+        <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
+      </div>
 
-              <div class="custom-modal-body">
-                <form class="custom-form" novalidate (submit)="$event.preventDefault()">
-                  <div class="form-group-wrapper">
-                    <div class="custom-form-group">
-                      <div class="form-floating form-floating-outline mb-0 position-relative">
-                        <!-- search input -->
-                        <input type="text" id="picker-input" #pickerSearchInput class="form-control branch-input"
-                          placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
-                          (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
-                        <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
+      <div class="custom-modal-body">
+        <form class="custom-form" novalidate (submit)="$event.preventDefault()">
+          <div class="form-group-wrapper">
+            <div class="custom-form-group">
+              <div class="form-floating form-floating-outline mb-0 position-relative">
+                <!-- search input -->
+                <input type="text" id="picker-input" #pickerSearchInput class="form-control branch-input"
+                  placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
+                  (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
+                <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
 
-                        <!-- caret toggle -->
-                        <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
-                          aria-label="Toggle">
-                          <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
-                        </button>
+                <!-- caret toggle -->
+                <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
+                  aria-label="Toggle">
+                  <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+                </button>
 
-                        <!-- dropdown panel -->
-                        <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
-                          <div class="dropdown-list">
-                            <!-- list item: name (left) + pin (right). No 'code: ...' text -->
-                            <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
-                              (click)="pickOption(opt)"
-                              [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
-                              style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;">
-                              <div style="min-width:0">
-                                <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
-                              </div>
+                <!-- dropdown panel -->
+                <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
+                  <div class="dropdown-list">
+                    <!-- list item: name (left) + pin (right). No 'code: ...' text -->
+                    <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
+                      (click)="pickOption(opt)"
+                      [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
+                      style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;">
+                      <div style="min-width:0">
+                        <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
+                      </div>
 
-                              <!-- show pin or placeholder -->
-                              <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
-                                <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''; else noPin">
-                                  {{ opt.pin }}
-                                </ng-container>
-                                <ng-template #noPin>—</ng-template>
-                              </div>
-                            </div>
-
-                            <!-- empty / loading states -->
-                            <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
-                              No {{ pickerTitle }} found
-                            </div>
-
-                            <div *ngIf="pickerLoading" class="text-center my-3">
-                              <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                              </div>
-                            </div>
-                          </div>
+                      <!-- show pin or placeholder (only for city/area) -->
+                      <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;" 
+                           *ngIf="pickerField === 'city' || pickerField === 'area'; else noPinTemplate">
+                        <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''; else noPin">
+                          {{ opt.pin }}
+                        </ng-container>
+                        <ng-template #noPin>—</ng-template>
+                      </div>
+                      <ng-template #noPinTemplate>
+                        <!-- For non-city/area fields, show code -->
+                        <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
+                          {{ opt.code }}
                         </div>
-                        <!-- /dropdown panel -->
+                      </ng-template>
+                    </div>
 
+                    <!-- empty / loading states -->
+                    <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
+                      No {{ pickerTitle }} found
+                    </div>
+
+                    <div *ngIf="pickerLoading" class="text-center my-3">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                       </div>
                     </div>
                   </div>
-                </form>
-              </div>
+                </div>
+                <!-- /dropdown panel -->
 
-              <div class="custom-modal-footer">
-                <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
-                <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
-                  (click)="confirmPicker()">
-                  Continue
-                </button>
               </div>
             </div>
           </div>
-        </div>
+        </form>
+      </div>
 
-        <!-- Backdrop closes the modal when clicked -->
-        <div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
+        <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
+          (click)="confirmPicker()">
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <!-- invisible fullscreen click-catcher while dropdown open -->
-        <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
+<!-- Backdrop closes the modal when clicked -->
+<div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
 
-
+<!-- invisible fullscreen click-catcher while dropdown open -->
+<div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
 
         <!-- STEP 3: Personal + Company/Firm conditional content -->
         <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
@@ -505,28 +511,29 @@
 
 
 
-              <!-- Other / Staff (fixed small width) -->
-              <div class="sm:col-span-3">
-                <div class="flex items-start gap-4">
-                  <div class="w-36 min-w-[9rem]">
-                    <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
-                      <select id="otherStaffType" class="form-select">
-                        <option value="O">Other</option>
-                        <option value="S">Staff</option>
-                      </select>
-                      <label for="otherStaffType">Other/Staff</label>
-                    </div>
-                  </div>
+             <!-- Other / Staff (fixed small width) -->
+<div class="sm:col-span-3">
+  <div class="flex items-start gap-4">
+    <div class="w-36 min-w-[9rem]">
+      <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
+        <select id="otherStaffType" class="form-select" [(ngModel)]="otherStaffType" (change)="onOtherStaffTypeChange()">
+          <option value="O">Other</option>
+          <option value="S">Staff</option>
+        </select>
+        <label for="otherStaffType">Other/Staff</label>
+      </div>
+    </div>
 
-                  <div class="flex-1">
-                    <div class="form-floating form-floating-outline flex-1">
-                      <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name" />
-                      <label for="Other/Staff Name">Other/Staff</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+    <div class="flex-1">
+      <div class="form-floating form-floating-outline flex-1">
+        <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name" 
+               [(ngModel)]="otherStaffName" readonly 
+               (click)="openOtherStaffPicker()" style="cursor: pointer;" />
+        <label for="otherStaffName">Other/Staff Name</label>
+      </div>
+    </div>
+  </div>
+</div>
 
 
             </div>
