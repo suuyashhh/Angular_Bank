@@ -662,148 +662,167 @@
         <!-- STEP 5: KYC Details -->
         <section id="panel-5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step-5">
           <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
-                [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" />
-              <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode" />
-              <label for="IDProof">I.D.Proof</label>
+
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- I.D. Proof -->
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="chk_idProof" name="idProofCheck"
+                class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
+              <div class="form-floating form-floating-outline flex-1">
+                <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
+                  [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" />
+                <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode" />
+                <label for="IDProof">I.D.Proof</label>
+              </div>
             </div>
 
-            <div class="form-floating form-floating-outline mb-4 always-float">
-              <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
-                [value]="addrproofName" readonly (click)="openPicker('addrproof')" style="cursor:pointer"
-                name="Address Proof" />
-              <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName" />
-              <label for="AddressProof">Address Proof</label>
+            <!-- Address Proof -->
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="chk_addressProof" name="addressProofCheck"
+                class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
+              <div class="form-floating form-floating-outline flex-1">
+                <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
+                  [value]="addrproofName" readonly (click)="openPicker('addrproof')" style="cursor:pointer"
+                  name="Address Proof" />
+                <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName" />
+                <label for="AddressProof">Address Proof</label>
+              </div>
             </div>
 
+            <!-- Empty third column -->
+            <div class="flex items-center gap-3">
+              <!-- Empty space -->
+            </div>
           </div>
-          <div class="rounded-xl border border-gray-200 overflow-hidden bg-white">
-            <div class="flex gap-3 p-3 overflow-x-auto">
-              <!-- Photo -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Photo</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #photoInput data-key="photo">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
-                    (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
-                    aria-label="Preview Photo">
-                    <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
-                      alt="Photo preview" class="w-full h-full object-contain" />
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
-                  </div>
+
+          <div class="mt-6">
+            <hr
+              class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Photo -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">Photo</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #photoInput data-key="photo">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
+                  (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
+                  aria-label="Preview Photo">
+                  <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
+                    alt="Photo preview" class="w-full h-full object-contain" />
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
                 </div>
               </div>
+            </div>
 
-              <!-- Sign -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Sign</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*" aria-label="Upload Signature"
-                    (change)="onFileChange($event, 'sign')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #signInput data-key="sign">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
-                    (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
-                    aria-label="Preview Signature">
-                    <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
-                      alt="Signature preview" class="w-full h-full object-contain" />
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
-                  </div>
+            <!-- Sign -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">Sign</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*" aria-label="Upload Signature"
+                  (change)="onFileChange($event, 'sign')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #signInput data-key="sign">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
+                  (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
+                  aria-label="Preview Signature">
+                  <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
+                    alt="Signature preview" class="w-full h-full object-contain" />
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
                 </div>
               </div>
+            </div>
 
-              <!-- PAN -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*,.pdf" aria-label="Upload PAN"
-                    (change)="onFileChange($event, 'pan')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #panInput data-key="pan">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
-                    (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button"
-                    aria-label="Preview PAN">
-                    <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)" alt="PAN preview"
-                      class="w-full h-full object-contain" />
-                    <div class="flex flex-col items-center gap-1 text-gray-500"
-                      *ngIf="previews.pan && !isImage(previews.pan)">
-                      <i class="fa-solid fa-file-pdf text-3xl"></i>
-                      <span class="text-sm">PDF Document</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.pan">Preview</span>
+            <!-- PAN -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*,.pdf" aria-label="Upload PAN" (change)="onFileChange($event, 'pan')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #panInput data-key="pan">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
+                  (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button" aria-label="Preview PAN">
+                  <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)" alt="PAN preview"
+                    class="w-full h-full object-contain" />
+                  <div class="flex flex-col items-center gap-1 text-gray-500"
+                    *ngIf="previews.pan && !isImage(previews.pan)">
+                    <i class="fa-solid fa-file-pdf text-3xl"></i>
+                    <span class="text-sm">PDF Document</span>
                   </div>
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.pan">Preview</span>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <!-- Aadhaar Front -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
-                    (change)="onFileChange($event, 'aadhaarFront')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #aadhaarFrontInput data-key="aadhaarFront">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('aadhaarFront')" tabindex="0" (keydown.enter)="openPreview('aadhaarFront')"
-                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
-                    aria-label="Preview Aadhaar front">
-                    <img [src]="previews.aadhaarFront || ''"
-                      *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
-                      class="w-full h-full object-contain" />
-                    <div class="flex flex-col items-center gap-1 text-gray-500"
-                      *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
-                      <i class="fa-solid fa-file-pdf text-3xl"></i>
-                      <span class="text-sm">PDF Document</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarFront">Preview</span>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <!-- Aadhaar Front -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
+                  (change)="onFileChange($event, 'aadhaarFront')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #aadhaarFrontInput data-key="aadhaarFront">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('aadhaarFront')" tabindex="0" (keydown.enter)="openPreview('aadhaarFront')"
+                  (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
+                  aria-label="Preview Aadhaar front">
+                  <img [src]="previews.aadhaarFront || ''"
+                    *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
+                    class="w-full h-full object-contain" />
+                  <div class="flex flex-col items-center gap-1 text-gray-500"
+                    *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
+                    <i class="fa-solid fa-file-pdf text-3xl"></i>
+                    <span class="text-sm">PDF Document</span>
                   </div>
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarFront">Preview</span>
                 </div>
               </div>
+            </div>
 
-              <!-- Aadhaar Back -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
-                    (change)="onFileChange($event, 'aadhaarBack')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #aadhaarBackInput data-key="aadhaarBack">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
-                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
-                    aria-label="Preview Aadhaar back">
-                    <img [src]="previews.aadhaarBack || ''"
-                      *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" alt="Aadhaar back preview"
-                      class="w-full h-full object-contain" />
-                    <div class="flex flex-col items-center gap-1 text-gray-500"
-                      *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
-                      <i class="fa-solid fa-file-pdf text-3xl"></i>
-                      <span class="text-sm">PDF Document</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarBack">Preview</span>
+            <!-- Aadhaar Back -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
+                  (change)="onFileChange($event, 'aadhaarBack')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #aadhaarBackInput data-key="aadhaarBack">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
+                  (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
+                  aria-label="Preview Aadhaar back">
+                  <img [src]="previews.aadhaarBack || ''" *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)"
+                    alt="Aadhaar back preview" class="w-full h-full object-contain" />
+                  <div class="flex flex-col items-center gap-1 text-gray-500"
+                    *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
+                    <i class="fa-solid fa-file-pdf text-3xl"></i>
+                    <span class="text-sm">PDF Document</span>
                   </div>
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarBack">Preview</span>
                 </div>
               </div>
             </div>
@@ -865,7 +884,7 @@
 <!-- Styles -->
 <style>
   .wizard-card {
-    max-height: calc(160vh - 48px);
+    max-height: calc(560vh - 48px);
     width: 100%;
     max-width: none;
   }
