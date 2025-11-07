@@ -698,9 +698,10 @@ export class PartymastComponent implements OnInit {
     this.closePreview();
   }
 
-  @HostListener('window:keydown.escape', ['$event'])
-  onEscKey(_: KeyboardEvent) {
-    if (this.modalOpen) this.closePreview();
-    if (this.pickerOpen) this.closePicker();
+@HostListener('window:keydown.escape', ['$event'])
+onEscKey(event: Event | KeyboardEvent) {
+  const ke = event as KeyboardEvent;
+  if (this.modalOpen) this.closePreview();
+  if (this.pickerOpen) this.closePicker();
   }
 }

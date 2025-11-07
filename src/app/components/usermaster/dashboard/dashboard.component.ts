@@ -19,6 +19,7 @@ export class DashboardComponent {
   private items = [
     { pathName: 'Home', link: '/USERMASTER/dashboard' },
     { pathName: 'Customer Party Account', link: '/USERMASTER/partymast' },
+    { pathName: 'Country Master', link: '/USERMASTER/countrymst' },
   ];
   filtered: Array<{ pathName: string; link: string }> = []; // empty initially → "No records found"
 
