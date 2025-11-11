@@ -65,10 +65,10 @@
         <section id="panel-1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step-1">
           <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="form-floating form-floating-outline mb-4">
+            <!-- <div class="form-floating form-floating-outline mb-4">
               <input type="text" id="basic_customerId" class="form-control" placeholder="Customer Id" />
               <label for="basic_customerId">Customer Id</label>
-            </div>
+            </div> -->
 
             <!-- A/C Type: bound to accountType -->
             <div class="form-floating form-floating-outline mb-4">
@@ -128,297 +128,340 @@
           </div>
         </section>
 
-       <!-- STEP 2: Address Details -->
-<section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
-  <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
+        <!-- STEP 2: Address Details -->
+        <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
+          <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_permanent_line1" class="form-control" placeholder="Permanent Address"
-        name="permanentAddrLine1" />
-      <label for="addr_permanent_line1">Permanent Address</label>
-    </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_permanent_line1" class="form-control" placeholder="Permanent Address"
+                name="permanentAddrLine1" />
+              <label for="addr_permanent_line1">Permanent Address</label>
+            </div>
 
-    <div class="form-floating form-floating-outline mb-4 always-float">
-      <input type="text" id="addr_permanent_line2" class="form-control" placeholder="Permanent Address II"
-        name="permanentAddrLine2" />
-      <label for="addr_permanent_line2">Permanent Address II</label>
-    </div>
+            <div class="form-floating form-floating-outline mb-4 always-float">
+              <input type="text" id="addr_permanent_line2" class="form-control" placeholder="Permanent Address II"
+                name="permanentAddrLine2" />
+              <label for="addr_permanent_line2">Permanent Address II</label>
+            </div>
 
-    <div class="form-floating form-floating-outline mb-4 always-float">
-      <input type="text" id="addr_permanent_line3" class="form-control" placeholder="Permanent Address III"
-        name="permanentAddrLine3" />
-      <label for="addr_permanent_line3">Permanent Address III</label>
-    </div>
+            <div class="form-floating form-floating-outline mb-4 always-float">
+              <input type="text" id="addr_permanent_line3" class="form-control" placeholder="Permanent Address III"
+                name="permanentAddrLine3" />
+              <label for="addr_permanent_line3">Permanent Address III</label>
+            </div>
 
-    <!-- City (clickable -> opens modal) -->
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName" readonly
-        (click)="openPicker('city','primary')" aria-haspopup="dialog" aria-label="Select city" style="cursor:pointer" />
-      <input type="hidden" id="field_cityCode" name="field_cityCode" [(ngModel)]="selectedCityCode" />
-      <input type="hidden" id="field_cityUnicId" name="field_cityUnicId" [(ngModel)]="selectedCityUnicId" />
-      <label for="addr_city">City</label>
-    </div>
+            <!-- City (clickable -> opens modal) -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
+                readonly (click)="openPicker('city','primary')" aria-haspopup="dialog" aria-label="Select city"
+                style="cursor:pointer" />
+              <input type="hidden" id="field_cityCode" name="field_cityCode" [(ngModel)]="selectedCityCode" />
+              <input type="hidden" id="field_cityUnicId" name="field_cityUnicId" [(ngModel)]="selectedCityUnicId" />
+              <label for="addr_city">City</label>
+            </div>
 
-    <!-- Country (readonly; populated from city dependency) -->
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_country" class="form-control" placeholder="Country" [value]="selectedCountryName"
-        readonly aria-label="Country (readonly)" />
-      <input type="hidden" id="field_countryCode" name="field_countryCode" [(ngModel)]="selectedCountryCode" />
-      <label for="addr_country">Country</label>
-    </div>
+            <!-- Country (readonly; populated from city dependency) -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_country" class="form-control" placeholder="Country"
+                [value]="selectedCountryName" readonly aria-label="Country (readonly)" />
+              <input type="hidden" id="field_countryCode" name="field_countryCode" [(ngModel)]="selectedCountryCode" />
+              <label for="addr_country">Country</label>
+            </div>
 
-    <!-- State -->
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_state" class="form-control" placeholder="State" [value]="selectedStateName"
-        readonly aria-label="State (readonly)" />
-      <input type="hidden" id="field_stateCode" name="field_stateCode" [(ngModel)]="selectedStateCode" />
-      <label for="addr_state">State</label>
-    </div>
+            <!-- State -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_state" class="form-control" placeholder="State" [value]="selectedStateName"
+                readonly aria-label="State (readonly)" />
+              <input type="hidden" id="field_stateCode" name="field_stateCode" [(ngModel)]="selectedStateCode" />
+              <label for="addr_state">State</label>
+            </div>
 
-    <!-- District -->
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_district" class="form-control" placeholder="District"
-        [value]="selectedDistrictName" readonly aria-label="District (readonly)" />
-      <input type="hidden" id="field_districtCode" name="field_districtCode" [(ngModel)]="selectedDistrictCode" />
-      <label for="addr_district">District</label>
-    </div>
+            <!-- District -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_district" class="form-control" placeholder="District"
+                [value]="selectedDistrictName" readonly aria-label="District (readonly)" />
+              <input type="hidden" id="field_districtCode" name="field_districtCode"
+                [(ngModel)]="selectedDistrictCode" />
+              <label for="addr_district">District</label>
+            </div>
 
-    <!-- Taluka -->
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_taluka" class="form-control" placeholder="Taluka" [value]="selectedTalukaName"
-        readonly aria-label="Taluka (readonly)" />
-      <input type="hidden" id="field_talukaCode" name="field_talukaCode" [(ngModel)]="selectedTalukaCode" />
-      <label for="addr_taluka">Taluka</label>
-    </div>
+            <!-- Taluka -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_taluka" class="form-control" placeholder="Taluka" [value]="selectedTalukaName"
+                readonly aria-label="Taluka (readonly)" />
+              <input type="hidden" id="field_talukaCode" name="field_talukaCode" [(ngModel)]="selectedTalukaCode" />
+              <label for="addr_taluka">Taluka</label>
+            </div>
 
-    <!-- Area (clickable -> opens Area picker) -->
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_area" class="form-control" placeholder="Area" [value]="selectedAreaName" readonly
-        (click)="openPicker('area','primary')" aria-haspopup="dialog" aria-label="Select area" style="cursor:pointer" />
-      <input type="hidden" id="field_areaCode" name="field_areaCode" [(ngModel)]="selectedAreaCode" />
-      <label for="addr_area">Area</label>
-    </div>
+            <!-- Area (clickable -> opens Area picker) -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_area" class="form-control" placeholder="Area" [value]="selectedAreaName"
+                readonly (click)="openPicker('area','primary')" aria-haspopup="dialog" aria-label="Select area"
+                style="cursor:pointer" />
+              <input type="hidden" id="field_areaCode" name="field_areaCode" [(ngModel)]="selectedAreaCode" />
+              <label for="addr_area">Area</label>
+            </div>
 
-    <!-- PinCode (readonly) -->
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_pincode" class="form-control" placeholder="PinCode" [value]="selectedPincode"
-        readonly aria-label="PinCode (readonly)" />
-      <input type="hidden" id="field_pinCode" name="field_pinCode" [(ngModel)]="selectedPincode" />
-      <label for="addr_pincode">PinCode</label>
-    </div>
+            <!-- PinCode (readonly) -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_pincode" class="form-control" placeholder="PinCode" [value]="selectedPincode"
+                readonly aria-label="PinCode (readonly)" />
+              <input type="hidden" id="field_pinCode" name="field_pinCode" [(ngModel)]="selectedPincode" />
+              <label for="addr_pincode">PinCode</label>
+            </div>
 
-    <!-- Phone / Mobile -->
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_phone" class="form-control" placeholder="Phone no" />
-      <label for="addr_phone">Phone no</label>
-    </div>
+            <!-- Phone / Mobile -->
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_phone" class="form-control" placeholder="Phone no" />
+              <label for="addr_phone">Phone no</label>
+            </div>
 
-    <div class="form-floating form-floating-outline mb-4">
-      <input type="text" id="addr_mobile" class="form-control" placeholder="Mobile no" />
-      <label for="addr_mobile">Mobile no</label>
-    </div>
-  </div>
+            <div class="form-floating form-floating-outline mb-4">
+              <input type="text" id="addr_mobile" class="form-control" placeholder="Mobile no" />
+              <label for="addr_mobile">Mobile no</label>
+            </div>
+          </div>
 
-  <!-- row below Pincode: Corresponding address checkbox -->
-  <div class="mt-4 ml-2">
-    <label class="inline-flex items-center gap-3">
-      <input type="checkbox" id="chk_correspondingAddr" [(ngModel)]="useDifferentCorresponding"
-        name="useDifferentCorresponding" class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
-      <span class="text-sm text-gray-700">Do You Want Fill Different Corresponding Address ?</span>
-    </label>
-  </div>
+          <!-- row below Pincode: Corresponding address checkbox -->
+          <div class="mt-4 ml-2">
+            <label class="inline-flex items-center gap-3">
+              <input type="checkbox" id="chk_correspondingAddr" [(ngModel)]="useDifferentCorresponding"
+                name="useDifferentCorresponding" class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
+              <span class="text-sm text-gray-700">Do You Want Fill Different Corresponding Address ?</span>
+            </label>
+          </div>
 
-  <!-- show corresponding address block when checkbox checked -->
-  <div *ngIf="useDifferentCorresponding" class="mt-6">
-    <hr
-      class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
-    <h5 class="mb-4 text-md font-semibold">Corresponding Address</h5>
+          <!-- show corresponding address block when checkbox checked -->
+          <div *ngIf="useDifferentCorresponding" class="mt-6">
+            <hr
+              class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
+            <h5 class="mb-4 text-md font-semibold">Corresponding Address</h5>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="form-floating form-floating-outline mb-4">
-        <input type="text" id="corr_addr_line1" class="form-control" placeholder="Corresponding Address"
-          name="corrAddrLine1" [(ngModel)]="corrAddrLine1" />
-        <label for="corr_addr_line1">Corresponding Address</label>
-      </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="corr_addr_line1" class="form-control" placeholder="Corresponding Address"
+                  name="corrAddrLine1" [(ngModel)]="corrAddrLine1" />
+                <label for="corr_addr_line1">Corresponding Address</label>
+              </div>
 
-      <div class="form-floating form-floating-outline mb-4 always-float">
-        <input type="text" id="corr_addr_line2" class="form-control" placeholder="Corresponding Address II"
-          name="corrAddrLine2" [(ngModel)]="corrAddrLine2" />
-        <label for="corr_addr_line2">Corresponding Address II</label>
-      </div>
+              <div class="form-floating form-floating-outline mb-4 always-float">
+                <input type="text" id="corr_addr_line2" class="form-control" placeholder="Corresponding Address II"
+                  name="corrAddrLine2" [(ngModel)]="corrAddrLine2" />
+                <label for="corr_addr_line2">Corresponding Address II</label>
+              </div>
 
-      <div class="form-floating form-floating-outline mb-4 always-float">
-        <input type="text" id="corr_addr_line3" class="form-control" placeholder="Corresponding Address III"
-          name="corrAddrLine3" [(ngModel)]="corrAddrLine3" />
-        <label for="corr_addr_line3">Corresponding Address III</label>
-      </div>
+              <div class="form-floating form-floating-outline mb-4 always-float">
+                <input type="text" id="corr_addr_line3" class="form-control" placeholder="Corresponding Address III"
+                  name="corrAddrLine3" [(ngModel)]="corrAddrLine3" />
+                <label for="corr_addr_line3">Corresponding Address III</label>
+              </div>
 
-      <!-- Corresponding City (clickable -> opens modal for corr target) -->
-      <div class="form-floating form-floating-outline mb-4">
-        <input type="text" id="corr_city" class="form-control" placeholder="City" [value]="corrCityName" readonly
-          (click)="openPicker('city','corr')" aria-haspopup="dialog" aria-label="Select corresponding city" style="cursor:pointer" />
-        <input type="hidden" id="field_corrCityCode" name="field_corrCityCode" [(ngModel)]="corrSelectedCityCode" />
-        <input type="hidden" id="field_corrCityUnicId" name="field_corrCityUnicId" [(ngModel)]="corrSelectedCityUnicId" />
-        <label for="corr_city">City</label>
-      </div>
+              <!-- Corresponding City (clickable -> opens modal for corr target) -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="corr_city" class="form-control" placeholder="City" [value]="corrCityName"
+                  readonly (click)="openPicker('city','corr')" aria-haspopup="dialog"
+                  aria-label="Select corresponding city" style="cursor:pointer" />
+                <input type="hidden" id="field_corrCityCode" name="field_corrCityCode"
+                  [(ngModel)]="corrSelectedCityCode" />
+                <input type="hidden" id="field_corrCityUnicId" name="field_corrCityUnicId"
+                  [(ngModel)]="corrSelectedCityUnicId" />
+                <label for="corr_city">City</label>
+              </div>
 
-      <!-- Corresponding Country -->
-      <div class="form-floating form-floating-outline mb-4">
-        <input type="text" id="corr_country" class="form-control" placeholder="Country" [value]="corrCountryName" readonly />
-        <input type="hidden" id="field_corrCountryCode" name="field_corrCountryCode" [(ngModel)]="corrSelectedCountryCode" />
-        <label for="corr_country">Country</label>
-      </div>
+              <!-- Corresponding Country -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="corr_country" class="form-control" placeholder="Country"
+                  [value]="corrCountryName" readonly />
+                <input type="hidden" id="field_corrCountryCode" name="field_corrCountryCode"
+                  [(ngModel)]="corrSelectedCountryCode" />
+                <label for="corr_country">Country</label>
+              </div>
 
-      <!-- Corresponding State -->
-      <div class="form-floating form-floating-outline mb-4">
-        <input type="text" id="corr_state" class="form-control" placeholder="State" [value]="corrStateName" readonly />
-        <input type="hidden" id="field_corrStateCode" name="field_corrStateCode" [(ngModel)]="corrSelectedStateCode" />
-        <label for="corr_state">State</label>
-      </div>
+              <!-- Corresponding State -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="corr_state" class="form-control" placeholder="State" [value]="corrStateName"
+                  readonly />
+                <input type="hidden" id="field_corrStateCode" name="field_corrStateCode"
+                  [(ngModel)]="corrSelectedStateCode" />
+                <label for="corr_state">State</label>
+              </div>
 
-      <!-- Corresponding District -->
-      <div class="form-floating form-floating-outline mb-4">
-        <input type="text" id="corr_district" class="form-control" placeholder="District" [value]="corrDistrictName" readonly />
-        <input type="hidden" id="field_corrDistrictCode" name="field_corrDistrictCode" [(ngModel)]="corrSelectedDistrictCode" />
-        <label for="corr_district">District</label>
-      </div>
+              <!-- Corresponding District -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="corr_district" class="form-control" placeholder="District"
+                  [value]="corrDistrictName" readonly />
+                <input type="hidden" id="field_corrDistrictCode" name="field_corrDistrictCode"
+                  [(ngModel)]="corrSelectedDistrictCode" />
+                <label for="corr_district">District</label>
+              </div>
 
-      <!-- Corresponding Taluka -->
-      <div class="form-floating form-floating-outline mb-4">
-        <input type="text" id="corr_taluka" class="form-control" placeholder="Taluka" [value]="corrTalukaName" readonly />
-        <input type="hidden" id="field_corrTalukaCode" name="field_corrTalukaCode" [(ngModel)]="corrSelectedTalukaCode" />
-        <label for="corr_taluka">Taluka</label>
-      </div>
+              <!-- Corresponding Taluka -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="corr_taluka" class="form-control" placeholder="Taluka" [value]="corrTalukaName"
+                  readonly />
+                <input type="hidden" id="field_corrTalukaCode" name="field_corrTalukaCode"
+                  [(ngModel)]="corrSelectedTalukaCode" />
+                <label for="corr_taluka">Taluka</label>
+              </div>
 
-      <!-- Corresponding Area -->
-      <div class="form-floating form-floating-outline mb-4">
-        <input type="text" id="corr_area" class="form-control" placeholder="Area" [value]="corrAreaName" readonly
-          (click)="openPicker('area','corr')" aria-haspopup="dialog" aria-label="Select corresponding area" style="cursor:pointer" />
-        <input type="hidden" id="field_corrAreaCode" name="field_corrAreaCode" [(ngModel)]="corrSelectedAreaCode" />
-        <label for="corr_area">Area</label>
-      </div>
+              <!-- Corresponding Area -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="corr_area" class="form-control" placeholder="Area" [value]="corrAreaName"
+                  readonly (click)="openPicker('area','corr')" aria-haspopup="dialog"
+                  aria-label="Select corresponding area" style="cursor:pointer" />
+                <input type="hidden" id="field_corrAreaCode" name="field_corrAreaCode"
+                  [(ngModel)]="corrSelectedAreaCode" />
+                <label for="corr_area">Area</label>
+              </div>
 
-      <!-- Corresponding PinCode -->
-      <div class="form-floating form-floating-outline mb-4">
-        <input type="text" id="corr_pincode" class="form-control" placeholder="PinCode" [value]="corrPincode" readonly />
-        <input type="hidden" id="field_corrPinCode" name="field_corrPinCode" [(ngModel)]="corrPincode" />
-        <label for="corr_pincode">PinCode</label>
-      </div>
-    </div>
-  </div>
-
-  <div class="mt-6 flex items-center justify-between gap-3">
-    <label for="step-1"
-      class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-    <label for="step-3"
-      class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-  </div>
-</section>
-
-<!-- Picker modal (used for City OR Area; target depends on how openPicker was called) -->
-<div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
-  [style.display]="pickerOpen ? 'block' : 'none'">
-  <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
-    <div class="modal-content custom-modal-content" role="document">
-      <div class="custom-modal-header">
-        <div class="modal-title-wrapper">
-          <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
-        </div>
-        <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
-      </div>
-
-      <div class="custom-modal-body">
-        <form class="custom-form" novalidate (submit)="$event.preventDefault()">
-          <div class="form-group-wrapper">
-            <div class="custom-form-group">
-              <div class="form-floating form-floating-outline mb-0 position-relative">
-                <!-- search input -->
-                <input type="text" id="picker-input" #pickerSearchInput class="form-control branch-input"
-                  placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
-                  (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
-                <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
-
-                <!-- caret toggle -->
-                <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()" aria-label="Toggle">
-                  <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
-                </button>
-
-                <!-- dropdown panel -->
-                <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
-                  <div class="dropdown-list">
-                    <!-- list item: name (left) + pin (right). No 'code: ...' text -->
-                    <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
-                      (click)="pickOption(opt)"
-                      [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
-                      style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;">
-                      <div style="min-width:0">
-                        <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
-                      </div>
-
-                      <!-- show pin or placeholder -->
-                      <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
-                        <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''; else noPin">
-                          {{ opt.pin }}
-                        </ng-container>
-                        <ng-template #noPin>—</ng-template>
-                      </div>
-                    </div>
-
-                    <!-- empty / loading states -->
-                    <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
-                      No {{ pickerTitle }} found
-                    </div>
-
-                    <div *ngIf="pickerLoading" class="dropdown-empty">Loading...</div>
-                  </div>
-                </div>
-                <!-- /dropdown panel -->
-
+              <!-- Corresponding PinCode -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="corr_pincode" class="form-control" placeholder="PinCode" [value]="corrPincode"
+                  readonly />
+                <input type="hidden" id="field_corrPinCode" name="field_corrPinCode" [(ngModel)]="corrPincode" />
+                <label for="corr_pincode">PinCode</label>
               </div>
             </div>
           </div>
-        </form>
-      </div>
 
-      <div class="custom-modal-footer">
-        <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
-        <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
-          (click)="confirmPicker()">
-          Continue
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Backdrop closes the modal when clicked -->
-<div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
-
-<!-- invisible fullscreen click-catcher while dropdown open -->
-<div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
+          <div class="mt-6 flex items-center justify-between gap-3">
+            <label for="step-1"
+              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+            <label for="step-3"
+              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
+          </div>
+        </section>
 
 
-       
+        <!-- Picker modal (used for City OR Area OR Religion OR Cast OR Occupation OR IDProof OR AddressProof OR Other/Staff) -->
+        <div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
+          [style.display]="pickerOpen ? 'block' : 'none'">
+          <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
+            <div class="modal-content custom-modal-content" role="document">
+              <div class="custom-modal-header">
+                <div class="modal-title-wrapper">
+                  <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
+                </div>
+                <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
+              </div>
+
+              <div class="custom-modal-body">
+                <form class="custom-form" novalidate (submit)="$event.preventDefault()">
+                  <div class="form-group-wrapper">
+                    <div class="custom-form-group">
+                      <div class="form-floating form-floating-outline mb-0 position-relative">
+                        <!-- search input -->
+                        <input type="text" id="picker-input" #pickerSearchInput class="form-control branch-input"
+                          placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
+                          (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
+                        <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
+
+                        <!-- caret toggle -->
+                        <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
+                          aria-label="Toggle">
+                          <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+                        </button>
+
+                        <!-- dropdown panel -->
+                        <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
+                          <div class="dropdown-list">
+                            <!-- list item: name (left) + pin (right). No 'code: ...' text -->
+                            <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
+                              (click)="pickOption(opt)"
+                              [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
+                              style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;">
+                              <div style="min-width:0">
+                                <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
+                              </div>
+
+                              <!-- show pin or placeholder (only for city/area) -->
+                              <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;"
+                                *ngIf="pickerField === 'city' || pickerField === 'area'; else noPinTemplate">
+                                <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''; else noPin">
+                                  {{ opt.pin }}
+                                </ng-container>
+                                <ng-template #noPin>—</ng-template>
+                              </div>
+                              <ng-template #noPinTemplate>
+                                <!-- For non-city/area fields, show code (same null/empty handling as pin) -->
+                                <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
+                                  <ng-container
+                                    *ngIf="opt.code !== null && opt.code !== undefined && (opt.code + '') !== 'null' && (opt.code + '') !== '' ; else noCode">
+                                    {{ opt.code }}
+                                  </ng-container>
+                                  <ng-template #noCode>—</ng-template>
+                                </div>
+                              </ng-template>
+
+                            </div>
+
+                            <!-- empty / loading states -->
+                            <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
+                              No {{ pickerTitle }} found
+                            </div>
+
+                            <div *ngIf="pickerLoading" class="text-center my-3">
+                              <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /dropdown panel -->
+
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="custom-modal-footer">
+                <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
+                <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
+                  (click)="confirmPicker()">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backdrop closes the modal when clicked -->
+        <div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
+
+        <!-- invisible fullscreen click-catcher while dropdown open -->
+        <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
+
         <!-- STEP 3: Personal + Company/Firm conditional content -->
         <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
           <div *ngIf="accountType === '0'">
             <h4 class="mb-4 text-lg font-semibold">Personal Details</h4>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <!-- Religion -->
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="religionCode" placeholder="Religion Code" />
-                <label for="religionCode">Religion Code</label>
+                <input type="text" class="form-control" id="religionCode" placeholder="Religion Code"
+                  [value]="religionName" readonly (click)="openPicker('religion')" style="cursor:pointer" />
+                <input type="hidden" name="religionCode" [(ngModel)]="religionCode" />
+                <label for="religionCode">Religion</label>
               </div>
 
+              <!-- Cast -->
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="castCode" placeholder="Cast Code" />
-                <label for="castCode">Cast Code</label>
+                <input type="text" class="form-control" id="castCode" placeholder="Cast Code" [value]="castName"
+                  readonly (click)="openPicker('cast')" style="cursor:pointer" />
+                <input type="hidden" name="castCode" [(ngModel)]="castCode" />
+                <label for="castCode">Caste</label>
               </div>
 
+              <!-- Occupation -->
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="occupation" placeholder="Occupation" />
+                <input type="text" class="form-control" id="occupation" placeholder="Occupation"
+                  [value]="occupationName" readonly (click)="openPicker('occupation')" style="cursor:pointer" />
+                <input type="hidden" name="occupationCode" [(ngModel)]="occupationCode" />
                 <label for="occupation">Occupation</label>
               </div>
+
 
               <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
                 <input type="text" class="form-control" id="passportNo" placeholder="Passport No." />
@@ -471,10 +514,34 @@
                 </div>
               </div>
 
-              <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
-                <input type="text" class="form-control" id="otherStaff" placeholder="Other / Staff" />
-                <label for="otherStaff">Other / Staff</label>
+
+
+              <!-- Other / Staff (fixed small width) -->
+              <div class="sm:col-span-3">
+                <div class="flex items-start gap-4">
+                  <div class="w-36 min-w-[9rem]">
+                    <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
+                      <select id="otherStaffType" class="form-select" [(ngModel)]="otherStaffType"
+                        (change)="onOtherStaffTypeChange()">
+                        <option value="O">Other</option>
+                        <option value="S">Staff</option>
+                      </select>
+                      <label for="otherStaffType">Other/Staff</label>
+                    </div>
+                  </div>
+
+                  <div class="flex-1">
+                    <div class="form-floating form-floating-outline flex-1">
+                      <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name"
+                        [(ngModel)]="otherStaffName" readonly (click)="openOtherStaffPicker()"
+                        style="cursor: pointer;" />
+                      <label for="otherStaffName">Other/Staff Name</label>
+                    </div>
+                  </div>
+                </div>
               </div>
+
+
             </div>
           </div>
 
@@ -499,7 +566,7 @@
 
               <div class="form-floating form-floating-outline mb-0">
                 <input type="text" class="form-control" id="businessNature" placeholder="Business Nature" />
-                <label for="businessNature">Bussiness Nature</label>
+                <label for="businessNature">Business Nature</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
@@ -596,131 +663,166 @@
         <section id="panel-5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step-5">
           <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
 
-          <div class="rounded-xl border border-gray-200 overflow-hidden bg-white">
-            <div class="flex gap-3 p-3 overflow-x-auto">
-              <!-- Photo -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Photo</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #photoInput data-key="photo">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
-                    (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
-                    aria-label="Preview Photo">
-                    <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
-                      alt="Photo preview" class="w-full h-full object-contain" />
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
-                  </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- I.D. Proof -->
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="chk_idProof" name="idProofCheck"
+                class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
+              <div class="form-floating form-floating-outline flex-1">
+                <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
+                  [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" />
+                <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode" />
+                <label for="IDProof">I.D.Proof</label>
+              </div>
+            </div>
+
+            <!-- Address Proof -->
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="chk_addressProof" name="addressProofCheck"
+                class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
+              <div class="form-floating form-floating-outline flex-1">
+                <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
+                  [value]="addrproofName" readonly (click)="openPicker('addrproof')" style="cursor:pointer"
+                  name="Address Proof" />
+                <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName" />
+                <label for="AddressProof">Address Proof</label>
+              </div>
+            </div>
+
+            <!-- Empty third column -->
+            <div class="flex items-center gap-3">
+              <!-- Empty space -->
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <hr
+              class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Photo -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">Photo</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #photoInput data-key="photo">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
+                  (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
+                  aria-label="Preview Photo">
+                  <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
+                    alt="Photo preview" class="w-full h-full object-contain" />
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
                 </div>
               </div>
+            </div>
 
-              <!-- Sign -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Sign</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*" aria-label="Upload Signature"
-                    (change)="onFileChange($event, 'sign')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #signInput data-key="sign">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
-                    (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
-                    aria-label="Preview Signature">
-                    <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
-                      alt="Signature preview" class="w-full h-full object-contain" />
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
-                  </div>
+            <!-- Sign -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">Sign</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*" aria-label="Upload Signature"
+                  (change)="onFileChange($event, 'sign')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #signInput data-key="sign">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
+                  (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
+                  aria-label="Preview Signature">
+                  <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
+                    alt="Signature preview" class="w-full h-full object-contain" />
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
                 </div>
               </div>
+            </div>
 
-              <!-- PAN -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*,.pdf" aria-label="Upload PAN"
-                    (change)="onFileChange($event, 'pan')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #panInput data-key="pan">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
-                    (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button"
-                    aria-label="Preview PAN">
-                    <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)" alt="PAN preview"
-                      class="w-full h-full object-contain" />
-                    <div class="flex flex-col items-center gap-1 text-gray-500"
-                      *ngIf="previews.pan && !isImage(previews.pan)">
-                      <i class="fa-solid fa-file-pdf text-3xl"></i>
-                      <span class="text-sm">PDF Document</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.pan">Preview</span>
+            <!-- PAN -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*,.pdf" aria-label="Upload PAN" (change)="onFileChange($event, 'pan')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #panInput data-key="pan">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
+                  (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button" aria-label="Preview PAN">
+                  <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)" alt="PAN preview"
+                    class="w-full h-full object-contain" />
+                  <div class="flex flex-col items-center gap-1 text-gray-500"
+                    *ngIf="previews.pan && !isImage(previews.pan)">
+                    <i class="fa-solid fa-file-pdf text-3xl"></i>
+                    <span class="text-sm">PDF Document</span>
                   </div>
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.pan">Preview</span>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <!-- Aadhaar Front -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
-                    (change)="onFileChange($event, 'aadhaarFront')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #aadhaarFrontInput data-key="aadhaarFront">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('aadhaarFront')" tabindex="0" (keydown.enter)="openPreview('aadhaarFront')"
-                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
-                    aria-label="Preview Aadhaar front">
-                    <img [src]="previews.aadhaarFront || ''"
-                      *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
-                      class="w-full h-full object-contain" />
-                    <div class="flex flex-col items-center gap-1 text-gray-500"
-                      *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
-                      <i class="fa-solid fa-file-pdf text-3xl"></i>
-                      <span class="text-sm">PDF Document</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarFront">Preview</span>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <!-- Aadhaar Front -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
+                  (change)="onFileChange($event, 'aadhaarFront')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #aadhaarFrontInput data-key="aadhaarFront">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('aadhaarFront')" tabindex="0" (keydown.enter)="openPreview('aadhaarFront')"
+                  (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
+                  aria-label="Preview Aadhaar front">
+                  <img [src]="previews.aadhaarFront || ''"
+                    *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
+                    class="w-full h-full object-contain" />
+                  <div class="flex flex-col items-center gap-1 text-gray-500"
+                    *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
+                    <i class="fa-solid fa-file-pdf text-3xl"></i>
+                    <span class="text-sm">PDF Document</span>
                   </div>
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarFront">Preview</span>
                 </div>
               </div>
+            </div>
 
-              <!-- Aadhaar Back -->
-              <div class="min-w-[320px] max-w-[360px] flex-1 rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
-                <div class="mt-3">
-                  <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
-                    (change)="onFileChange($event, 'aadhaarBack')"
-                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #aadhaarBackInput data-key="aadhaarBack">
-                </div>
-                <div class="mt-3">
-                  <div
-                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
-                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
-                    aria-label="Preview Aadhaar back">
-                    <img [src]="previews.aadhaarBack || ''"
-                      *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" alt="Aadhaar back preview"
-                      class="w-full h-full object-contain" />
-                    <div class="flex flex-col items-center gap-1 text-gray-500"
-                      *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
-                      <i class="fa-solid fa-file-pdf text-3xl"></i>
-                      <span class="text-sm">PDF Document</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarBack">Preview</span>
+            <!-- Aadhaar Back -->
+            <div class="rounded-xl border border-gray-200 p-4">
+              <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
+              <div class="mt-3">
+                <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
+                  (change)="onFileChange($event, 'aadhaarBack')"
+                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                  #aadhaarBackInput data-key="aadhaarBack">
+              </div>
+              <div class="mt-3">
+                <div
+                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                  (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
+                  (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
+                  aria-label="Preview Aadhaar back">
+                  <img [src]="previews.aadhaarBack || ''" *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)"
+                    alt="Aadhaar back preview" class="w-full h-full object-contain" />
+                  <div class="flex flex-col items-center gap-1 text-gray-500"
+                    *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
+                    <i class="fa-solid fa-file-pdf text-3xl"></i>
+                    <span class="text-sm">PDF Document</span>
                   </div>
+                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarBack">Preview</span>
                 </div>
               </div>
             </div>
@@ -782,7 +884,7 @@
 <!-- Styles -->
 <style>
   .wizard-card {
-    max-height: calc(160vh - 48px);
+    max-height: calc(560vh - 48px);
     width: 100%;
     max-width: none;
   }
@@ -797,11 +899,25 @@
     display: none;
   }
 
-  #step-1:checked~.wizard-panels #panel-1 { display: block; }
-  #step-2:checked~.wizard-panels #panel-2 { display: block; }
-  #step-3:checked~.wizard-panels #panel-3 { display: block; }
-  #step-4:checked~.wizard-panels #panel-4 { display: block; }
-  #step-5:checked~.wizard-panels #panel-5 { display: block; }
+  #step-1:checked~.wizard-panels #panel-1 {
+    display: block;
+  }
+
+  #step-2:checked~.wizard-panels #panel-2 {
+    display: block;
+  }
+
+  #step-3:checked~.wizard-panels #panel-3 {
+    display: block;
+  }
+
+  #step-4:checked~.wizard-panels #panel-4 {
+    display: block;
+  }
+
+  #step-5:checked~.wizard-panels #panel-5 {
+    display: block;
+  }
 
   #step-1:checked~.wizard-steps label[for="step-1"],
   #step-2:checked~.wizard-steps label[for="step-2"],
@@ -815,6 +931,11 @@
     transform: translateY(-1px);
   }
 
-  .wizard-steps label { transition: all .18s ease; }
-  .min-w-0 { min-width: 0; }
+  .wizard-steps label {
+    transition: all .18s ease;
+  }
+
+  .min-w-0 {
+    min-width: 0;
+  }
 </style>

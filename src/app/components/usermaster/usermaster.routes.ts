@@ -26,4 +26,13 @@ export const UserMaster_Routes: Routes = [
       import('./partymast/partymast.component').then((m) => m.PartymastComponent),
     title: 'Party Master | SmartBank',
   },
+
+  // Country Master 
+  {
+    path: 'countrymst',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./countrymst/countrymst.component').then((m) => m.CountrymstComponent),
+    title: 'Country Master | SmartBank',
+  },
 ];

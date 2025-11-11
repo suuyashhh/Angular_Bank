@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
         });
 
       // ---------- 3️⃣ Disable right-click ----------
-      window.addEventListener('contextmenu', (e) => e.preventDefault());
+      //window.addEventListener('contextmenu', (e) => e.preventDefault());
 
       // ---------- 4️⃣ Disable keyboard shortcuts ----------
       // window.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -71,10 +71,10 @@ export class AppComponent implements OnInit {
       // });
 
       // ---------- 5️⃣ Disable mobile long-press context menu ----------
-      window.addEventListener('touchstart', (e) => {
-        this.touchTimeout = setTimeout(() => e.preventDefault(), 500);
-      });
-      window.addEventListener('touchend', () => clearTimeout(this.touchTimeout));
+      // window.addEventListener('touchstart', (e) => {
+      //   this.touchTimeout = setTimeout(() => e.preventDefault(), 500);
+      // });
+      // window.addEventListener('touchend', () => clearTimeout(this.touchTimeout));
 
       // ---------- 6️⃣ Detect DevTools in real-time ----------
       // this.ngZone.runOutsideAngular(() => {
@@ -95,8 +95,8 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // ngOnDestroy(): void {
-  //   if (this.devToolsCheckInterval) clearInterval(this.devToolsCheckInterval);
-  //   clearTimeout(this.touchTimeout);
-  // }
+  ngOnDestroy(): void {
+    if (this.devToolsCheckInterval) clearInterval(this.devToolsCheckInterval);
+    clearTimeout(this.touchTimeout);
+  }
 }

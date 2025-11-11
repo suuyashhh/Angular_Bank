@@ -5,8 +5,8 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private baseUrl = environment.BASE_URL;
-
+ // private baseUrl = environment.BASE_URL;
+private baseUrl = environment.BASE_URL.replace(/\/+$/, '') + '/';
   constructor(private http: HttpClient, private auth: AuthService) {}
 
   private getHeaders(additionalHeaders: Record<string, string> = {}): HttpHeaders {
@@ -33,7 +33,7 @@ export class ApiService {
       }
     });
 
-    return this.http.get<T>(`${this.baseUrl}${endpoint}`, {
+    return this.http.get<T>(`${this.baseUrl}${endpoint}`, { 
       headers: this.getHeaders(),
       params: httpParams,
       observe: 'body'
