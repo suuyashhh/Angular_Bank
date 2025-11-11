@@ -10,11 +10,22 @@ type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idpro
 type PickerTarget = 'primary' | 'corr';
 type PreviewKey = 'photo' | 'sign' | 'pan' | 'aadhaarFront' | 'aadhaarBack';
 
+// updated Option type with dependency fields
 type Option = {
   code: number;
   name: string;
   selectId?: number;
   pin?: string | null;
+
+  // dependency fields returned by GetAllDependencies
+  talukaCode?: number;
+  talukaName?: string;
+  distCode?: number;
+  distName?: string;
+  stateCode?: number;
+  stateName?: string;
+  countryCode?: number;
+  countryName?: string;
 };
 
 @Component({
@@ -51,6 +62,7 @@ export class PartymastComponent implements OnInit {
   pickerOptionsFiltered: Option[] = [];
   pickerSelectedCode: number | null = null;
   pickerSelectedName: string | null = null;
+  pickerSelectedObj: Option | null = null; // store full selected object
   pickerLoading = false;
   pickerSearch = '';
   dropdownOpen = false;
@@ -116,7 +128,6 @@ export class PartymastComponent implements OnInit {
   @ViewChild('panInput') panInput!: ElementRef<HTMLInputElement>;
   @ViewChild('aadhaarFrontInput') aadhaarFrontInput!: ElementRef<HTMLInputElement>;
   @ViewChild('aadhaarBackInput') aadhaarBackInput!: ElementRef<HTMLInputElement>;
-  // search input ref in picker modal - used for autofocus
   @ViewChild('pickerSearchInput') pickerSearchInput!: ElementRef<HTMLInputElement>;
 
   constructor(
@@ -147,6 +158,7 @@ export class PartymastComponent implements OnInit {
     this.pickerSearch = '';
     this.pickerSelectedCode = null;
     this.pickerSelectedName = null;
+    this.pickerSelectedObj = null;
     this.pickerOptions = [];
     this.pickerOptionsFiltered = [];
     this.pickerLoading = true;
@@ -174,12 +186,14 @@ export class PartymastComponent implements OnInit {
         return;
       }
     }
+
     this.pickerField = field;
     this.pickerTarget = target;
     this.pickerTitle = this.getPickerTitle(field);
     this.pickerSearch = '';
     this.pickerSelectedCode = null;
     this.pickerSelectedName = null;
+    this.pickerSelectedObj = null;
     this.pickerOptions = [];
     this.pickerOptionsFiltered = [];
     this.pickerLoading = true;
@@ -224,6 +238,7 @@ export class PartymastComponent implements OnInit {
     this.pickerOptionsFiltered = [];
     this.pickerSelectedCode = null;
     this.pickerSelectedName = null;
+    this.pickerSelectedObj = null;
     this.pickerLoading = false;
     this.pickerSearch = '';
     this.dropdownOpen = false;
@@ -241,20 +256,17 @@ export class PartymastComponent implements OnInit {
       next: (res: any) => {
         const list: any[] = Array.isArray(res) ? res : Object.values(res || {});
 
-        // Map based on the type (Other or Staff)
         const mapped: Option[] = (list || []).map(x => {
           if (this.otherStaffType === 'O') {
-            // For Other type
             const code = Number(x.otheR_CODE ?? x.OTHER_CODE ?? 0);
             const name = String(x.otheR_NAME ?? x.OTHER_NAME ?? '').trim();
             return { code, name, selectId: code };
           } else {
-            // For Staff type - using KYC_ADDR fields from your example
             const code = Number(x.stafF_CODE);
             const name = String(x.stafF_NAME ?? '').trim();
             return { code, name, selectId: code };
           }
-        }).filter(x => x.name && x.name !== 'null' && x.name !== '') // Filter out empty names
+        }).filter(x => x.name && x.name !== 'null')
           .sort((a, b) => a.name.localeCompare(b.name));
 
         this.pickerOptions = mapped;
@@ -273,19 +285,38 @@ export class PartymastComponent implements OnInit {
     });
   }
 
+  // ---------- City loader: uses the new GetAllDependencies API ----------
   private loadCityList() {
     this.pickerLoading = true;
-    const apiUrl = `CityMaster/GetAllCities`;
+    const apiUrl = `CityMaster/GetAllDependencies`; // new single API that returns city + taluka/dist/state/country
+
     this.api.get(apiUrl).subscribe({
       next: (res: any) => {
-        const list: any[] = Array.isArray(res) ? res : Object.values(res || {});
+        const list: any[] = Array.isArray(res) ? res : (res?.data && Array.isArray(res.data) ? res.data : Object.values(res || {}));
+
         const mapped: Option[] = (list || []).map(x => {
-          const unic = Number(x.citY_UNIC_ID ?? x.CitY_UNIC_ID ?? 0);
-          const code = Number(x.citY_CODE ?? x.CitY_CODE ?? 0);
-          const name = String(x.citY_NAME ?? x.CitY_NAME ?? '').trim();
+          const unic = Number(x.citY_UNIC_ID ?? x.CitY_UNIC_ID ?? x.city_unic_id ?? 0);
+          const code = Number(x.citY_CODE ?? x.CitY_CODE ?? x.city_code ?? x.citY_CODE ?? 0);
+          const name = String(x.citY_NAME ?? x.CitY_NAME ?? x.city_name ?? '').trim();
           const pin = x.piN_CODE ?? x.PIN_CODE ?? x.pin_code ?? null;
-          return { code, name, selectId: unic, pin: pin ? String(pin) : null };
-        }).sort((a, b) => a.name.localeCompare(b.name));
+
+          return {
+            code,
+            selectId: unic || undefined,
+            name,
+            pin: pin ? String(pin) : null,
+            talukaCode: Number(x.talukA_CODE ?? x.TALUKA_CODE ?? x.talukA_CODE ?? x.taluka_code ?? 0) || undefined,
+            talukaName: String(x.talukA_NAME ?? x.TALUKA_NAME ?? x.talukA_NAME ?? x.taluka_name ?? '').trim() || undefined,
+            distCode: Number(x.disT_CODE ?? x.DIST_CODE ?? x.disT_CODE ?? x.dist_code ?? 0) || undefined,
+            distName: String(x.disT_NAME ?? x.DIST_NAME ?? x.disT_NAME ?? x.dist_name ?? '').trim() || undefined,
+            stateCode: Number(x.statE_CODE ?? x.STATE_CODE ?? x.statE_CODE ?? x.state_code ?? 0) || undefined,
+            stateName: String(x.statE_NAME ?? x.STATE_NAME ?? x.statE_NAME ?? x.state_name ?? '').trim() || undefined,
+            countryCode: Number(x.countrY_CODE ?? x.COUNTRy_CODE ?? x.country_code ?? 0) || undefined,
+            countryName: String(x.countrY_NAME ?? x.COUNTRy_NAME ?? x.country_name ?? '').trim() || undefined
+          } as Option;
+        })
+        .filter(o => o.name && o.name !== 'null')
+        .sort((a, b) => a.name.localeCompare(b.name));
 
         this.pickerOptions = mapped;
         this.pickerOptionsFiltered = [...this.pickerOptions];
@@ -293,7 +324,7 @@ export class PartymastComponent implements OnInit {
         this.dropdownOpen = true;
       },
       error: (err: any) => {
-        console.error('Error loading cities', err);
+        console.error('Error loading cities (GetAllDependencies)', err);
         this.pickerOptions = [];
         this.pickerOptionsFiltered = [];
         this.pickerLoading = false;
@@ -307,7 +338,6 @@ export class PartymastComponent implements OnInit {
   private loadAreaList() {
     this.pickerLoading = true;
 
-    // choose codes depending on target
     const country = this.pickerTarget === 'primary' ? this.selectedCountryCode : this.corrSelectedCountryCode;
     const state = this.pickerTarget === 'primary' ? this.selectedStateCode : this.corrSelectedStateCode;
     const dist = this.pickerTarget === 'primary' ? this.selectedDistrictCode : this.corrSelectedDistrictCode;
@@ -458,7 +488,6 @@ export class PartymastComponent implements OnInit {
     this.pickerOptionsFiltered = this.pickerOptions.filter(o => {
       const name = (o.name ?? '').toString().toLowerCase();
       const pin = (o.pin ?? '').toString().toLowerCase();
-      // code may be numeric or string; use selectId as fallback
       const codeVal = o.code ?? o.selectId ?? '';
       const code = (codeVal === null || codeVal === undefined) ? '' : String(codeVal).toLowerCase();
 
@@ -466,15 +495,16 @@ export class PartymastComponent implements OnInit {
     });
   }
 
-
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
     if (this.dropdownOpen) this.onSearchChange();
   }
 
+  // store full object when picking
   pickOption(opt: Option) {
     this.pickerSelectedCode = opt.selectId ?? opt.code;
     this.pickerSelectedName = opt.name;
+    this.pickerSelectedObj = opt;
     this.pickerSearch = opt.name;
     this.dropdownOpen = false;
   }
@@ -518,84 +548,64 @@ export class PartymastComponent implements OnInit {
 
     // -------------------- CITY --------------------
     if (this.pickerField === 'city') {
-      this.loader.show();
-      const cityUnicId = Number(this.pickerSelectedCode);
-      const depApi = `CityMaster/GetDependencyByCityId?cityUnicId=${cityUnicId}`;
+      // use the stored full object (no extra dependency call)
+      const selected = this.pickerSelectedObj ?? this.pickerOptions.find(o => (o.selectId ?? o.code) === this.pickerSelectedCode);
+      if (!selected) {
+        this.toastr.error('Selected city not found.');
+        this.closePicker();
+        return;
+      }
 
-      this.api.get(depApi).subscribe({
-        next: (res: any) => {
-          if (!res) {
-            this.toastr.error('No dependency data returned for selected city.');
-            this.closePicker();
-            this.loader.hide();
-            return;
-          }
+      if (this.pickerTarget === 'primary') {
+        this.selectedCityUnicId = Number(selected.selectId ?? selected.code ?? 0);
+        this.selectedCityCode = selected.code ?? null;
+        this.selectedCityName = selected.name ?? '';
 
-          const resp: any = res;
+        this.selectedCountryCode = selected.countryCode ?? null;
+        this.selectedCountryName = selected.countryName ?? '';
 
-          if (this.pickerTarget === 'primary') {
-            this.selectedCityUnicId = Number(resp.citY_UNIC_ID ?? resp.CitY_UNIC_ID ?? resp.city_unic_id ?? cityUnicId);
-            this.selectedCityCode = resp.citY_CODE ?? resp.CitY_CODE ?? resp.city_code ?? null;
-            this.selectedCityName = String(resp.citY_NAME ?? resp.CitY_NAME ?? resp.city_name ?? this.pickerSelectedName ?? '').trim();
+        this.selectedStateCode = selected.stateCode ?? null;
+        this.selectedStateName = selected.stateName ?? '';
 
-            this.selectedCountryCode = resp.countrY_CODE ?? resp.COUNTRy_CODE ?? resp.country_code ?? null;
-            this.selectedCountryName = String(resp.countrY_NAME ?? resp.COUNTRy_NAME ?? resp.country_name ?? '').trim();
+        this.selectedDistrictCode = selected.distCode ?? null;
+        this.selectedDistrictName = selected.distName ?? '';
 
-            this.selectedStateCode = resp.statE_CODE ?? resp.STATe_CODE ?? resp.state_code ?? null;
-            this.selectedStateName = String(resp.statE_NAME ?? resp.statE_NAME ?? resp.state_name ?? '').trim();
+        this.selectedTalukaCode = selected.talukaCode ?? null;
+        this.selectedTalukaName = selected.talukaName ?? '';
 
-            this.selectedDistrictCode = resp.disT_CODE ?? resp.DIST_CODE ?? resp.dist_code ?? null;
-            this.selectedDistrictName = String(resp.disT_NAME ?? resp.disT_NAME ?? resp.dist_name ?? '').trim();
+        // reset area — user should select if needed
+        this.selectedAreaCode = null;
+        this.selectedAreaName = '';
+        // use city-level pincode if present
+        this.selectedPincode = String(selected.pin ?? '').trim();
+      } else {
+        // corresponding target
+        this.corrSelectedCityUnicId = Number(selected.selectId ?? selected.code ?? 0);
+        this.corrSelectedCityCode = selected.code ?? null;
+        this.corrCityName = selected.name ?? '';
 
-            this.selectedTalukaCode = resp.talukA_CODE ?? resp.TALUKA_CODE ?? resp.taluka_code ?? null;
-            this.selectedTalukaName = String(resp.talukA_NAME ?? resp.talukA_NAME ?? resp.taluka_name ?? '').trim();
+        this.corrSelectedCountryCode = selected.countryCode ?? null;
+        this.corrCountryName = selected.countryName ?? '';
 
-            // keep area blank — user must pick area separately
-            this.selectedAreaCode = null;
-            this.selectedAreaName = '';
-            // set city-level pincode if returned; area selection will overwrite
-            this.selectedPincode = String(resp.piN_CODE ?? resp.PIN_CODE ?? resp.pin_code ?? '').trim();
-          } else { // corr target
-            this.corrSelectedCityUnicId = Number(resp.citY_UNIC_ID ?? resp.CitY_UNIC_ID ?? resp.city_unic_id ?? cityUnicId);
-            this.corrSelectedCityCode = resp.citY_CODE ?? resp.CitY_CODE ?? resp.city_code ?? null;
-            this.corrCityName = String(resp.citY_NAME ?? resp.CitY_NAME ?? resp.city_name ?? this.pickerSelectedName ?? '').trim();
+        this.corrSelectedStateCode = selected.stateCode ?? null;
+        this.corrStateName = selected.stateName ?? '';
 
-            this.corrSelectedCountryCode = resp.countrY_CODE ?? resp.COUNTRy_CODE ?? resp.country_code ?? null;
-            this.corrCountryName = String(resp.countrY_NAME ?? resp.COUNTRy_NAME ?? resp.country_name ?? '').trim();
+        this.corrSelectedDistrictCode = selected.distCode ?? null;
+        this.corrDistrictName = selected.distName ?? '';
 
-            this.corrSelectedStateCode = resp.statE_CODE ?? resp.STATe_CODE ?? resp.state_code ?? null;
-            this.corrStateName = String(resp.statE_NAME ?? resp.statE_NAME ?? resp.state_name ?? '').trim();
+        this.corrSelectedTalukaCode = selected.talukaCode ?? null;
+        this.corrTalukaName = selected.talukaName ?? '';
 
-            this.corrSelectedDistrictCode = resp.disT_CODE ?? resp.DIST_CODE ?? resp.dist_code ?? null;
-            this.corrDistrictName = String(resp.disT_NAME ?? resp.disT_NAME ?? resp.dist_name ?? '').trim();
+        this.corrSelectedAreaCode = null;
+        this.corrAreaName = '';
+        this.corrPincode = String(selected.pin ?? '').trim();
+      }
 
-            this.corrSelectedTalukaCode = resp.talukA_CODE ?? resp.TALUKA_CODE ?? resp.taluka_code ?? null;
-            this.corrTalukaName = String(resp.talukA_NAME ?? resp.talukA_NAME ?? resp.taluka_name ?? '').trim();
-
-            // keep corr area blank — user must pick area separately
-            this.corrSelectedAreaCode = null;
-            this.corrAreaName = '';
-            // set city-level pincode if returned; area selection will overwrite
-            this.corrPincode = String(resp.piN_CODE ?? resp.PIN_CODE ?? resp.pin_code ?? '').trim();
-          }
-
-          this.toastr.success('City selected and address fields updated.');
-          this.closePicker();
-          this.loader.hide();
-        },
-        error: (err: any) => {
-          console.error('Error fetching city dependency', err);
-          this.toastr.error('Unable to fetch city details. Please try again.');
-          this.closePicker();
-          this.loader.hide();
-        }
-      });
-
+      this.closePicker();
       return;
     }
 
-    // -------------------- RELIGION / CAST / OCCUPATION --------------------
-    // These types simply return code + name from their respective APIs (already loaded into pickerOptions)
+    // -------------------- RELIGION / CAST / OCCUPATION / IDPROOF / ADDRPROOF --------------------
     switch (this.pickerField) {
       case 'religion':
         this.religionCode = Number(this.pickerSelectedCode);
@@ -628,7 +638,6 @@ export class PartymastComponent implements OnInit {
         break;
 
       default:
-        // unknown picker field (shouldn't happen)
         console.warn('confirmPicker: unknown pickerField', this.pickerField);
         break;
     }
@@ -639,7 +648,6 @@ export class PartymastComponent implements OnInit {
   trackByCode(_: number, item: { code: number; selectId?: number }) {
     return item.selectId ?? item.code;
   }
-
 
   // ---------- Preview Handlers ----------
   onFileChange(event: Event, key: PreviewKey) {
@@ -698,10 +706,23 @@ export class PartymastComponent implements OnInit {
     this.closePreview();
   }
 
-@HostListener('window:keydown.escape', ['$event'])
-onEscKey(event: Event | KeyboardEvent) {
-  const ke = event as KeyboardEvent;
-  if (this.modalOpen) this.closePreview();
-  if (this.pickerOpen) this.closePicker();
+  formatCityMeta(opt: Option | null | undefined): string {
+  if (!opt) return '';
+  const parts = [
+    opt.talukaName,
+    opt.distName,
+    opt.stateName,
+    opt.countryName
+  ].filter(p => p !== null && p !== undefined && String(p).trim() !== '' && String(p).toLowerCase() !== 'null')
+   .map(p => String(p).trim());
+
+  return parts.length ? parts.join(' · ') : '';
+}
+
+  @HostListener('window:keydown.escape', ['$event'])
+  onEscKey(event: Event | KeyboardEvent) {
+    const ke = event as KeyboardEvent;
+    if (this.modalOpen) this.closePreview();
+    if (this.pickerOpen) this.closePicker();
   }
 }
