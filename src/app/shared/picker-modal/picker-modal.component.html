@@ -16,8 +16,8 @@
 
       <!-- BODY -->
       <div class="custom-modal-body">
-        <form class="custom-form" (submit)="$event.preventDefault()">
 
+        <form class="custom-form" (submit)="$event.preventDefault()">
           <div class="custom-form-group">
             <div class="form-floating form-floating-outline mb-0 position-relative">
 
@@ -27,7 +27,6 @@
                 (focus)="dropdownOpen = true" autocomplete="off"
                 [value]="(picker.pickerTempSelected$ | async)?.option?.name || searchText || ''"
                 [placeholder]="picker.pickerTitle$ | async" />
-
 
               <label>
                 <i class="ri-map-pin-line"></i>
@@ -41,116 +40,110 @@
 
             </div>
 
-            <!-- DROPDOWN -->
+            <!-- DROPDOWN LIST -->
             <div class="dropdown-panel mt-2" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
               <div class="dropdown-list">
 
-                <!-- LIST ITEM -->
                 <div class="dropdown-item" *ngFor="let opt of picker.pickerFiltered$ | async"
                   (click)="picker.pickOption(opt)" [ngClass]="{
-                    'is-selected':
-                      (picker.pickerField$ | async) === 'country'
-                        ? ((picker.pickerTempSelected$ | async)?.option?.code === opt.code)
-                      : (picker.pickerField$ | async) === 'city'
-                        ? ((picker.pickerTempSelected$ | async)?.option?.uniqCode === opt.uniqCode)
-                      : (picker.pickerField$ | async) === 'area'
-                        ? ((picker.pickerTempSelected$ | async)?.option?.areA_CODE === opt.areA_CODE)
-                      : false
-                  }">
+    'is-selected':
+      (pickerField === 'country' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'city' && selectedTemp?.option?.uniqCode === opt.uniqCode) ||
+      (pickerField === 'area' && selectedTemp?.option?.areA_CODE === opt.areA_CODE) ||
+      (pickerField === 'religion' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'cast' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'occupation' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'idproof' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'addrproof' && selectedTemp?.option?.code === opt.code)
+  }">
 
-                  <!-- LEFT PANEL (TEXT) -->
                   <div style="flex:1; min-width:0;">
 
-                    <!-- COUNTRY NAME -->
-                    <div *ngIf="(picker.pickerField$ | async) === 'country'"
-                      class="item-name text-sm font-medium truncate">
+                    <!-- NAME (same for all fields) -->
+                    <div class="item-name text-sm font-medium truncate">
                       {{ opt.name }}
                     </div>
 
-                    <!-- CITY NAME -->
-                    <div *ngIf="(picker.pickerField$ | async) === 'city'"
-                      class="item-name text-sm font-medium truncate">
-                      {{ opt.name }}
-                    </div>
-
-                    <!-- AREA NAME -->
-                    <div *ngIf="(picker.pickerField$ | async) === 'area'"
-                      class="item-name text-sm font-medium truncate">
-                      {{ opt.name }}
-                    </div>
-
-                    <!-- CITY META (TALUKA · DISTRICT · STATE · COUNTRY · PIN) -->
-                    <div *ngIf="(picker.pickerField$ | async) === 'city'" class="item-meta text-xs text-muted truncate">
+                    <!-- CITY META → MULTI LINE -->
+                    <div *ngIf="pickerField === 'city'" class="item-meta text-xs text-muted truncate">
                       {{ opt.talukA_NAME }} ·
                       {{ opt.disT_NAME }} ·
                       {{ opt.statE_NAME }} ·
                       {{ opt.countrY_NAME }} ·
-                      Pin: {{ opt.pin ?? opt.piN_CODE ?? '—' }}
+                      Pin: {{ opt.piN_CODE ?? '—' }}
                     </div>
 
-                    <!-- AREA META: PIN ONLY -->
-                    <div *ngIf="(picker.pickerField$ | async) === 'area'" class="item-meta text-xs text-muted truncate">
+                    <!-- AREA META → ONLY PIN -->
+                    <div *ngIf="pickerField === 'area'" class="item-meta text-xs text-muted truncate">
                       Pin Code: {{ opt.piN_CODE ?? '—' }}
+                    </div>
+
+                    <!-- RELIGION, CASTE, OCCUPATION, ID, ADDRESS → SHOW CODE BELOW -->
+                    <div *ngIf="
+        pickerField === 'religion' ||
+        pickerField === 'cast' ||
+        pickerField === 'occupation' ||
+        pickerField === 'idproof' ||
+        pickerField === 'addrproof'
+      " class="item-meta text-xs text-muted truncate">
+                      Code: {{ opt.code }}
                     </div>
 
                   </div>
 
-                  <!-- RIGHT: CHECK ICON -->
+                  <!-- CHECK ICON -->
                   <i class="ri-check-line text-success" *ngIf="
-                      (picker.pickerField$ | async) === 'country' &&
-                      (picker.pickerTempSelected$ | async)?.option?.code === opt.code
-
-                      ||
-
-                      (picker.pickerField$ | async) === 'city' &&
-                      (picker.pickerTempSelected$ | async)?.option?.uniqCode === opt.uniqCode
-
-                      ||
-
-                      (picker.pickerField$ | async) === 'area' &&
-                      (picker.pickerTempSelected$ | async)?.option?.areA_CODE === opt.areA_CODE
-                    ">
+      (pickerField === 'country' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'city' && selectedTemp?.option?.uniqCode === opt.uniqCode) ||
+      (pickerField === 'area' && selectedTemp?.option?.areA_CODE === opt.areA_CODE) ||
+      (pickerField === 'religion' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'cast' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'occupation' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'idproof' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'addrproof' && selectedTemp?.option?.code === opt.code)
+    ">
                   </i>
 
                 </div>
-                <!-- END ITEM -->
+
 
                 <!-- EMPTY STATE -->
                 <div class="dropdown-empty" *ngIf="!(picker.pickerLoading$ | async)
-                    && (picker.pickerFiltered$ | async)?.length === 0">
+                       && (picker.pickerFiltered$ | async)?.length === 0">
                   No {{ picker.pickerTitle$ | async }} found
                 </div>
 
-                <!-- LOADING SPINNER -->
+                <!-- LOADING -->
                 <div *ngIf="picker.pickerLoading$ | async" class="text-center my-3">
                   <div class="spinner-border text-primary"></div>
                 </div>
 
               </div>
             </div>
-            <!-- /DROPDOWN -->
+            <!-- END DROPDOWN -->
 
           </div>
-
         </form>
+
       </div>
 
       <!-- FOOTER -->
       <div class="custom-modal-footer">
-        <button class="custom-btn custom-btn-cancel" type="button" (click)="picker.closePicker()">Cancel</button>
+        <button type="button" class="custom-btn custom-btn-cancel" (click)="picker.closePicker()">
+          Cancel
+        </button>
 
-        <button class="custom-btn custom-btn-save" [disabled]="!(picker.pickerTempSelected$ | async)?.option"
-          (click)="picker.confirmPicker()">
+        <button class="custom-btn custom-btn-save" [disabled]="!selectedTemp?.option" (click)="picker.confirmPicker()">
           Continue
         </button>
       </div>
 
     </div>
   </div>
+
 </div>
 
 <!-- BACKDROP -->
 <div *ngIf="picker.pickerOpen$ | async" class="modal-backdrop fade show" (click)="picker.closePicker()"></div>
 
-<!-- DROPDOWN BACKDROP -->
 <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>

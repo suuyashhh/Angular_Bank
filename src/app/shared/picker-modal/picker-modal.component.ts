@@ -11,12 +11,18 @@ import { PickerService } from '../../services/picker.service';
   styleUrls: ['./picker-modal.component.css']
 })
 export class PickerModalComponent {
+
   dropdownOpen = false;
   searchText = '';
+
+  pickerField: any = null;
+  selectedTemp: any = null;
 
   @ViewChild('modalSearchInput') modalSearchInput!: ElementRef;
 
   constructor(public picker: PickerService) {
+
+    /** Focus search box when modal opens */
     this.picker.pickerOpen$.subscribe(open => {
       if (open) {
         setTimeout(() => {
@@ -24,32 +30,27 @@ export class PickerModalComponent {
             this.modalSearchInput.nativeElement.focus();
             this.dropdownOpen = true;
           }
-        }, 50);
+        }, 40);
       }
     });
 
-    /** 
-     * Update search box ONLY for the field currently opened 
-     * (prevents cross-field selection issues)
-     */
-    this.picker.pickerSelected$.subscribe(sel => {
-      if (!sel) return;
+    /** Store currently opened field */
+    this.picker.pickerField$.subscribe(f => {
+      this.pickerField = f;
 
-      const currentField = this.picker.pickerField$.value;
-      if (sel.field === currentField && sel.option) {
+      const exist = this.picker.getSelected(f!, this.picker.currentTarget);
+      this.searchText = exist ? exist.name : '';
+    });
+
+    /** Temp selection updates searchBox */
+    this.picker.pickerTempSelected$.subscribe(sel => {
+      this.selectedTemp = sel;
+
+      if (sel?.option) {
         this.searchText = sel.option.name;
       }
     });
 
-    /** 
-     * When switching pickers, load existing selected value 
-     */
-    this.picker.pickerField$.subscribe(field => {
-      if (!field) return;
-
-      const existing = this.picker.getSelected(field);
-      this.searchText = existing ? existing.name : '';
-    });
   }
 
   toggleDropdown() {
@@ -59,12 +60,9 @@ export class PickerModalComponent {
     }
   }
 
-  /** Select an option (temp selection only) */
   selectOption(opt: any) {
     this.picker.pickOption(opt);
-
-    this.searchText = opt.name || '';
-
+    this.searchText = opt.name;
     this.dropdownOpen = false;
   }
 }

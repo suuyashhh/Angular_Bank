@@ -129,108 +129,86 @@
         </section>
 
         <!-- STEP 2: Address Details -->
+        <!-- STEP 2: Address Details -->
         <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
           <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+            <!-- Permanent Address lines -->
             <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_permanent_line1" class="form-control" placeholder="Permanent Address"
-                name="permanentAddrLine1" />
+              <input type="text" id="addr_permanent_line1" class="form-control" name="permanentAddrLine1"
+                placeholder="Permanent Address" />
               <label for="addr_permanent_line1">Permanent Address</label>
             </div>
 
             <div class="form-floating form-floating-outline mb-4 always-float">
-              <input type="text" id="addr_permanent_line2" class="form-control" placeholder="Permanent Address II"
-                name="permanentAddrLine2" />
+              <input type="text" id="addr_permanent_line2" class="form-control" name="permanentAddrLine2"
+                placeholder="Permanent Address II" />
               <label for="addr_permanent_line2">Permanent Address II</label>
             </div>
 
             <div class="form-floating form-floating-outline mb-4 always-float">
-              <input type="text" id="addr_permanent_line3" class="form-control" placeholder="Permanent Address III"
-                name="permanentAddrLine3" />
+              <input type="text" id="addr_permanent_line3" class="form-control" name="permanentAddrLine3"
+                placeholder="Permanent Address III" />
               <label for="addr_permanent_line3">Permanent Address III</label>
             </div>
 
-            <!-- City (clickable -> opens modal) -->
-            <!-- <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
-                readonly (click)="openPicker('city','primary')" aria-haspopup="dialog" aria-label="Select city"
-                style="cursor:pointer" />
-              <input type="hidden" id="field_cityCode" name="field_cityCode" [(ngModel)]="selectedCityCode" />
-              <input type="hidden" id="field_cityUnicId" name="field_cityUnicId" [(ngModel)]="selectedCityUnicId" />
-              <label for="addr_city">City</label>
-            </div> -->
-            <!-- city input -->
+            <!-- 🔵 PRIMARY CITY -->
             <div class="form-floating form-floating-outline mb-4">
-              <!-- <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
-                readonly (click)="picker.openPicker('city')" style="cursor: pointer" /> -->
-              <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName" readonly
-                (click)="picker.openPicker('city')" />
+              <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
+                readonly (click)="picker.openPicker('city','primary')" style="cursor:pointer"/>
 
-              <input type="hidden" id="field_cityCode" name="field_cityCode" [(ngModel)]="selectedCityCode" />
-              <input type="hidden" id="field_cityUnicId" name="field_cityUnicId" [(ngModel)]="selectedCityUnicId" />
+              <input type="hidden" name="cityCode" [(ngModel)]="selectedCityCode" />
+              <input type="hidden" name="cityUnicId" [(ngModel)]="selectedCityUnicId" />
               <label for="addr_city">City</label>
             </div>
 
-
-            <!-- Country (readonly; populated from city dependency) -->
+            <!-- Primary Country -->
             <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_country" class="form-control" placeholder="Country"
-                [value]="selectedCountryName" readonly aria-label="Country (readonly)" />
-              <input type="hidden" id="field_countryCode" name="field_countryCode" [(ngModel)]="selectedCountryCode" />
+              <input type="text" id="addr_country" class="form-control" readonly placeholder="Country"
+                [value]="selectedCountryName" />
+              <input type="hidden" name="countryCode" [(ngModel)]="selectedCountryCode" />
               <label for="addr_country">Country</label>
             </div>
 
-            <!-- State -->
+            <!-- Primary State -->
             <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_state" class="form-control" placeholder="State" [value]="selectedStateName"
-                readonly aria-label="State (readonly)" />
-              <input type="hidden" id="field_stateCode" name="field_stateCode" [(ngModel)]="selectedStateCode" />
+              <input type="text" id="addr_state" class="form-control" readonly placeholder="State"
+                [value]="selectedStateName" />
+              <input type="hidden" name="stateCode" [(ngModel)]="selectedStateCode" />
               <label for="addr_state">State</label>
             </div>
 
-            <!-- District -->
+            <!-- Primary District -->
             <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_district" class="form-control" placeholder="District"
-                [value]="selectedDistrictName" readonly aria-label="District (readonly)" />
-              <input type="hidden" id="field_districtCode" name="field_districtCode"
-                [(ngModel)]="selectedDistrictCode" />
+              <input type="text" id="addr_district" class="form-control" readonly placeholder="District"
+                [value]="selectedDistrictName" />
+              <input type="hidden" name="districtCode" [(ngModel)]="selectedDistrictCode" />
               <label for="addr_district">District</label>
             </div>
 
-            <!-- Taluka -->
+            <!-- Primary Taluka -->
             <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_taluka" class="form-control" placeholder="Taluka" [value]="selectedTalukaName"
-                readonly aria-label="Taluka (readonly)" />
-              <input type="hidden" id="field_talukaCode" name="field_talukaCode" [(ngModel)]="selectedTalukaCode" />
+              <input type="text" id="addr_taluka" class="form-control" readonly placeholder="Taluka"
+                [value]="selectedTalukaName" />
+              <input type="hidden" name="talukaCode" [(ngModel)]="selectedTalukaCode" />
               <label for="addr_taluka">Taluka</label>
             </div>
 
-            <!-- Area (clickable -> opens Area picker) -->
-            <!-- <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_area" class="form-control" placeholder="Area" [value]="selectedAreaName"
-                readonly (click)="openPicker('area','primary')" aria-haspopup="dialog" aria-label="Select area"
-                style="cursor:pointer" />
-              <input type="hidden" id="field_areaCode" name="field_areaCode" [(ngModel)]="selectedAreaCode" />
-              <label for="addr_area">Area</label>
-            </div> -->
-
+            <!-- 🔵 PRIMARY AREA -->
             <div class="form-floating form-floating-outline mb-4">
-              <!-- <input type="text" id="addr_area" class="form-control" placeholder="Area" [value]="selectedAreaName"
-                readonly (click)="picker.openPicker('area')" style="cursor: pointer" /> -->
-              <input type="text" id="addr_area" class="form-control" placeholder="Area" [value]="selectedAreaName" readonly
-                (click)="picker.openPicker('area')" />
-
-              <input type="hidden" id="field_areaCode" name="field_areaCode" [(ngModel)]="selectedAreaCode" />
-
+              <input type="text" id="addr_area" class="form-control" readonly placeholder="Area"
+                [value]="selectedAreaName" (click)="picker.openPicker('area','primary')" style="cursor:pointer"/>
+              <input type="hidden" name="areaCode" [(ngModel)]="selectedAreaCode" />
               <label for="addr_area">Area</label>
             </div>
 
-            <!-- PinCode (readonly) -->
+            <!-- Primary Pincode -->
             <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_pincode" class="form-control" placeholder="PinCode" [value]="selectedPincode"
-                readonly aria-label="PinCode (readonly)" />
-              <input type="hidden" id="field_pinCode" name="field_pinCode" [(ngModel)]="selectedPincode" />
+              <input type="text" id="addr_pincode" class="form-control" readonly placeholder="PinCode"
+                [value]="selectedPincode" />
+              <input type="hidden" name="pin" [(ngModel)]="selectedPincode" />
               <label for="addr_pincode">PinCode</label>
             </div>
 
@@ -246,117 +224,187 @@
             </div>
           </div>
 
-          <!-- row below Pincode: Corresponding address checkbox -->
+          <!-- Toggle Corr Address -->
           <div class="mt-4 ml-2">
             <label class="inline-flex items-center gap-3">
               <input type="checkbox" id="chk_correspondingAddr" [(ngModel)]="useDifferentCorresponding"
                 name="useDifferentCorresponding" class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
-              <span class="text-sm text-gray-700">Do You Want Fill Different Corresponding Address ?</span>
+              <span class="text-sm text-gray-700">
+                Do You Want Fill Different Corresponding Address ?
+              </span>
             </label>
           </div>
 
-          <!-- show corresponding address block when checkbox checked -->
+          <!-- 🔵 CORRESPONDING BLOCK -->
           <div *ngIf="useDifferentCorresponding" class="mt-6">
-            <hr
-              class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
+            <hr class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 mb-6" />
+
             <h5 class="mb-4 text-md font-semibold">Corresponding Address</h5>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+              <!-- City -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_addr_line1" class="form-control" placeholder="Corresponding Address"
-                  name="corrAddrLine1" [(ngModel)]="corrAddrLine1" />
-                <label for="corr_addr_line1">Corresponding Address</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-4 always-float">
-                <input type="text" id="corr_addr_line2" class="form-control" placeholder="Corresponding Address II"
-                  name="corrAddrLine2" [(ngModel)]="corrAddrLine2" />
-                <label for="corr_addr_line2">Corresponding Address II</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-4 always-float">
-                <input type="text" id="corr_addr_line3" class="form-control" placeholder="Corresponding Address III"
-                  name="corrAddrLine3" [(ngModel)]="corrAddrLine3" />
-                <label for="corr_addr_line3">Corresponding Address III</label>
-              </div>
-
-              <!-- Corresponding City (clickable -> opens modal for corr target) -->
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_city" class="form-control" placeholder="City" [value]="corrCityName"
-                  readonly (click)="openPicker('city','corr')" aria-haspopup="dialog"
-                  aria-label="Select corresponding city" style="cursor:pointer" />
-                <input type="hidden" id="field_corrCityCode" name="field_corrCityCode"
-                  [(ngModel)]="corrSelectedCityCode" />
-                <input type="hidden" id="field_corrCityUnicId" name="field_corrCityUnicId"
-                  [(ngModel)]="corrSelectedCityUnicId" />
+                <input type="text" id="corr_city" class="form-control" readonly placeholder="City"
+                  [value]="corrCityName" (click)="picker.openPicker('city','corr')" style="cursor:pointer"/>
+                <input type="hidden" [(ngModel)]="corrSelectedCityCode" name="corrCityCode" />
                 <label for="corr_city">City</label>
               </div>
 
-              <!-- Corresponding Country -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_country" class="form-control" placeholder="Country"
-                  [value]="corrCountryName" readonly />
-                <input type="hidden" id="field_corrCountryCode" name="field_corrCountryCode"
-                  [(ngModel)]="corrSelectedCountryCode" />
+                <input type="text" id="corr_country" class="form-control" readonly placeholder="Country"
+                  [value]="corrCountryName" />
+                <input type="hidden" [(ngModel)]="corrSelectedCountryCode" name="corrCountryCode" />
                 <label for="corr_country">Country</label>
               </div>
 
-              <!-- Corresponding State -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_state" class="form-control" placeholder="State" [value]="corrStateName"
-                  readonly />
-                <input type="hidden" id="field_corrStateCode" name="field_corrStateCode"
-                  [(ngModel)]="corrSelectedStateCode" />
+                <input type="text" id="corr_state" class="form-control" readonly placeholder="State"
+                  [value]="corrStateName" />
+                <input type="hidden" [(ngModel)]="corrSelectedStateCode" name="corrStateCode" />
                 <label for="corr_state">State</label>
               </div>
 
-              <!-- Corresponding District -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_district" class="form-control" placeholder="District"
-                  [value]="corrDistrictName" readonly />
-                <input type="hidden" id="field_corrDistrictCode" name="field_corrDistrictCode"
-                  [(ngModel)]="corrSelectedDistrictCode" />
+                <input type="text" id="corr_district" class="form-control" readonly placeholder="District"
+                  [value]="corrDistrictName" />
+                <input type="hidden" [(ngModel)]="corrSelectedDistrictCode" name="corrDistrictCode" />
                 <label for="corr_district">District</label>
               </div>
 
-              <!-- Corresponding Taluka -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_taluka" class="form-control" placeholder="Taluka" [value]="corrTalukaName"
-                  readonly />
-                <input type="hidden" id="field_corrTalukaCode" name="field_corrTalukaCode"
-                  [(ngModel)]="corrSelectedTalukaCode" />
+                <input type="text" id="corr_taluka" class="form-control" readonly placeholder="Taluka"
+                  [value]="corrTalukaName" />
+                <input type="hidden" [(ngModel)]="corrSelectedTalukaCode" name="corrTalukaCode" />
                 <label for="corr_taluka">Taluka</label>
               </div>
 
-              <!-- Corresponding Area -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_area" class="form-control" placeholder="Area" [value]="corrAreaName"
-                  readonly (click)="openPicker('area','corr')" aria-haspopup="dialog"
-                  aria-label="Select corresponding area" style="cursor:pointer" />
-                <input type="hidden" id="field_corrAreaCode" name="field_corrAreaCode"
-                  [(ngModel)]="corrSelectedAreaCode" />
+                <input type="text" id="corr_area" class="form-control" readonly placeholder="Area"
+                  [value]="corrAreaName" (click)="picker.openPicker('area','corr')" style="cursor:pointer"/>
+                <input type="hidden" [(ngModel)]="corrSelectedAreaCode" name="corrAreaCode" />
                 <label for="corr_area">Area</label>
               </div>
 
-              <!-- Corresponding PinCode -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_pincode" class="form-control" placeholder="PinCode" [value]="corrPincode"
-                  readonly />
-                <input type="hidden" id="field_corrPinCode" name="field_corrPinCode" [(ngModel)]="corrPincode" />
-                <label for="corr_pincode">PinCode</label>
+                <input type="text" id="corr_pincode" class="form-control" readonly placeholder="Pincode"
+                  [value]="corrPincode" />
+                <label for="corr_pincode">Pincode</label>
               </div>
+
             </div>
           </div>
 
+          <!-- Nav buttons -->
           <div class="mt-6 flex items-center justify-between gap-3">
             <label for="step-1"
-              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-            <label for="step-3"
-              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
+              class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+              Previous
+            </label>
+            <label for="step-3" class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+              Next
+            </label>
           </div>
         </section>
 
 
+        <div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
+          [style.display]="pickerOpen ? 'block' : 'none'">
+          <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
+            <div class="modal-content custom-modal-content" role="document">
+              <div class="custom-modal-header">
+                <div class="modal-title-wrapper">
+                  <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
+                </div>
+                <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
+              </div>
+
+              <div class="custom-modal-body">
+                <form class="custom-form" novalidate (submit)="$event.preventDefault()">
+                  <div class="form-group-wrapper">
+                    <div class="custom-form-group">
+                      <div class="form-floating form-floating-outline mb-0 position-relative">
+                        <!-- search input -->
+                        <input type="text" id="picker-input" #pickerSearchInput class="form-control branch-input"
+                          placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
+                          (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
+                        <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
+
+                        <!-- caret toggle -->
+                        <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
+                          aria-label="Toggle">
+                          <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+                        </button>
+
+                        <!-- dropdown panel -->
+                        <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
+                          <div class="dropdown-list">
+                            <!-- list item: name (left) + pin (right). No 'code: ...' text -->
+                            <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
+                              (click)="pickOption(opt)"
+                              [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
+                              style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;">
+                              <div style="min-width:0">
+                                <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
+                              </div>
+
+                              <!-- show pin or placeholder (only for city/area) -->
+                              <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;"
+                                *ngIf="pickerField === 'city' || pickerField === 'area'; else noPinTemplate">
+                                <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''; else noPin">
+                                  {{ opt.pin }}
+                                </ng-container>
+                                <ng-template #noPin>—</ng-template>
+                              </div>
+                              <ng-template #noPinTemplate>
+                                <!-- For non-city/area fields, show code (same null/empty handling as pin) -->
+                                <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
+                                  <ng-container
+                                    *ngIf="opt.code !== null && opt.code !== undefined && (opt.code + '') !== 'null' && (opt.code + '') !== '' ; else noCode">
+                                    {{ opt.code }}
+                                  </ng-container>
+                                  <ng-template #noCode>—</ng-template>
+                                </div>
+                              </ng-template>
+
+                            </div>
+
+                            <!-- empty / loading states -->
+                            <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
+                              No {{ pickerTitle }} found
+                            </div>
+
+                            <div *ngIf="pickerLoading" class="text-center my-3">
+                              <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /dropdown panel -->
+
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="custom-modal-footer">
+                <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
+                <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
+                  (click)="confirmPicker()">
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backdrop closes the modal when clicked -->
+        <div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
+
+        <!-- invisible fullscreen click-catcher while dropdown open -->
+        <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
         <!-- Shared picker modal -->
         <app-picker-modal></app-picker-modal>
 
@@ -367,24 +415,30 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <!-- Religion -->
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="religionCode" placeholder="Religion Code"
-                  [value]="religionName" readonly (click)="openPicker('religion')" style="cursor:pointer" />
+                <!-- <input type="text" class="form-control" id="religionCode" placeholder="Religion Code"
+                  [value]="religionName" readonly (click)="openPicker('religion')" style="cursor:pointer" /> -->
+                  <input type="text" id="religionCode" class="form-control" placeholder="Religion Code" [value]="religionName"
+                readonly (click)="picker.openPicker('religion','primary')" style="cursor:pointer"/>
                 <input type="hidden" name="religionCode" [(ngModel)]="religionCode" />
                 <label for="religionCode">Religion</label>
               </div>
 
               <!-- Cast -->
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="castCode" placeholder="Cast Code" [value]="castName"
-                  readonly (click)="openPicker('cast')" style="cursor:pointer" />
+                <!-- <input type="text" class="form-control" id="castCode" placeholder="Cast Code" [value]="castName"
+                  readonly (click)="openPicker('cast')" style="cursor:pointer" /> -->
+                  <input type="text" id="castCode" class="form-control" placeholder="Cast Code" [value]="castName"
+                readonly (click)="picker.openPicker('cast','primary')" style="cursor:pointer"/>
                 <input type="hidden" name="castCode" [(ngModel)]="castCode" />
                 <label for="castCode">Caste</label>
               </div>
 
               <!-- Occupation -->
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="occupation" placeholder="Occupation"
-                  [value]="occupationName" readonly (click)="openPicker('occupation')" style="cursor:pointer" />
+                <!-- <input type="text" class="form-control" id="occupation" placeholder="Occupation"
+                  [value]="occupationName" readonly (click)="openPicker('occupation')" style="cursor:pointer" /> -->
+                  <input type="text" id="occupation" class="form-control" placeholder="Occupation" [value]="occupationName"
+                readonly (click)="picker.openPicker('occupation','primary')" style="cursor:pointer"/>
                 <input type="hidden" name="occupationCode" [(ngModel)]="occupationCode" />
                 <label for="occupation">Occupation</label>
               </div>
@@ -597,8 +651,10 @@
               <input type="checkbox" id="chk_idProof" name="idProofCheck"
                 class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
               <div class="form-floating form-floating-outline flex-1">
-                <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
-                  [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" />
+                <!-- <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
+                  [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" /> -->
+                  <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" [value]="idproofName"
+                readonly (click)="picker.openPicker('idproof','primary')" style="cursor:pointer"/>
                 <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode" />
                 <label for="IDProof">I.D.Proof</label>
               </div>
@@ -609,9 +665,11 @@
               <input type="checkbox" id="chk_addressProof" name="addressProofCheck"
                 class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
               <div class="form-floating form-floating-outline flex-1">
-                <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
+                <!-- <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
                   [value]="addrproofName" readonly (click)="openPicker('addrproof')" style="cursor:pointer"
-                  name="Address Proof" />
+                  name="Address Proof" /> -->
+                  <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof" [value]="addrproofName"
+                readonly (click)="picker.openPicker('addrproof','primary')" style="cursor:pointer"/>
                 <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName" />
                 <label for="AddressProof">Address Proof</label>
               </div>

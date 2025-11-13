@@ -40,7 +40,7 @@ export class UsermstComponent implements OnInit {
     });
 
     
-    
+    this.picker.resetSelections();
     // this.loadCountryList();
     
     this.picker.pickerSelected$.subscribe((selected:any) => {
