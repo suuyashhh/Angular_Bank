@@ -152,14 +152,26 @@
             </div>
 
             <!-- City (clickable -> opens modal) -->
-            <div class="form-floating form-floating-outline mb-4">
+            <!-- <div class="form-floating form-floating-outline mb-4">
               <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
                 readonly (click)="openPicker('city','primary')" aria-haspopup="dialog" aria-label="Select city"
                 style="cursor:pointer" />
               <input type="hidden" id="field_cityCode" name="field_cityCode" [(ngModel)]="selectedCityCode" />
               <input type="hidden" id="field_cityUnicId" name="field_cityUnicId" [(ngModel)]="selectedCityUnicId" />
               <label for="addr_city">City</label>
+            </div> -->
+            <!-- city input -->
+            <div class="form-floating form-floating-outline mb-4">
+              <!-- <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
+                readonly (click)="picker.openPicker('city')" style="cursor: pointer" /> -->
+              <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName" readonly
+                (click)="picker.openPicker('city')" />
+
+              <input type="hidden" id="field_cityCode" name="field_cityCode" [(ngModel)]="selectedCityCode" />
+              <input type="hidden" id="field_cityUnicId" name="field_cityUnicId" [(ngModel)]="selectedCityUnicId" />
+              <label for="addr_city">City</label>
             </div>
+
 
             <!-- Country (readonly; populated from city dependency) -->
             <div class="form-floating form-floating-outline mb-4">
@@ -195,11 +207,22 @@
             </div>
 
             <!-- Area (clickable -> opens Area picker) -->
-            <div class="form-floating form-floating-outline mb-4">
+            <!-- <div class="form-floating form-floating-outline mb-4">
               <input type="text" id="addr_area" class="form-control" placeholder="Area" [value]="selectedAreaName"
                 readonly (click)="openPicker('area','primary')" aria-haspopup="dialog" aria-label="Select area"
                 style="cursor:pointer" />
               <input type="hidden" id="field_areaCode" name="field_areaCode" [(ngModel)]="selectedAreaCode" />
+              <label for="addr_area">Area</label>
+            </div> -->
+
+            <div class="form-floating form-floating-outline mb-4">
+              <!-- <input type="text" id="addr_area" class="form-control" placeholder="Area" [value]="selectedAreaName"
+                readonly (click)="picker.openPicker('area')" style="cursor: pointer" /> -->
+              <input type="text" id="addr_area" class="form-control" placeholder="Area" [value]="selectedAreaName" readonly
+                (click)="picker.openPicker('area')" />
+
+              <input type="hidden" id="field_areaCode" name="field_areaCode" [(ngModel)]="selectedAreaCode" />
+
               <label for="addr_area">Area</label>
             </div>
 
@@ -334,104 +357,8 @@
         </section>
 
 
-        <!-- Picker modal (used for City OR Area OR Religion OR Cast OR Occupation OR IDProof OR AddressProof OR Other/Staff) -->
-        <div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
-          [style.display]="pickerOpen ? 'block' : 'none'">
-          <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
-            <div class="modal-content custom-modal-content" role="document">
-              <div class="custom-modal-header">
-                <div class="modal-title-wrapper">
-                  <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
-                </div>
-                <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
-              </div>
-
-              <div class="custom-modal-body">
-                <form class="custom-form" novalidate (submit)="$event.preventDefault()">
-                  <div class="form-group-wrapper">
-                    <div class="custom-form-group">
-                      <div class="form-floating form-floating-outline mb-0 position-relative">
-                        <!-- search input -->
-                        <input type="text" id="picker-input" #pickerSearchInput class="form-control branch-input"
-                          placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
-                          (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
-                        <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
-
-                        <!-- caret toggle -->
-                        <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
-                          aria-label="Toggle">
-                          <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
-                        </button>
-
-                        <!-- dropdown panel -->
-                        <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
-                          <div class="dropdown-list">
-                            <!-- list item: name (left) + pin (right). No 'code: ...' text -->
-                            <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
-                              (click)="pickOption(opt)"
-                              [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
-                              style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;">
-                              <div style="min-width:0">
-                                <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
-                              </div>
-
-                              <!-- show pin or placeholder (only for city/area) -->
-                              <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;"
-                                *ngIf="pickerField === 'city' || pickerField === 'area'; else noPinTemplate">
-                                <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''; else noPin">
-                                  {{ opt.pin }}
-                                </ng-container>
-                                <ng-template #noPin>—</ng-template>
-                              </div>
-                              <ng-template #noPinTemplate>
-                                <!-- For non-city/area fields, show code (same null/empty handling as pin) -->
-                                <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
-                                  <ng-container
-                                    *ngIf="opt.code !== null && opt.code !== undefined && (opt.code + '') !== 'null' && (opt.code + '') !== '' ; else noCode">
-                                    {{ opt.code }}
-                                  </ng-container>
-                                  <ng-template #noCode>—</ng-template>
-                                </div>
-                              </ng-template>
-
-                            </div>
-
-                            <!-- empty / loading states -->
-                            <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
-                              No {{ pickerTitle }} found
-                            </div>
-
-                            <div *ngIf="pickerLoading" class="text-center my-3">
-                              <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- /dropdown panel -->
-
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
-
-              <div class="custom-modal-footer">
-                <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
-                <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
-                  (click)="confirmPicker()">
-                  Continue
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Backdrop closes the modal when clicked -->
-        <div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
-
-        <!-- invisible fullscreen click-catcher while dropdown open -->
-        <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
+        <!-- Shared picker modal -->
+        <app-picker-modal></app-picker-modal>
 
         <!-- STEP 3: Personal + Company/Firm conditional content -->
         <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
