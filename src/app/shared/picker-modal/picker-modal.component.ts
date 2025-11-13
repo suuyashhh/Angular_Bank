@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerService } from '../../services/picker.service';
@@ -14,7 +14,19 @@ export class PickerModalComponent {
   dropdownOpen = false;
   searchText = '';
 
+  @ViewChild('modalSearchInput') modalSearchInput!: ElementRef;
+
   constructor(public picker: PickerService) {
+    this.picker.pickerOpen$.subscribe(open => {
+      if (open) {
+        setTimeout(() => {
+          if (this.modalSearchInput) {
+            this.modalSearchInput.nativeElement.focus();
+            this.dropdownOpen = true;
+          }
+        }, 50);
+      }
+    });
 
     /** 
      * Update search box ONLY for the field currently opened 

@@ -24,7 +24,7 @@ export interface Option {
   selectId?: number | string;
 
   uniqCode?: number;      // <-- ADD THIS LINE
-  areA_CODE?:number;
+  areA_CODE?: number;
   citY_CODE?: number;
   talukA_CODE?: number;
   talukA_NAME?: string;
@@ -34,7 +34,7 @@ export interface Option {
   statE_NAME?: string;
   countrY_CODE?: number;
   countrY_NAME?: string;
-  piN_CODE?:number;
+  piN_CODE?: number;
 }
 
 
@@ -73,14 +73,24 @@ export class PickerService {
     private api: ApiService,
     private toastr: ToastrService,
     private loader: LoaderService
-  ) {}
+  ) { }
 
   getSelected(field: PickerField) {
     return this.pickerSelectedMap[field];
   }
 
   openPicker(field: PickerField, target: PickerTarget = 'primary') {
+
+    // 🔥 GLOBAL VALIDATION FOR AREA
+    if (field === 'area' && !this.pickerSelectedMap.city) {
+      this.toastr.error("Please select a city first.");
+      return;
+    }
+
     this.currentTarget = target;
+
+    // 🔥 CLEAR previously selected value for fresh open
+    this.pickerSelectedMap[field] = null;
 
     this.pickerOpen$.next(true);
     this.pickerField$.next(field);
@@ -89,6 +99,7 @@ export class PickerService {
     this.pickerFiltered$.next([]);
     this.pickerLoading$.next(true);
 
+    // no old value anymore (existing = null)
     const existing = this.pickerSelectedMap[field];
 
     this.pickerTempSelected$.next({ field, option: existing, target });
@@ -97,12 +108,21 @@ export class PickerService {
     document.body.style.overflow = 'hidden';
 
     switch (field) {
-      case 'city': this.loadCityList(); break;
-      case 'country': this.loadCountryList(); break;
-      case 'area': this.loadAreaList(); break;
-      default: this.pickerLoading$.next(false); break;
+      case 'city':
+        this.loadCityList();
+        break;
+      case 'country':
+        this.loadCountryList();
+        break;
+      case 'area':
+        this.loadAreaList();
+        break;
+      default:
+        this.pickerLoading$.next(false);
+        break;
     }
   }
+
 
   closePicker() {
     this.pickerOpen$.next(false);
@@ -171,7 +191,7 @@ export class PickerService {
     this.api.get('CityMaster/GetAllDependencies').subscribe({
       next: (res: any[]) => {
         const options = res.map(r => ({
-          uniqCode : r.uniqCode,
+          uniqCode: r.uniqCode,
           code: r.citY_CODE,
           name: r.citY_NAME,
           talukA_CODE: r.talukA_CODE,
@@ -182,7 +202,7 @@ export class PickerService {
           statE_NAME: r.statE_NAME,
           countrY_CODE: r.countrY_CODE,
           countrY_NAME: r.countrY_NAME,
-          piN_CODE:r.pin
+          piN_CODE: r.pin
         }));
 
         this.pickerOptions$.next(options);
@@ -218,7 +238,7 @@ export class PickerService {
   private loadAreaList() {
     const city = this.pickerSelectedMap.city;
     console.log(city);
-    
+
     if (!city) {
       this.toastr.error('Please select city first.');
       this.pickerFiltered$.next([]);
@@ -234,7 +254,7 @@ export class PickerService {
         const options = res.map(r => ({
           areA_CODE: r.areA_CODE,
           name: r.areA_NAME,
-          piN_CODE:r.piN_CODE,
+          piN_CODE: r.piN_CODE,
         }));
 
         this.pickerOptions$.next(options);

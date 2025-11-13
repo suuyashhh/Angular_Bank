@@ -171,7 +171,7 @@ export class PartymastComponent implements OnInit {
 
       console.log('Selected City:', option);
     }
-
+    
     // -------------------------------
     // AREA SELECTED
     // -------------------------------
@@ -190,6 +190,9 @@ export class PartymastComponent implements OnInit {
     }
 
   });
+  if(!this.selectedCityName){
+    this.picker.closePicker();
+  }
 
 }
 
