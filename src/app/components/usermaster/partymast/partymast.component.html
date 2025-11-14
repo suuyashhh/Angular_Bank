@@ -336,37 +336,72 @@
                           <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
                         </button>
 
-                        <!-- dropdown panel -->
+                        <!-- dropdown panel (replace your existing dropdown-panel block with this) -->
                         <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
                           <div class="dropdown-list">
-                            <!-- list item: name (left) + pin (right). No 'code: ...' text -->
+                            <!-- list item: left = name + meta, right = pin (only for area) or code (others) -->
                             <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
                               (click)="pickOption(opt)"
                               [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
-                              style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;">
-                              <div style="min-width:0">
-                                <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
-                              </div>
+                              style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;cursor:pointer;align-items:center;"
+                              role="option"
+                              [attr.aria-selected]="pickerSelectedCode === (opt.selectId ?? opt.code) ? 'true' : 'false'">
 
-                              <!-- show pin or placeholder (only for city/area) -->
-                              <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;"
-                                *ngIf="pickerField === 'city' || pickerField === 'area'; else noPinTemplate">
-                                <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''; else noPin">
-                                  {{ opt.pin }}
-                                </ng-container>
-                                <ng-template #noPin>—</ng-template>
-                              </div>
-                              <ng-template #noPinTemplate>
-                                <!-- For non-city/area fields, show code (same null/empty handling as pin) -->
-                                <div class="text-sm text-muted" style="margin-left:12px;white-space:nowrap;">
-                                  <ng-container
-                                    *ngIf="opt.code !== null && opt.code !== undefined && (opt.code + '') !== 'null' && (opt.code + '') !== '' ; else noCode">
-                                    {{ opt.code }}
-                                  </ng-container>
-                                  <ng-template #noCode>—</ng-template>
+                              <!-- left: name + dependency meta -->
+                              <div style="min-width:0;flex:1;display:flex;flex-direction:column;gap:4px;">
+                                <!-- city/area/name -->
+                                <div class="item-name text-sm font-medium truncate" title="{{ opt.name }}">
+                                  {{ opt.name }}
                                 </div>
-                              </ng-template>
 
+                                <!-- dependency meta: taluka · district · state · country -->
+                                <div class="item-meta text-xs text-muted truncate" style="opacity:2.75;">
+                                  <ng-container *ngIf="pickerField === 'city'">
+                                    <ng-container *ngIf="formatCityMeta(opt); else noMeta">
+                                      {{ formatCityMeta(opt) }}
+                                    </ng-container>
+                                    <ng-template #noMeta>—</ng-template>
+                                  </ng-container>
+
+                                  <!-- area shows name only (or you can show pin below separately) -->
+                                  <ng-container *ngIf="pickerField === 'area'">
+                                    <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''">
+                                      Pin: {{ opt.pin }}
+                                    </ng-container>
+                                    <ng-container *ngIf="!opt.pin || opt.pin === 'null' || opt.pin === ''">
+                                      —
+                                    </ng-container>
+                                  </ng-container>
+
+                                  <!-- other pickers: show code -->
+                                  <ng-container *ngIf="pickerField !== 'city' && pickerField !== 'area'">
+                                    <ng-container
+                                      *ngIf="opt.code !== null && opt.code !== undefined && (opt.code + '') !== 'null' && (opt.code + '') !== ''">
+                                      {{ opt.code }}
+                                    </ng-container>
+                                    <ng-container
+                                      *ngIf="opt.code === null || opt.code === undefined || (opt.code + '') === 'null' || (opt.code + '') === ''">
+                                      —
+                                    </ng-container>
+                                  </ng-container>
+                                </div>
+
+                              </div>
+
+                              <!-- right: small code/pin column (kept compact) -->
+                              <!-- <div style="flex-shrink:0; margin-left:8px; text-align:right; min-width:56px;">
+        <div *ngIf="pickerField === 'area'" class="text-sm text-muted" style="white-space:nowrap;">
+          <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== '' ; else dashPin">{{ opt.pin }}</ng-container>
+          <ng-template #dashPin>—</ng-template>
+        </div>
+
+        <div *ngIf="pickerField !== 'area' && pickerField !== 'city'" class="text-sm text-muted" style="white-space:nowrap;">
+          <ng-container *ngIf="opt.code !== null && opt.code !== undefined && (opt.code + '') !== 'null' && (opt.code + '') !== '' ; else dashCode">{{ opt.code }}</ng-container>
+          <ng-template #dashCode>—</ng-template>
+        </div>
+
+        <div *ngIf="pickerField === 'city'" style="height:0;opacity:0"></div>
+      </div> -->
                             </div>
 
                             <!-- empty / loading states -->
@@ -381,7 +416,7 @@
                             </div>
                           </div>
                         </div>
-                        <!-- /dropdown panel -->
+
 
                       </div>
                     </div>

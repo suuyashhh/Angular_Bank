@@ -19,7 +19,6 @@ type Option = {
   selectId?: number;
   pin?: string | null;
 
-  
   // dependency fields returned by GetAllDependencies
   talukaCode?: number;
   talukaName?: string;
@@ -737,7 +736,7 @@ ngOnInit(): void {
         this.selectedAreaCode = null;
         this.selectedAreaName = '';
         // use city-level pincode if present
-        // this.selectedPincode = String(selected.pin ?? '').trim();
+
       } else {
         // corresponding target
         this.corrSelectedCityUnicId = Number(selected.selectId ?? selected.code ?? 0);
@@ -758,7 +757,6 @@ ngOnInit(): void {
 
         this.corrSelectedAreaCode = null;
         this.corrAreaName = '';
-        // this.corrPincode = String(selected.pin ?? '').trim();
       }
 
       this.closePicker();
