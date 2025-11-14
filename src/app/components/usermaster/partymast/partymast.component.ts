@@ -1,10 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../services/loader.service';
+import { PickerModalComponent } from '../../../shared/picker-modal/picker-modal.component';
+import { PickerService } from '../../../services/picker.service';
 
 type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idproof' | 'addrproof' | 'otherstaff';
 type PickerTarget = 'primary' | 'corr';
@@ -31,7 +33,7 @@ type Option = {
 @Component({
   selector: 'app-partymast',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, PickerModalComponent, ReactiveFormsModule],
   templateUrl: './partymast.component.html',
   styleUrls: ['./partymast.component.css']
 })
@@ -81,7 +83,7 @@ export class PartymastComponent implements OnInit {
   selectedCityUnicId: number | null = null;
   selectedAreaCode: number | null = null;
   selectedAreaName = '';
-  selectedPincode = '';
+  selectedPincode : number | null = null;
 
   // ---------- Corresponding Address ----------
   corrCityName = '';
@@ -97,7 +99,7 @@ export class PartymastComponent implements OnInit {
   corrTalukaName = '';
   corrSelectedAreaCode: number | null = null;
   corrAreaName = '';
-  corrPincode = '';
+  corrPincode : number | null = null;
 
   // ---------- Religion / Caste / Occupation ----------
   religionName = '';
@@ -133,10 +135,167 @@ export class PartymastComponent implements OnInit {
   constructor(
     private api: ApiService,
     private toastr: ToastrService,
-    private loader: LoaderService
+    private loader: LoaderService,
+    public picker: PickerService,
   ) { }
 
-  ngOnInit(): void { }
+ngOnInit(): void {
+
+  this.picker.resetSelections();
+
+  this.picker.pickerSelected$.subscribe(sel => {
+
+    if (!sel) return;
+
+    const { field, option, target } = sel;
+
+
+    /* ---------------------------------------
+     * PRIMARY ADDRESS
+     * --------------------------------------- */
+    if (target === 'primary') {
+
+      /* 🔵 CITY (PRIMARY) */
+      if (field === 'city') {
+
+        if (!option) {
+          this.selectedCityName = '';
+          return;
+        }
+
+        this.selectedCityName = option.name;
+        this.selectedCityCode = Number(option.code ?? null);
+        this.selectedCityUnicId = Number(option.uniqCode ?? option.code ?? 0);
+
+        // Dependencies
+        this.selectedTalukaName = option.talukA_NAME ?? '';
+        this.selectedDistrictName = option.disT_NAME ?? '';
+        this.selectedStateName = option.statE_NAME ?? '';
+        this.selectedCountryName = option.countrY_NAME ?? '';
+
+        this.selectedTalukaCode = Number(option.talukA_CODE ?? 0);
+        this.selectedDistrictCode = Number(option.disT_CODE ?? 0);
+        this.selectedStateCode = Number(option.statE_CODE ?? 0);
+        this.selectedCountryCode = Number(option.countrY_CODE ?? 0);
+
+        console.log('PRIMARY CITY:', option);
+      }
+
+
+      /* 🔵 AREA (PRIMARY) */
+      if (field === 'area') {
+
+        if (!option) {
+          this.selectedAreaName = '';
+          return;
+        }
+
+        this.selectedAreaName = option.name;
+        this.selectedAreaCode = Number(option.areA_CODE ?? null);
+        this.selectedPincode = Number(option.piN_CODE ?? 0);
+
+        console.log('PRIMARY AREA:', option);
+      }
+
+
+      /* 🔵 RELIGION (PRIMARY) */
+      if (field === 'religion') {
+        this.religionName = option?.name ?? '';
+        this.religionCode = Number(option?.code ?? 0);
+
+        console.log("PRIMARY RELIGION:", option);
+      }
+
+      /* 🔵 CASTE (PRIMARY) */
+      if (field === 'cast') {
+        this.castName = option?.name ?? '';
+        this.castCode = Number(option?.code ?? 0);
+
+        console.log("PRIMARY CAST:", option);
+      }
+
+      /* 🔵 OCCUPATION (PRIMARY) */
+      if (field === 'occupation') {
+        this.occupationName = option?.name ?? '';
+        this.occupationCode = Number(option?.code ?? 0);
+
+        console.log("PRIMARY OCCUPATION:", option);
+      }
+
+      /* 🔵 ID PROOF (PRIMARY) */
+      if (field === 'idproof') {
+        this.idproofName = option?.name ?? '';
+        this.idproofCode = Number(option?.code ?? 0);
+
+        console.log("PRIMARY ID PROOF:", option);
+      }
+
+      /* 🔵 ADDRESS PROOF (PRIMARY) */
+      if (field === 'addrproof') {
+        this.addrproofName = option?.name ?? '';
+        this.addrproofCode = Number(option?.code ?? 0);
+
+        console.log("PRIMARY ADDRESS PROOF:", option);
+      }
+
+    }
+
+
+
+    /* ---------------------------------------
+     * CORRESPONDING ADDRESS
+     * --------------------------------------- */
+    if (target === 'corr') {
+
+      /* 🔵 CITY (CORR) */
+      if (field === 'city') {
+
+        if (!option) {
+          this.corrCityName = '';
+          return;
+        }
+
+        this.corrCityName = option.name;
+        this.corrSelectedCityCode = Number(option.code ?? null);
+        this.corrSelectedCityUnicId = Number(option.uniqCode ?? option.code ?? 0);
+
+        this.corrTalukaName = option.talukA_NAME ?? '';
+        this.corrDistrictName = option.disT_NAME ?? '';
+        this.corrStateName = option.statE_NAME ?? '';
+        this.corrCountryName = option.countrY_NAME ?? '';
+
+        this.corrSelectedTalukaCode = Number(option.talukA_CODE ?? 0);
+        this.corrSelectedDistrictCode = Number(option.disT_CODE ?? 0);
+        this.corrSelectedStateCode = Number(option.statE_CODE ?? 0);
+        this.corrSelectedCountryCode = Number(option.countrY_CODE ?? 0);
+
+        console.log('CORR CITY:', option);
+      }
+
+
+      /* 🔵 AREA (CORR) */
+      if (field === 'area') {
+
+        if (!option) {
+          this.corrAreaName = '';
+          return;
+        }
+
+        this.corrAreaName = option.name;
+        this.corrSelectedAreaCode = Number(option.areA_CODE ?? null);
+        this.corrPincode = Number(option.piN_CODE ?? 0);
+
+        console.log('CORR AREA:', option);
+      }
+
+
+    }
+
+  });
+}
+
+
+
 
   // ---------- Other/Staff Type Change Handler ----------
   onOtherStaffTypeChange() {
@@ -534,11 +693,11 @@ export class PartymastComponent implements OnInit {
       if (this.pickerTarget === 'primary') {
         this.selectedAreaCode = Number(selected.selectId ?? selected.code ?? 0);
         this.selectedAreaName = selected.name ?? '';
-        this.selectedPincode = String(selected.pin ?? '').trim();
+        // this.selectedPincode = String(selected.pin ?? '').trim();
       } else { // corr
         this.corrSelectedAreaCode = Number(selected.selectId ?? selected.code ?? 0);
         this.corrAreaName = selected.name ?? '';
-        this.corrPincode = String(selected.pin ?? '').trim();
+        // this.corrPincode = String(selected.pin ?? '').trim();
       }
 
       this.toastr.success('Area selected and pincode updated.');
@@ -577,7 +736,7 @@ export class PartymastComponent implements OnInit {
         this.selectedAreaCode = null;
         this.selectedAreaName = '';
         // use city-level pincode if present
-        this.selectedPincode = String(selected.pin ?? '').trim();
+
       } else {
         // corresponding target
         this.corrSelectedCityUnicId = Number(selected.selectId ?? selected.code ?? 0);
@@ -598,7 +757,6 @@ export class PartymastComponent implements OnInit {
 
         this.corrSelectedAreaCode = null;
         this.corrAreaName = '';
-        this.corrPincode = String(selected.pin ?? '').trim();
       }
 
       this.closePicker();

@@ -1,0 +1,149 @@
+<div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="picker.pickerOpen$ | async"
+  [style.display]="(picker.pickerOpen$ | async) ? 'block' : 'none'">
+
+  <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content custom-modal-content" role="document">
+
+      <!-- HEADER -->
+      <div class="custom-modal-header">
+        <div class="modal-title-wrapper">
+          <h5 class="custom-modal-title">
+            Select {{ picker.pickerTitle$ | async }}
+          </h5>
+        </div>
+        <button type="button" class="custom-btn-close" (click)="picker.closePicker()"></button>
+      </div>
+
+      <!-- BODY -->
+      <div class="custom-modal-body">
+
+        <form class="custom-form" (submit)="$event.preventDefault()">
+          <div class="custom-form-group">
+            <div class="form-floating form-floating-outline mb-0 position-relative">
+
+              <!-- SEARCH BAR -->
+              <input #modalSearchInput id="modalSearchInput" type="text" class="form-control branch-input"
+                name="pickerSearch" [(ngModel)]="searchText" (input)="picker.filter(searchText)"
+                (focus)="dropdownOpen = true" autocomplete="off"
+                [value]="(picker.pickerTempSelected$ | async)?.option?.name || searchText || ''"
+                [placeholder]="picker.pickerTitle$ | async" />
+
+              <label>
+                <i class="ri-map-pin-line"></i>
+                {{ picker.pickerTitle$ | async }}
+              </label>
+
+              <!-- CARET -->
+              <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()">
+                <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+              </button>
+
+            </div>
+
+            <!-- DROPDOWN LIST -->
+            <div class="dropdown-panel mt-2" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
+              <div class="dropdown-list">
+
+                <div class="dropdown-item" *ngFor="let opt of picker.pickerFiltered$ | async"
+                  (click)="picker.pickOption(opt)" [ngClass]="{
+    'is-selected':
+      (pickerField === 'country' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'city' && selectedTemp?.option?.uniqCode === opt.uniqCode) ||
+      (pickerField === 'area' && selectedTemp?.option?.areA_CODE === opt.areA_CODE) ||
+      (pickerField === 'religion' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'cast' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'occupation' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'idproof' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'addrproof' && selectedTemp?.option?.code === opt.code)
+  }">
+
+                  <div style="flex:1; min-width:0;">
+
+                    <!-- NAME (same for all fields) -->
+                    <div class="item-name text-sm font-medium truncate">
+                      {{ opt.name }}
+                    </div>
+
+                    <!-- CITY META → MULTI LINE -->
+                    <div *ngIf="pickerField === 'city'" class="item-meta text-xs text-muted truncate">
+                      {{ opt.talukA_NAME }} ·
+                      {{ opt.disT_NAME }} ·
+                      {{ opt.statE_NAME }} ·
+                      {{ opt.countrY_NAME }} ·
+                      Pin: {{ opt.piN_CODE ?? '—' }}
+                    </div>
+
+                    <!-- AREA META → ONLY PIN -->
+                    <div *ngIf="pickerField === 'area'" class="item-meta text-xs text-muted truncate">
+                      Pin Code: {{ opt.piN_CODE ?? '—' }}
+                    </div>
+
+                    <!-- RELIGION, CASTE, OCCUPATION, ID, ADDRESS → SHOW CODE BELOW -->
+                    <div *ngIf="
+        pickerField === 'religion' ||
+        pickerField === 'cast' ||
+        pickerField === 'occupation' ||
+        pickerField === 'idproof' ||
+        pickerField === 'addrproof'
+      " class="item-meta text-xs text-muted truncate">
+                      Code: {{ opt.code }}
+                    </div>
+
+                  </div>
+
+                  <!-- CHECK ICON -->
+                  <i class="ri-check-line text-success" *ngIf="
+      (pickerField === 'country' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'city' && selectedTemp?.option?.uniqCode === opt.uniqCode) ||
+      (pickerField === 'area' && selectedTemp?.option?.areA_CODE === opt.areA_CODE) ||
+      (pickerField === 'religion' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'cast' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'occupation' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'idproof' && selectedTemp?.option?.code === opt.code) ||
+      (pickerField === 'addrproof' && selectedTemp?.option?.code === opt.code)
+    ">
+                  </i>
+
+                </div>
+
+
+                <!-- EMPTY STATE -->
+                <div class="dropdown-empty" *ngIf="!(picker.pickerLoading$ | async)
+                       && (picker.pickerFiltered$ | async)?.length === 0">
+                  No {{ picker.pickerTitle$ | async }} found
+                </div>
+
+                <!-- LOADING -->
+                <div *ngIf="picker.pickerLoading$ | async" class="text-center my-3">
+                  <div class="spinner-border text-primary"></div>
+                </div>
+
+              </div>
+            </div>
+            <!-- END DROPDOWN -->
+
+          </div>
+        </form>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn custom-btn-cancel" (click)="picker.closePicker()">
+          Cancel
+        </button>
+
+        <button class="custom-btn custom-btn-save" [disabled]="!selectedTemp?.option" (click)="picker.confirmPicker()">
+          Continue
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- BACKDROP -->
+<div *ngIf="picker.pickerOpen$ | async" class="modal-backdrop fade show" (click)="picker.closePicker()"></div>
+
+<div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
