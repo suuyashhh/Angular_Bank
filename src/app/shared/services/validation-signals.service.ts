@@ -7,7 +7,9 @@ export type ValidatorType =
   | 'gst'
   | 'mobile'
   | 'phone'
-  | 'email';
+  | 'email'
+  | 'passport'
+  | 'voterid';
 
 export class ValidationSignal {
   value = signal('');

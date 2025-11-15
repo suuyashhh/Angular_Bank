@@ -154,7 +154,7 @@
                 </div>
               </div>
 
-              
+
 
 
 
@@ -669,10 +669,25 @@
                 </div>
 
 
-                <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                <!-- <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
                   <input type="text" class="form-control" id="passportNo" placeholder="Passport No." />
                   <label for="passportNo">Passport No.</label>
+                </div> -->
+
+                <div class="flex-1">
+                  <div class="form-floating form-floating-outline flex-1">
+
+                    <input type="text" class="form-control" placeholder="Passport No." passportFormat  validatedInput="passport" />
+
+                    <label>Passport No.</label>
+
+                    <small class="text-danger mt-1 block" *ngIf="passport?.invalid?.()">
+                      Invalid Passport No (e.g., A1234567)
+                    </small>
+
+                  </div>
                 </div>
+
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
                   <input type="date" class="form-control" id="passportExp" placeholder="Passport Exp.Date" />
@@ -685,10 +700,24 @@
                   <label for="passportIssueAuth">Passport Issue Authority</label>
                 </div>
 
-                <div class="form-floating form-floating-outline mb-0">
+                <!-- <div class="form-floating form-floating-outline mb-0">
                   <input type="text" class="form-control" id="electionCardNo" placeholder="Election Card No." />
                   <label for="electionCardNo">Election Card No.</label>
+                </div> -->
+                <div class="flex-1">
+                  <div class="form-floating form-floating-outline flex-1">
+
+                    <input type="text" class="form-control" placeholder="Election Card No." voteridFormat validatedInput="voterid" />
+
+                    <label>Election Card No.</label>
+
+                    <small class="text-danger mt-1 block" *ngIf="voterid?.invalid?.()">
+                      Invalid Voter ID (e.g., ABC1234567)
+                    </small>
+
+                  </div>
                 </div>
+
 
                 <div class="form-floating form-floating-outline mb-0">
                   <input type="date" class="form-control" id="birthDate" placeholder="Birth Date" />

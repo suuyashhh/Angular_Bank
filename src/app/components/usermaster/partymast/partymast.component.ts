@@ -20,6 +20,8 @@ import { AsyncValidationService } from '../../../shared/services/async-validatio
 import { ValidatedInputDirective } from '../../../shared/directives/valid-indicator.directive';
 import { ShowErrorsDirective } from '../../../shared/directives/show-errors.directive';
 import { ValidationSignal } from '../../../shared/services/validation-signals.service';
+import { VoterIdFormatDirective } from '../../../shared/directives/voterid-format.directive';
+import { PassportFormatDirective } from '../../../shared/directives/passport-format.directive';
 
 type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idproof' | 'addrproof' | 'otherstaff';
 type PickerTarget = 'primary' | 'corr';
@@ -63,7 +65,9 @@ type Option = {
     PhoneFormatDirective,
     ValidatedInputDirective,
     PanFormatDirective,
-    ShowErrorsDirective
+    ShowErrorsDirective,
+    VoterIdFormatDirective,
+    PassportFormatDirective
   ],
 
   templateUrl: './partymast.component.html',
@@ -176,7 +180,7 @@ export class PartymastComponent implements OnInit {
     public picker: PickerService,
     public fb: FormBuilder,
     public vs: ValidationService,
-    public asyncVs: AsyncValidationService
+    public asyncVs: AsyncValidationService,
   ) { }
    pan = new ValidationSignal(this.vs, 'pan');
   aadhaar = new ValidationSignal(this.vs, 'aadhaar');
@@ -184,6 +188,9 @@ export class PartymastComponent implements OnInit {
   mobile = new ValidationSignal(this.vs, 'mobile');
   phone = new ValidationSignal(this.vs, 'phone');
   email = new ValidationSignal(this.vs, 'email');
+  voterid = new ValidationSignal(this.vs, 'voterid');
+passport = new ValidationSignal(this.vs, 'passport');
+
   ngOnInit(): void {
 
     this.form = this.fb.group({

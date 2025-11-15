@@ -25,6 +25,17 @@ export class ValidatedInputDirective {
 
   private serverValid: boolean | null = null; // null=no API result yet
 
+  // 🟦 API ENDPOINT MAP
+  private apiMap: Record<string, string> = {
+    pan: 'ValidationService/PanNo',
+    aadhaar: 'ValidationService/AadharNo',
+    gst: 'ValidationService/GstNo',
+    mobile: 'ValidationService/MobileNo',
+    phone: 'ValidationService/PhoneNo',
+    voterid: 'ValidationService/VoterIdNo',
+    passport: 'ValidationService/PassportNo'
+  };
+
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
@@ -44,9 +55,8 @@ export class ValidatedInputDirective {
     this.serverValid = null; // reset API override
     this.updateUI(value);
 
-    // Auto call API ONLY when Aadhaar fully typed
-    if (this.type === 'aadhaar' && value.length === 12 && this.validator.validate('aadhaar', value)) {
-      this.callAadhaarApi(value);
+    if (this.shouldAutoValidate(value)) {
+      this.callServerValidation(value);
     }
   }
 
@@ -55,12 +65,36 @@ export class ValidatedInputDirective {
   onBlur(value: string) {
     value = value.trim();
 
-    // shake only if invalid & no server-positive
     if (!this.validator.validate(this.type, value) && this.serverValid !== true) {
       this.shake(this.el.nativeElement);
     }
+  }
 
-    // no API call on blur
+  // ---------------------------- WHEN TO CALL API -----------------------
+  private shouldAutoValidate(value: string): boolean {
+    switch (this.type) {
+      case 'aadhaar':
+        return value.length === 12 && this.validator.validate('aadhaar', value);
+
+      case 'pan':
+        return value.length === 10;
+
+      case 'gst':
+        return value.length === 15;
+
+      case 'mobile':
+      case 'phone':
+        return value.length === 10;
+
+      case 'voterid':
+        return value.length >= 6;
+
+      case 'passport':
+        return value.length >= 8;
+
+      default:
+        return false;
+    }
   }
 
   // ---------------------------- UI UPDATE ------------------------------
@@ -68,18 +102,16 @@ export class ValidatedInputDirective {
     const input = this.el.nativeElement as HTMLElement;
     const parent = this.getParent();
 
-    // 1. API result overrides everything
-    if (this.serverValid === false) {
-      this.invalidExistsUI(input, parent);
-      return;
-    }
-
     if (this.serverValid === true) {
       this.validUI(input, parent);
       return;
     }
 
-    // 2. No API yet → local regex validation
+    if (this.serverValid === false) {
+      this.invalidExistsUI(input, parent);
+      return;
+    }
+
     const isValidLocal = this.validator.validate(this.type, value);
 
     if (!value) {
@@ -95,16 +127,25 @@ export class ValidatedInputDirective {
   }
 
   // --------------------------- SERVER (API) CALL -----------------------
-  private callAadhaarApi(value: string) {
+  private callServerValidation(value: string) {
     const input = this.el.nativeElement as HTMLElement;
     const parent = this.getParent();
 
+    const endpoint = this.apiMap[this.type];
+    if (!endpoint) return;
+
+    const paramName =
+      this.type === 'aadhaar' ? 'aadharNo' :
+      this.type === 'pan'     ? 'panNo' :
+      this.type === 'gst'     ? 'gstNo' :
+      this.type === 'mobile'  ? 'mobileNo' :
+      this.type === 'phone'   ? 'phone1' :
+      this.type === 'voterid' ? 'voterIdNo' :
+      this.type === 'passport'? 'passportNo' : '';
+
     this.showLoader(parent);
 
-    const endpoint = `ValidationService/AadharNo`;
-    const params = { aadharNo: value };
-
-    this.api.get(endpoint, params).subscribe({
+    this.api.get(endpoint, { [paramName]: value }).subscribe({
       next: (res: any) => {
         this.hideLoader(parent);
 
@@ -119,7 +160,7 @@ export class ValidatedInputDirective {
           this.validUI(input, parent);
         }
 
-        this.updateUI(value); // ★ refresh UI after API
+        this.updateUI(value);
       },
       error: () => {
         this.hideLoader(parent);
@@ -147,7 +188,7 @@ export class ValidatedInputDirective {
   private invalidExistsUI(input: HTMLElement, parent: HTMLElement) {
     this.setBorder(input, '#e63946');
     this.setLabelColor(parent, '#e63946');
-    this.setIcon(parent, '⚠', '#e63946'); // yellow warning symbol
+    this.setIcon(parent, '⚠', '#e63946');
   }
 
   private resetUI(input: HTMLElement, parent: HTMLElement) {
@@ -167,14 +208,12 @@ export class ValidatedInputDirective {
   private setLabelColor(parent: HTMLElement, color: string | null) {
     const label = parent.querySelector('label');
     if (!label) return;
-
     if (color) this.renderer.setStyle(label, 'color', color);
     else this.renderer.removeStyle(label, 'color');
   }
 
   private setIcon(parent: HTMLElement, symbol: string, color: string) {
     this.removeIcon(parent);
-
     this.iconEl = this.renderer.createElement('span');
 
     this.renderer.setStyle(this.iconEl, 'position', 'absolute');
