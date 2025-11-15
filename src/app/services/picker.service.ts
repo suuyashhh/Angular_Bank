@@ -172,14 +172,85 @@ export class PickerService {
   }
 
   filter(term: string) {
-    term = (term || '').toLowerCase();
+  term = (term || '').toLowerCase().trim();
 
-    const filtered = this.pickerOptions$.value.filter(x =>
-      (x.name ?? '').toLowerCase().includes(term)
-    );
+  const field = this.pickerField$.value;
+  const list = this.pickerOptions$.value;
 
-    this.pickerFiltered$.next(filtered);
+  // No search term → show all
+  if (!term) {
+    this.pickerFiltered$.next([...list]);
+    return;
   }
+
+  const filtered = list.filter(o => {
+    const name = (o.name ?? '').toString().toLowerCase();
+    const code = (o.code ?? '').toString().toLowerCase();
+    const pin = (o.piN_CODE ?? '').toString().toLowerCase();
+
+    // Additional CITY dependency fields
+    const taluka = (o.talukA_NAME ?? '').toLowerCase();
+    const dist = (o.disT_NAME ?? '').toLowerCase();
+    const state = (o.statE_NAME ?? '').toLowerCase();
+    const country = (o.countrY_NAME ?? '').toLowerCase();
+
+    switch (field) {
+
+      /* -------------------------------------
+       * CITY SEARCH (Name + metadata + pin)
+       * ------------------------------------- */
+      case 'city':
+        return (
+          name.includes(term) ||
+          taluka.includes(term) ||
+          dist.includes(term) ||
+          state.includes(term) ||
+          country.includes(term) ||
+          pin.includes(term) ||
+          code.includes(term)
+        );
+
+      /* -------------------------------------
+       * AREA SEARCH (Name + Pincode + Code)
+       * ------------------------------------- */
+      case 'area':
+        return (
+          name.includes(term) ||
+          pin.includes(term) ||
+          code.includes(term)
+        );
+
+      /* -------------------------------------
+       * RELIGION / CAST / OCCUPATION / ID / ADDRESS
+       * Search Name OR Code
+       * ------------------------------------- */
+      case 'religion':
+      case 'cast':
+      case 'occupation':
+      case 'idproof':
+      case 'addrproof':
+        return (
+          name.includes(term) ||
+          code.includes(term)
+        );
+
+      /* -------------------------------------
+       * COUNTRY SEARCH
+       * ------------------------------------- */
+      case 'country':
+        return (
+          name.includes(term) ||
+          code.includes(term)
+        );
+
+      default:
+        return name.includes(term);
+    }
+  });
+
+  this.pickerFiltered$.next(filtered);
+}
+
 
   private getPickerTitle(field: PickerField) {
     return {

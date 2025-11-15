@@ -61,159 +61,259 @@
 
       <!-- Panels -->
       <div class="wizard-panels">
-        <!-- STEP 1: Basic Details -->
-        <section id="panel-1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step-1">
-          <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- <div class="form-floating form-floating-outline mb-4">
+        <form [formGroup]="form">
+          <!-- STEP 1: Basic Details -->
+          <section id="panel-1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step-1">
+            <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- <div class="form-floating form-floating-outline mb-4">
               <input type="text" id="basic_customerId" class="form-control" placeholder="Customer Id" />
               <label for="basic_customerId">Customer Id</label>
             </div> -->
 
-            <!-- A/C Type: bound to accountType -->
-            <div class="form-floating form-floating-outline mb-4">
-              <select id="basic_accountType" class="form-select" [(ngModel)]="accountType" name="accountType">
-                <option value="0">Individual</option>
-                <option value="1">Co.Op.Soc.</option>
-                <option value="2">Proprietor Ship</option>
-                <option value="3">Partnership Firm</option>
-                <option value="4">Private Limited</option>
-                <option value="5">Public Limited</option>
-                <option value="6">H.U.F.</option>
-                <option value="7">Trust</option>
-                <option value="8">Other Legal Entity</option>
-              </select>
-              <label for="basic_accountType">A/C Type</label>
-            </div>
+              <!-- A/C Type: bound to accountType -->
+              <div class="form-floating form-floating-outline mb-4">
+                <select id="basic_accountType" class="form-select" [(ngModel)]="accountType" name="accountType"
+                  [ngModelOptions]="{standalone: true}">
+                  <option value="0">Individual</option>
+                  <option value="1">Co.Op.Soc.</option>
+                  <option value="2">Proprietor Ship</option>
+                  <option value="3">Partnership Firm</option>
+                  <option value="4">Private Limited</option>
+                  <option value="5">Public Limited</option>
+                  <option value="6">H.U.F.</option>
+                  <option value="7">Trust</option>
+                  <option value="8">Other Legal Entity</option>
+                </select>
+                <label for="basic_accountType">A/C Type</label>
+              </div>
 
-            <div class="form-floating form-floating-outline mb-4">
+              <!-- <div class="form-floating form-floating-outline mb-4">
               <input type="text" id="basic_panNo" class="form-control" placeholder="Pan Card No" />
               <label for="basic_panNo">Pan Card No</label>
-            </div>
+            </div> -->
+              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
+                <input type="text" class="form-control" formControlName="pan" panFormat placeholder="Pan No"
+                  [validIndicator]="form.controls['pan']" />
 
-            <!-- Aadhaar shown only for Individual -->
-            <div *ngIf="accountType === '0'" class="form-floating form-floating-outline mb-4">
+                <label>PAN No</label>
+
+                <small class="text-danger" *ngIf="form.controls['pan'].hasError('panInvalid')">
+                  Invalid PAN (ABCDE1234F)
+                </small>
+
+                <small class="text-danger" *ngIf="form.controls['pan'].hasError('panTaken')">
+                  PAN already exists in system!
+                </small>
+              </div> -->
+              <div class="flex-1">
+                <div class="form-floating form-floating-outline flex-1">
+
+                  <input type="text" class="form-control" placeholder="PAN No" validatedInput="pan" panFormat />
+
+                  <label>PAN No</label>
+
+                  <small class="text-danger mt-1 block" *ngIf="pan.invalid()">
+                    Invalid PAN (ABCDE1234F)
+                  </small>
+
+                </div>
+              </div>
+
+
+
+              <!-- Aadhaar shown only for Individual -->
+              <!-- <div *ngIf="accountType === '0'" class="form-floating form-floating-outline mb-4">
               <input type="text" id="basic_aadhaarNo" class="form-control" placeholder="Aadhaar Card No" />
               <label for="basic_aadhaarNo">Aadhaar Card No</label>
+            </div> -->
+              <!-- <div *ngIf="accountType === '0'" class="form-floating form-floating-outline mb-4 position-relative">
+
+                <input type="text" class="form-control" formControlName="aadhaar" aadhaarFormat
+                  placeholder="Aadhaar Card No" [validIndicator]="form.controls['aadhaar']" />
+
+                <label>Aadhaar Card No</label>
+
+                <small class="text-danger"
+                  *ngIf="form.controls['aadhaar'].touched && form.controls['aadhaar'].hasError('aadhaarInvalid')">
+                  Aadhaar must be 12 digits
+                </small>
+              </div> -->
+              <div class="flex-1">
+                <div class="form-floating form-floating-outline flex-1">
+
+                  <input type="text" class="form-control" placeholder="Aadhaar No" validatedInput="aadhaar"
+                    aadhaarFormat />
+
+                  <label>Aadhaar No</label>
+
+                  <small class="text-danger mt-1 block" *ngIf="aadhaar.invalid()">
+                    Aadhaar must be 12 digits
+                  </small>
+
+                </div>
+              </div>
+
+              
+
+
+
+
+
+
+              <!-- <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="basic_gstNo" class="form-control" placeholder="GST No" />
+                <label for="basic_gstNo">GST No</label>
+              </div> -->
+              <!-- GST -->
+              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
+
+                <input type="text" class="form-control" placeholder="GST No" formControlName="gst" gstFormat
+                  [validIndicator]="form.controls['gst']" />
+
+                <label>GST No</label>
+
+                <small class="text-danger"
+                  *ngIf="form.controls['gst'].touched && form.controls['gst'].hasError('gstInvalid')">
+                  GST must be 15 characters
+                </small>
+              </div> -->
+              <div class="flex-1">
+                <div class="form-floating form-floating-outline flex-1">
+
+                  <input type="text" class="form-control" placeholder="GST No" validatedInput="gst" gstFormat />
+
+                  <label>GST No</label>
+
+                  <small class="text-danger mt-1 block" *ngIf="gst.invalid()">
+                    GST must be 15 characters
+                  </small>
+
+                </div>
+              </div>
+
+
+
             </div>
 
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="basic_gstNo" class="form-control" placeholder="GST No" />
-              <label for="basic_gstNo">GST No</label>
-            </div>
-          </div>
+            <div class="mt-4 flex items-center gap-3">
+              <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
+                <select id="basic_title" class="form-select">
+                  <option>Mr</option>
+                  <option>Mrs</option>
+                  <option>Other</option>
+                </select>
+              </div>
 
-          <div class="mt-4 flex items-center gap-3">
-            <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
-              <select id="basic_title" class="form-select">
-                <option>Mr</option>
-                <option>Mrs</option>
-                <option>Other</option>
-              </select>
-            </div>
-
-            <div class="flex-1">
-              <div class="form-floating form-floating-outline flex-1">
-                <input type="text" id="basic_name" class="form-control" placeholder="Widget Name" />
-                <label for="basic_name">Name</label>
+              <div class="flex-1">
+                <div class="form-floating form-floating-outline flex-1">
+                  <input type="text" id="basic_name" class="form-control" placeholder="Widget Name" />
+                  <label for="basic_name">Name</label>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="mt-6 flex items-center justify-between gap-3">
-            <label for="step-1"
-              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Cancel</label>
-            <label for="step-2"
-              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-          </div>
-        </section>
-
-        <!-- STEP 2: Address Details -->
-        <!-- STEP 2: Address Details -->
-        <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
-          <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-            <!-- Permanent Address lines -->
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_permanent_line1" class="form-control" name="permanentAddrLine1"
-                placeholder="Permanent Address" />
-              <label for="addr_permanent_line1">Permanent Address</label>
+            <div class="mt-6 flex items-center justify-between gap-3">
+              <label for="step-1"
+                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Cancel</label>
+              <label for="step-2"
+                class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
             </div>
+          </section>
 
-            <div class="form-floating form-floating-outline mb-4 always-float">
-              <input type="text" id="addr_permanent_line2" class="form-control" name="permanentAddrLine2"
-                placeholder="Permanent Address II" />
-              <label for="addr_permanent_line2">Permanent Address II</label>
-            </div>
+          <!-- STEP 2: Address Details -->
+          <!-- STEP 2: Address Details -->
+          <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
+            <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
 
-            <div class="form-floating form-floating-outline mb-4 always-float">
-              <input type="text" id="addr_permanent_line3" class="form-control" name="permanentAddrLine3"
-                placeholder="Permanent Address III" />
-              <label for="addr_permanent_line3">Permanent Address III</label>
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
-            <!-- 🔵 PRIMARY CITY -->
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
-                readonly (click)="picker.openPicker('city','primary')" style="cursor:pointer"/>
+              <!-- Permanent Address lines -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="addr_permanent_line1" class="form-control" name="permanentAddrLine1"
+                  placeholder="Permanent Address" />
+                <label for="addr_permanent_line1">Permanent Address</label>
+              </div>
 
-              <input type="hidden" name="cityCode" [(ngModel)]="selectedCityCode" />
-              <input type="hidden" name="cityUnicId" [(ngModel)]="selectedCityUnicId" />
-              <label for="addr_city">City</label>
-            </div>
+              <div class="form-floating form-floating-outline mb-4 always-float">
+                <input type="text" id="addr_permanent_line2" class="form-control" name="permanentAddrLine2"
+                  placeholder="Permanent Address II" />
+                <label for="addr_permanent_line2">Permanent Address II</label>
+              </div>
 
-            <!-- Primary Country -->
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_country" class="form-control" readonly placeholder="Country"
-                [value]="selectedCountryName" />
-              <input type="hidden" name="countryCode" [(ngModel)]="selectedCountryCode" />
-              <label for="addr_country">Country</label>
-            </div>
+              <div class="form-floating form-floating-outline mb-4 always-float">
+                <input type="text" id="addr_permanent_line3" class="form-control" name="permanentAddrLine3"
+                  placeholder="Permanent Address III" />
+                <label for="addr_permanent_line3">Permanent Address III</label>
+              </div>
 
-            <!-- Primary State -->
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_state" class="form-control" readonly placeholder="State"
-                [value]="selectedStateName" />
-              <input type="hidden" name="stateCode" [(ngModel)]="selectedStateCode" />
-              <label for="addr_state">State</label>
-            </div>
+              <!-- 🔵 PRIMARY CITY -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
+                  readonly (click)="picker.openPicker('city','primary')" style="cursor:pointer" />
 
-            <!-- Primary District -->
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_district" class="form-control" readonly placeholder="District"
-                [value]="selectedDistrictName" />
-              <input type="hidden" name="districtCode" [(ngModel)]="selectedDistrictCode" />
-              <label for="addr_district">District</label>
-            </div>
+                <input type="hidden" name="cityCode" [(ngModel)]="selectedCityCode"
+                  [ngModelOptions]="{standalone: true}" />
+                <input type="hidden" name="cityUnicId" [(ngModel)]="selectedCityUnicId"
+                  [ngModelOptions]="{standalone: true}" />
+                <label for="addr_city">City</label>
+              </div>
 
-            <!-- Primary Taluka -->
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_taluka" class="form-control" readonly placeholder="Taluka"
-                [value]="selectedTalukaName" />
-              <input type="hidden" name="talukaCode" [(ngModel)]="selectedTalukaCode" />
-              <label for="addr_taluka">Taluka</label>
-            </div>
+              <!-- Primary Country -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="addr_country" class="form-control" readonly placeholder="Country"
+                  [value]="selectedCountryName" />
+                <input type="hidden" name="countryCode" [(ngModel)]="selectedCountryCode"
+                  [ngModelOptions]="{standalone: true}" />
+                <label for="addr_country">Country</label>
+              </div>
 
-            <!-- 🔵 PRIMARY AREA -->
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_area" class="form-control" readonly placeholder="Area"
-                [value]="selectedAreaName" (click)="picker.openPicker('area','primary')" style="cursor:pointer"/>
-              <input type="hidden" name="areaCode" [(ngModel)]="selectedAreaCode" />
-              <label for="addr_area">Area</label>
-            </div>
+              <!-- Primary State -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="addr_state" class="form-control" readonly placeholder="State"
+                  [value]="selectedStateName" />
+                <input type="hidden" name="stateCode" [(ngModel)]="selectedStateCode"
+                  [ngModelOptions]="{standalone: true}" />
+                <label for="addr_state">State</label>
+              </div>
 
-            <!-- Primary Pincode -->
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_pincode" class="form-control" readonly placeholder="PinCode"
-                [value]="selectedPincode" />
-              <input type="hidden" name="pin" [(ngModel)]="selectedPincode" />
-              <label for="addr_pincode">PinCode</label>
-            </div>
+              <!-- Primary District -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="addr_district" class="form-control" readonly placeholder="District"
+                  [value]="selectedDistrictName" />
+                <input type="hidden" name="districtCode" [(ngModel)]="selectedDistrictCode"
+                  [ngModelOptions]="{standalone: true}" />
+                <label for="addr_district">District</label>
+              </div>
 
-            <!-- Phone / Mobile -->
-            <div class="form-floating form-floating-outline mb-4">
+              <!-- Primary Taluka -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="addr_taluka" class="form-control" readonly placeholder="Taluka"
+                  [value]="selectedTalukaName" />
+                <input type="hidden" name="talukaCode" [(ngModel)]="selectedTalukaCode"
+                  [ngModelOptions]="{standalone: true}" />
+                <label for="addr_taluka">Taluka</label>
+              </div>
+
+              <!-- 🔵 PRIMARY AREA -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="addr_area" class="form-control" readonly placeholder="Area"
+                  [value]="selectedAreaName" (click)="picker.openPicker('area','primary')" style="cursor:pointer" />
+                <input type="hidden" name="areaCode" [(ngModel)]="selectedAreaCode"
+                  [ngModelOptions]="{standalone: true}" />
+                <label for="addr_area">Area</label>
+              </div>
+
+              <!-- Primary Pincode -->
+              <div class="form-floating form-floating-outline mb-4">
+                <input type="text" id="addr_pincode" class="form-control" readonly placeholder="PinCode"
+                  [value]="selectedPincode" />
+                <input type="hidden" name="pin" [(ngModel)]="selectedPincode" [ngModelOptions]="{standalone: true}" />
+                <label for="addr_pincode">PinCode</label>
+              </div>
+
+              <!-- Phone / Mobile -->
+              <!-- <div class="form-floating form-floating-outline mb-4">
               <input type="text" id="addr_phone" class="form-control" placeholder="Phone no" />
               <label for="addr_phone">Phone no</label>
             </div>
@@ -221,175 +321,261 @@
             <div class="form-floating form-floating-outline mb-4">
               <input type="text" id="addr_mobile" class="form-control" placeholder="Mobile no" />
               <label for="addr_mobile">Mobile no</label>
-            </div>
-          </div>
+            </div> -->
+              <!-- PHONE (Optional) -->
+              <!-- 
+              <div class="form-floating form-floating-outline mb-4 position-relative">
 
-          <!-- Toggle Corr Address -->
-          <div class="mt-4 ml-2">
-            <label class="inline-flex items-center gap-3">
-              <input type="checkbox" id="chk_correspondingAddr" [(ngModel)]="useDifferentCorresponding"
-                name="useDifferentCorresponding" class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
-              <span class="text-sm text-gray-700">
-                Do You Want Fill Different Corresponding Address ?
-              </span>
-            </label>
-          </div>
+                <input type="text" class="form-control" placeholder="Phone no" formControlName="phone" phoneFormat
+                  [validIndicator]="form.controls['phone']" />
 
-          <!-- 🔵 CORRESPONDING BLOCK -->
-          <div *ngIf="useDifferentCorresponding" class="mt-6">
-            <hr class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 mb-6" />
+                <label>Phone no</label>
 
-            <h5 class="mb-4 text-md font-semibold">Corresponding Address</h5>
+                <small class="text-danger"
+                  *ngIf="form.controls['phone'].touched && form.controls['phone'].hasError('phoneInvalid')">
+                  Enter valid phone number (10 digits)
+                </small>
+              </div> -->
+              <div class="flex-1">
+                <div class="form-floating form-floating-outline flex-1">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <input type="text" class="form-control" placeholder="Phone No" validatedInput="phone" phoneFormat />
 
-              <!-- City -->
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_city" class="form-control" readonly placeholder="City"
-                  [value]="corrCityName" (click)="picker.openPicker('city','corr')" style="cursor:pointer"/>
-                <input type="hidden" [(ngModel)]="corrSelectedCityCode" name="corrCityCode" />
-                <label for="corr_city">City</label>
-              </div>
+                  <label>Phone No</label>
 
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_country" class="form-control" readonly placeholder="Country"
-                  [value]="corrCountryName" />
-                <input type="hidden" [(ngModel)]="corrSelectedCountryCode" name="corrCountryCode" />
-                <label for="corr_country">Country</label>
-              </div>
+                  <small class="text-danger mt-1 block" *ngIf="phone.invalid()">
+                    Phone number must be 10 digits
+                  </small>
 
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_state" class="form-control" readonly placeholder="State"
-                  [value]="corrStateName" />
-                <input type="hidden" [(ngModel)]="corrSelectedStateCode" name="corrStateCode" />
-                <label for="corr_state">State</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_district" class="form-control" readonly placeholder="District"
-                  [value]="corrDistrictName" />
-                <input type="hidden" [(ngModel)]="corrSelectedDistrictCode" name="corrDistrictCode" />
-                <label for="corr_district">District</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_taluka" class="form-control" readonly placeholder="Taluka"
-                  [value]="corrTalukaName" />
-                <input type="hidden" [(ngModel)]="corrSelectedTalukaCode" name="corrTalukaCode" />
-                <label for="corr_taluka">Taluka</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_area" class="form-control" readonly placeholder="Area"
-                  [value]="corrAreaName" (click)="picker.openPicker('area','corr')" style="cursor:pointer"/>
-                <input type="hidden" [(ngModel)]="corrSelectedAreaCode" name="corrAreaCode" />
-                <label for="corr_area">Area</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="corr_pincode" class="form-control" readonly placeholder="Pincode"
-                  [value]="corrPincode" />
-                <label for="corr_pincode">Pincode</label>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Nav buttons -->
-          <div class="mt-6 flex items-center justify-between gap-3">
-            <label for="step-1"
-              class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
-              Previous
-            </label>
-            <label for="step-3" class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
-              Next
-            </label>
-          </div>
-        </section>
-
-
-        <div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
-          [style.display]="pickerOpen ? 'block' : 'none'">
-          <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
-            <div class="modal-content custom-modal-content" role="document">
-              <div class="custom-modal-header">
-                <div class="modal-title-wrapper">
-                  <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
                 </div>
-                <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
               </div>
 
-              <div class="custom-modal-body">
-                <form class="custom-form" novalidate (submit)="$event.preventDefault()">
-                  <div class="form-group-wrapper">
-                    <div class="custom-form-group">
-                      <div class="form-floating form-floating-outline mb-0 position-relative">
-                        <!-- search input -->
-                        <input type="text" id="picker-input" #pickerSearchInput class="form-control branch-input"
-                          placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
-                          (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off" />
-                        <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
 
-                        <!-- caret toggle -->
-                        <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
-                          aria-label="Toggle">
-                          <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
-                        </button>
 
-                        <!-- dropdown panel (replace your existing dropdown-panel block with this) -->
-                        <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
-                          <div class="dropdown-list">
-                            <!-- list item: left = name + meta, right = pin (only for area) or code (others) -->
-                            <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
-                              (click)="pickOption(opt)"
-                              [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
-                              style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;cursor:pointer;align-items:center;"
-                              role="option"
-                              [attr.aria-selected]="pickerSelectedCode === (opt.selectId ?? opt.code) ? 'true' : 'false'">
 
-                              <!-- left: name + dependency meta -->
-                              <div style="min-width:0;flex:1;display:flex;flex-direction:column;gap:4px;">
-                                <!-- city/area/name -->
-                                <div class="item-name text-sm font-medium truncate" title="{{ opt.name }}">
-                                  {{ opt.name }}
+              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
+                <input type="text" class="form-control" placeholder="Mobile no" formControlName="mobile" mobileFormat
+                  [validIndicator]="form.controls['mobile']" />
+                <label>Mobile no</label>
+
+                <small class="text-danger" *ngIf="form.controls['mobile'].hasError('required')">Required</small>
+                <small class="text-danger" *ngIf="form.controls['mobile'].hasError('mobileInvalid')">
+                  Start with 6–9, 10 digits
+                </small>
+              </div> -->
+
+
+              <!-- MOBILE (Required) -->
+              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
+
+                <input type="text" id="addr_mobile" class="form-control" placeholder="Mobile no"
+                  formControlName="mobile" mobileFormat [validIndicator]="form.controls['mobile']" />
+
+                <label for="addr_mobile">Mobile no</label>
+
+                <small class="text-danger"
+                  *ngIf="form.controls['mobile'].touched && form.controls['mobile'].hasError('required')">
+                  Mobile number is required
+                </small>
+
+                <small class="text-danger"
+                  *ngIf="form.controls['mobile'].touched && form.controls['mobile'].hasError('mobileInvalid')">
+                  Start with 6–9 and must be 10 digits
+                </small>
+              </div> -->
+              <div class="flex-1">
+                <div class="form-floating form-floating-outline flex-1">
+
+                  <input type="text" class="form-control" placeholder="Mobile No" validatedInput="mobile"
+                    mobileFormat />
+
+                  <label>Mobile No</label>
+
+                  <small class="text-danger mt-1 block" *ngIf="mobile.invalid()">
+                    Mobile must start with 6–9 and have 10 digits
+                  </small>
+
+                </div>
+              </div>
+
+
+
+            </div>
+
+            <!-- Toggle Corr Address -->
+            <div class="mt-4 ml-2">
+              <label class="inline-flex items-center gap-3">
+                <input type="checkbox" id="chk_correspondingAddr" [(ngModel)]="useDifferentCorresponding"
+                  name="useDifferentCorresponding" class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm"
+                  [ngModelOptions]="{standalone: true}" />
+                <span class="text-sm text-gray-700">
+                  Do You Want Fill Different Corresponding Address ?
+                </span>
+              </label>
+            </div>
+
+            <!-- 🔵 CORRESPONDING BLOCK -->
+            <div *ngIf="useDifferentCorresponding" class="mt-6">
+              <hr class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 mb-6" />
+
+              <h5 class="mb-4 text-md font-semibold">Corresponding Address</h5>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                <!-- City -->
+                <div class="form-floating form-floating-outline mb-4">
+                  <input type="text" id="corr_city" class="form-control" readonly placeholder="City"
+                    [value]="corrCityName" (click)="picker.openPicker('city','corr')" style="cursor:pointer" />
+                  <input type="hidden" [(ngModel)]="corrSelectedCityCode" name="corrCityCode"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="corr_city">City</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-4">
+                  <input type="text" id="corr_country" class="form-control" readonly placeholder="Country"
+                    [value]="corrCountryName" />
+                  <input type="hidden" [(ngModel)]="corrSelectedCountryCode" name="corrCountryCode"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="corr_country">Country</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-4">
+                  <input type="text" id="corr_state" class="form-control" readonly placeholder="State"
+                    [value]="corrStateName" />
+                  <input type="hidden" [(ngModel)]="corrSelectedStateCode" name="corrStateCode"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="corr_state">State</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-4">
+                  <input type="text" id="corr_district" class="form-control" readonly placeholder="District"
+                    [value]="corrDistrictName" />
+                  <input type="hidden" [(ngModel)]="corrSelectedDistrictCode" name="corrDistrictCode"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="corr_district">District</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-4">
+                  <input type="text" id="corr_taluka" class="form-control" readonly placeholder="Taluka"
+                    [value]="corrTalukaName" />
+                  <input type="hidden" [(ngModel)]="corrSelectedTalukaCode" name="corrTalukaCode"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="corr_taluka">Taluka</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-4">
+                  <input type="text" id="corr_area" class="form-control" readonly placeholder="Area"
+                    [value]="corrAreaName" (click)="picker.openPicker('area','corr')" style="cursor:pointer" />
+                  <input type="hidden" [(ngModel)]="corrSelectedAreaCode" name="corrAreaCode"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="corr_area">Area</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-4">
+                  <input type="text" id="corr_pincode" class="form-control" readonly placeholder="Pincode"
+                    [value]="corrPincode" />
+                  <label for="corr_pincode">Pincode</label>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Nav buttons -->
+            <div class="mt-6 flex items-center justify-between gap-3">
+              <label for="step-1"
+                class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+                Previous
+              </label>
+              <label for="step-3" class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+                Next
+              </label>
+            </div>
+          </section>
+
+
+          <div class="modal custom-modal-fade" tabindex="-1" role="dialog" [class.show]="pickerOpen"
+            [style.display]="pickerOpen ? 'block' : 'none'">
+            <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
+              <div class="modal-content custom-modal-content" role="document">
+                <div class="custom-modal-header">
+                  <div class="modal-title-wrapper">
+                    <h5 class="custom-modal-title">Select {{ pickerTitle }}</h5>
+                  </div>
+                  <button type="button" class="custom-btn-close" (click)="closePicker()" aria-label="Close"></button>
+                </div>
+
+                <div class="custom-modal-body">
+                  <form class="custom-form" novalidate (submit)="$event.preventDefault()">
+                    <div class="form-group-wrapper">
+                      <div class="custom-form-group">
+                        <div class="form-floating form-floating-outline mb-0 position-relative">
+                          <!-- search input -->
+                          <input type="text" id="picker-input" #pickerSearchInput class="form-control branch-input"
+                            placeholder="{{ pickerTitle }}" [(ngModel)]="pickerSearch" name="pickerSearch"
+                            (focus)="dropdownOpen = true" (input)="onSearchChange()" autocomplete="off"
+                            [ngModelOptions]="{standalone: true}" />
+                          <label for="picker-input"><i class="ri-map-pin-line"></i> {{ pickerTitle }}</label>
+
+                          <!-- caret toggle -->
+                          <button type="button" class="dropdown-caret-button" (click)="toggleDropdown()"
+                            aria-label="Toggle">
+                            <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+                          </button>
+
+                          <!-- dropdown panel (replace your existing dropdown-panel block with this) -->
+                          <div class="dropdown-panel" *ngIf="dropdownOpen" (click)="$event.stopPropagation()">
+                            <div class="dropdown-list">
+                              <!-- list item: left = name + meta, right = pin (only for area) or code (others) -->
+                              <div class="dropdown-item" *ngFor="let opt of pickerOptionsFiltered; trackBy: trackByCode"
+                                (click)="pickOption(opt)"
+                                [ngClass]="{ 'is-selected': pickerSelectedCode === (opt.selectId ?? opt.code) }"
+                                style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;cursor:pointer;align-items:center;"
+                                role="option"
+                                [attr.aria-selected]="pickerSelectedCode === (opt.selectId ?? opt.code) ? 'true' : 'false'">
+
+                                <!-- left: name + dependency meta -->
+                                <div style="min-width:0;flex:1;display:flex;flex-direction:column;gap:4px;">
+                                  <!-- city/area/name -->
+                                  <div class="item-name text-sm font-medium truncate" title="{{ opt.name }}">
+                                    {{ opt.name }}
+                                  </div>
+
+                                  <!-- dependency meta: taluka · district · state · country -->
+                                  <div class="item-meta text-xs text-muted truncate" style="opacity:2.75;">
+                                    <ng-container *ngIf="pickerField === 'city'">
+                                      <ng-container *ngIf="formatCityMeta(opt); else noMeta">
+                                        {{ formatCityMeta(opt) }}
+                                      </ng-container>
+                                      <ng-template #noMeta>—</ng-template>
+                                    </ng-container>
+
+                                    <!-- area shows name only (or you can show pin below separately) -->
+                                    <ng-container *ngIf="pickerField === 'area'">
+                                      <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''">
+                                        Pin: {{ opt.pin }}
+                                      </ng-container>
+                                      <ng-container *ngIf="!opt.pin || opt.pin === 'null' || opt.pin === ''">
+                                        —
+                                      </ng-container>
+                                    </ng-container>
+
+                                    <!-- other pickers: show code -->
+                                    <ng-container *ngIf="pickerField !== 'city' && pickerField !== 'area'">
+                                      <ng-container
+                                        *ngIf="opt.code !== null && opt.code !== undefined && (opt.code + '') !== 'null' && (opt.code + '') !== ''">
+                                        {{ opt.code }}
+                                      </ng-container>
+                                      <ng-container
+                                        *ngIf="opt.code === null || opt.code === undefined || (opt.code + '') === 'null' || (opt.code + '') === ''">
+                                        —
+                                      </ng-container>
+                                    </ng-container>
+                                  </div>
+
                                 </div>
 
-                                <!-- dependency meta: taluka · district · state · country -->
-                                <div class="item-meta text-xs text-muted truncate" style="opacity:2.75;">
-                                  <ng-container *ngIf="pickerField === 'city'">
-                                    <ng-container *ngIf="formatCityMeta(opt); else noMeta">
-                                      {{ formatCityMeta(opt) }}
-                                    </ng-container>
-                                    <ng-template #noMeta>—</ng-template>
-                                  </ng-container>
-
-                                  <!-- area shows name only (or you can show pin below separately) -->
-                                  <ng-container *ngIf="pickerField === 'area'">
-                                    <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== ''">
-                                      Pin: {{ opt.pin }}
-                                    </ng-container>
-                                    <ng-container *ngIf="!opt.pin || opt.pin === 'null' || opt.pin === ''">
-                                      —
-                                    </ng-container>
-                                  </ng-container>
-
-                                  <!-- other pickers: show code -->
-                                  <ng-container *ngIf="pickerField !== 'city' && pickerField !== 'area'">
-                                    <ng-container
-                                      *ngIf="opt.code !== null && opt.code !== undefined && (opt.code + '') !== 'null' && (opt.code + '') !== ''">
-                                      {{ opt.code }}
-                                    </ng-container>
-                                    <ng-container
-                                      *ngIf="opt.code === null || opt.code === undefined || (opt.code + '') === 'null' || (opt.code + '') === ''">
-                                      —
-                                    </ng-container>
-                                  </ng-container>
-                                </div>
-
-                              </div>
-
-                              <!-- right: small code/pin column (kept compact) -->
-                              <!-- <div style="flex-shrink:0; margin-left:8px; text-align:right; min-width:56px;">
+                                <!-- right: small code/pin column (kept compact) -->
+                                <!-- <div style="flex-shrink:0; margin-left:8px; text-align:right; min-width:56px;">
         <div *ngIf="pickerField === 'area'" class="text-sm text-muted" style="white-space:nowrap;">
           <ng-container *ngIf="opt.pin && opt.pin !== 'null' && opt.pin !== '' ; else dashPin">{{ opt.pin }}</ng-container>
           <ng-template #dashPin>—</ng-template>
@@ -402,459 +588,502 @@
 
         <div *ngIf="pickerField === 'city'" style="height:0;opacity:0"></div>
       </div> -->
-                            </div>
+                              </div>
 
-                            <!-- empty / loading states -->
-                            <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
-                              No {{ pickerTitle }} found
-                            </div>
+                              <!-- empty / loading states -->
+                              <div class="dropdown-empty" *ngIf="!pickerLoading && pickerOptionsFiltered.length === 0">
+                                No {{ pickerTitle }} found
+                              </div>
 
-                            <div *ngIf="pickerLoading" class="text-center my-3">
-                              <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                              <div *ngIf="pickerLoading" class="text-center my-3">
+                                <div class="spinner-border text-primary" role="status">
+                                  <span class="visually-hidden">Loading...</span>
+                                </div>
                               </div>
                             </div>
                           </div>
+
+
                         </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="custom-modal-footer">
+                  <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
+                  <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
+                    (click)="confirmPicker()">
+                    Continue
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Backdrop closes the modal when clicked -->
+          <div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
+
+          <!-- invisible fullscreen click-catcher while dropdown open -->
+          <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
+          <!-- Shared picker modal -->
+          <app-picker-modal></app-picker-modal>
+
+          <!-- STEP 3: Personal + Company/Firm conditional content -->
+          <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
+            <div *ngIf="accountType === '0'">
+              <h4 class="mb-4 text-lg font-semibold">Personal Details</h4>
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <!-- Religion -->
+                <div class="form-floating form-floating-outline mb-0">
+                  <!-- <input type="text" class="form-control" id="religionCode" placeholder="Religion Code"
+                  [value]="religionName" readonly (click)="openPicker('religion')" style="cursor:pointer" /> -->
+                  <input type="text" id="religionCode" class="form-control" placeholder="Religion Code"
+                    [value]="religionName" readonly (click)="picker.openPicker('religion','primary')"
+                    style="cursor:pointer" />
+                  <input type="hidden" name="religionCode" [(ngModel)]="religionCode"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="religionCode">Religion</label>
+                </div>
+
+                <!-- Cast -->
+                <div class="form-floating form-floating-outline mb-0">
+                  <!-- <input type="text" class="form-control" id="castCode" placeholder="Cast Code" [value]="castName"
+                  readonly (click)="openPicker('cast')" style="cursor:pointer" /> -->
+                  <input type="text" id="castCode" class="form-control" placeholder="Cast Code" [value]="castName"
+                    readonly (click)="picker.openPicker('cast','primary')" style="cursor:pointer" />
+                  <input type="hidden" name="castCode" [(ngModel)]="castCode" [ngModelOptions]="{standalone: true}" />
+                  <label for="castCode">Caste</label>
+                </div>
+
+                <!-- Occupation -->
+                <div class="form-floating form-floating-outline mb-0">
+                  <!-- <input type="text" class="form-control" id="occupation" placeholder="Occupation"
+                  [value]="occupationName" readonly (click)="openPicker('occupation')" style="cursor:pointer" /> -->
+                  <input type="text" id="occupation" class="form-control" placeholder="Occupation"
+                    [value]="occupationName" readonly (click)="picker.openPicker('occupation','primary')"
+                    style="cursor:pointer" />
+                  <input type="hidden" name="occupationCode" [(ngModel)]="occupationCode"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="occupation">Occupation</label>
+                </div>
 
 
+                <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                  <input type="text" class="form-control" id="passportNo" placeholder="Passport No." />
+                  <label for="passportNo">Passport No.</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
+                  <input type="date" class="form-control" id="passportExp" placeholder="Passport Exp.Date" />
+                  <label for="passportExp">Passport Exp. Date</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
+                  <input type="text" class="form-control" id="passportIssueAuth"
+                    placeholder="Passport Issue Authority" />
+                  <label for="passportIssueAuth">Passport Issue Authority</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0">
+                  <input type="text" class="form-control" id="electionCardNo" placeholder="Election Card No." />
+                  <label for="electionCardNo">Election Card No.</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0">
+                  <input type="date" class="form-control" id="birthDate" placeholder="Birth Date" />
+                  <label for="birthDate">Birth Date</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0">
+                  <input type="number" class="form-control" id="age" placeholder="Age" min="0" />
+                  <label for="age">Age</label>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <div class="flex items-center gap-4 py-2">
+                    <span class="text-sm font-medium mr-2">Gender :</span>
+
+                    <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                      <input type="radio" name="gender" value="male" class="w-4 h-4 text-violet-600 border-gray-300" />
+                      <span>Male</span>
+                    </label>
+
+                    <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                      <input type="radio" name="gender" value="female"
+                        class="w-4 h-4 text-violet-600 border-gray-300" />
+                      <span>Female</span>
+                    </label>
+
+                    <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                      <input type="radio" name="gender" value="other" class="w-4 h-4 text-violet-600 border-gray-300" />
+                      <span>Other</span>
+                    </label>
+                  </div>
+                </div>
+
+
+
+                <!-- Other / Staff (fixed small width) -->
+                <div class="sm:col-span-3">
+                  <div class="flex items-start gap-4">
+                    <div class="w-36 min-w-[9rem]">
+                      <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
+                        <select id="otherStaffType" class="form-select" [(ngModel)]="otherStaffType"
+                          (change)="onOtherStaffTypeChange()" [ngModelOptions]="{standalone: true}">
+                          <option value="O">Other</option>
+                          <option value="S">Staff</option>
+                        </select>
+                        <label for="otherStaffType">Other/Staff</label>
+                      </div>
+                    </div>
+
+                    <div class="flex-1">
+                      <div class="form-floating form-floating-outline flex-1">
+                        <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name"
+                          [(ngModel)]="otherStaffName" readonly (click)="openOtherStaffPicker()"
+                          style="cursor: pointer;" [ngModelOptions]="{standalone: true}" />
+                        <label for="otherStaffName">Other/Staff Name</label>
                       </div>
                     </div>
                   </div>
-                </form>
-              </div>
+                </div>
 
-              <div class="custom-modal-footer">
-                <button type="button" class="custom-btn custom-btn-cancel" (click)="closePicker()">Cancel</button>
-                <button type="button" class="custom-btn custom-btn-save" [disabled]="!pickerSelectedCode"
-                  (click)="confirmPicker()">
-                  Continue
-                </button>
+
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Backdrop closes the modal when clicked -->
-        <div *ngIf="pickerOpen" class="modal-backdrop fade show" (click)="closePicker()"></div>
+            <!-- COMPANY/FIRM DETAILS: shown only for non-Individual -->
+            <div *ngIf="accountType !== '0'">
+              <h4 class="mb-4 text-lg font-semibold">Company/Firm Details</h4>
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div class="form-floating form-floating-outline mb-0">
+                  <input type="text" class="form-control" id="regNo" placeholder="Reg.No." />
+                  <label for="regNo">Reg.No.</label>
+                </div>
 
-        <!-- invisible fullscreen click-catcher while dropdown open -->
-        <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
-        <!-- Shared picker modal -->
-        <app-picker-modal></app-picker-modal>
+                <div class="form-floating form-floating-outline mb-0">
+                  <input type="text" class="form-control" id="regDate" placeholder="Reg.Date" />
+                  <label for="regDate">Reg.Date</label>
+                </div>
 
-        <!-- STEP 3: Personal + Company/Firm conditional content -->
-        <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
-          <div *ngIf="accountType === '0'">
-            <h4 class="mb-4 text-lg font-semibold">Personal Details</h4>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <!-- Religion -->
+                <div class="form-floating form-floating-outline mb-0">
+                  <input type="text" class="form-control" id="numBranches" placeholder="No.Of Branches" />
+                  <label for="numBranches">No.Of Branches</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0">
+                  <input type="text" class="form-control" id="businessNature" placeholder="Business Nature" />
+                  <label for="businessNature">Business Nature</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0">
+                  <input type="text" class="form-control" id="paidUpCapital" placeholder="Paid Up Capital" />
+                  <label for="paidUpCapital">Paid Up Capital</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0">
+                  <input type="text" class="form-control" id="lastYearTurnover" placeholder="Last Year TurnOver" />
+                  <label for="lastYearTurnover">Last Year TurnOver</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                  <input type="text" class="form-control" id="netWorth" placeholder="Net Worth Rs." />
+                  <label for="netWorth">Net Worth Rs.</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                  <input type="text" class="form-control" id="officerName1" placeholder="Officer Name 1" />
+                  <label for="officerName1">Officer Name 1</label>
+                </div>
+
+                <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
+                  <input type="text" class="form-control" id="officerName2" placeholder="Officer Name 2" />
+                  <label for="officerName2">Officer Name 2</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between gap-3">
+              <label for="step-2"
+                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+              <label for="step-4"
+                class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
+            </div>
+          </section>
+
+          <!-- STEP 4: Other Details (omitted lengthy bits for brevity) -->
+          <section id="panel-4" class="panel" data-step="4" role="tabpanel" aria-labelledby="step-4">
+            <h4 class="mb-4 text-lg font-semibold">Other Details</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div class="form-floating form-floating-outline mb-0">
-                <!-- <input type="text" class="form-control" id="religionCode" placeholder="Religion Code"
-                  [value]="religionName" readonly (click)="openPicker('religion')" style="cursor:pointer" /> -->
-                  <input type="text" id="religionCode" class="form-control" placeholder="Religion Code" [value]="religionName"
-                readonly (click)="picker.openPicker('religion','primary')" style="cursor:pointer"/>
-                <input type="hidden" name="religionCode" [(ngModel)]="religionCode" />
-                <label for="religionCode">Religion</label>
-              </div>
-
-              <!-- Cast -->
-              <div class="form-floating form-floating-outline mb-0">
-                <!-- <input type="text" class="form-control" id="castCode" placeholder="Cast Code" [value]="castName"
-                  readonly (click)="openPicker('cast')" style="cursor:pointer" /> -->
-                  <input type="text" id="castCode" class="form-control" placeholder="Cast Code" [value]="castName"
-                readonly (click)="picker.openPicker('cast','primary')" style="cursor:pointer"/>
-                <input type="hidden" name="castCode" [(ngModel)]="castCode" />
-                <label for="castCode">Caste</label>
-              </div>
-
-              <!-- Occupation -->
-              <div class="form-floating form-floating-outline mb-0">
-                <!-- <input type="text" class="form-control" id="occupation" placeholder="Occupation"
-                  [value]="occupationName" readonly (click)="openPicker('occupation')" style="cursor:pointer" /> -->
-                  <input type="text" id="occupation" class="form-control" placeholder="Occupation" [value]="occupationName"
-                readonly (click)="picker.openPicker('occupation','primary')" style="cursor:pointer"/>
-                <input type="hidden" name="occupationCode" [(ngModel)]="occupationCode" />
-                <label for="occupation">Occupation</label>
-              </div>
-
-
-              <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                <input type="text" class="form-control" id="passportNo" placeholder="Passport No." />
-                <label for="passportNo">Passport No.</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
-                <input type="date" class="form-control" id="passportExp" placeholder="Passport Exp.Date" />
-                <label for="passportExp">Passport Exp. Date</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
-                <input type="text" class="form-control" id="passportIssueAuth" placeholder="Passport Issue Authority" />
-                <label for="passportIssueAuth">Passport Issue Authority</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="electionCardNo" placeholder="Election Card No." />
-                <label for="electionCardNo">Election Card No.</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="date" class="form-control" id="birthDate" placeholder="Birth Date" />
-                <label for="birthDate">Birth Date</label>
+                <input type="text" class="form-control" id="officeName" placeholder="Office Name" />
+                <label for="officeName">Office Name</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="number" class="form-control" id="age" placeholder="Age" min="0" />
-                <label for="age">Age</label>
+                <input type="text" class="form-control" id="officePin" placeholder="PinCode" />
+                <label for="officePin">PinCode</label>
               </div>
 
-              <div class="sm:col-span-3">
-                <div class="flex items-center gap-4 py-2">
-                  <span class="text-sm font-medium mr-2">Gender :</span>
+              <div class="hidden lg:block"></div>
 
-                  <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
-                    <input type="radio" name="gender" value="male" class="w-4 h-4 text-violet-600 border-gray-300" />
-                    <span>Male</span>
-                  </label>
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="officeAddr1" placeholder="Office Address I" />
+                <label for="officeAddr1">Office Address</label>
+              </div>
 
-                  <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
-                    <input type="radio" name="gender" value="female" class="w-4 h-4 text-violet-600 border-gray-300" />
-                    <span>Female</span>
-                  </label>
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="officeAddr2" placeholder="Office Address II" />
+                <label for="officeAddr2">Office Address II</label>
+              </div>
 
-                  <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
-                    <input type="radio" name="gender" value="other" class="w-4 h-4 text-violet-600 border-gray-300" />
-                    <span>Other</span>
-                  </label>
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="officeAddr3" placeholder="Office Address III" />
+                <label for="officeAddr3">Office Address III</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="officePhone" placeholder="Office Phone No" />
+                <label for="officePhone">Office Phone No</label>
+              </div>
+
+              <div class="form-floating form-floating-outline mb-0">
+                <input type="text" class="form-control" id="faxNo" placeholder="Fax No" />
+                <label for="faxNo">Fax No.</label>
+              </div>
+
+              <!-- <div class="form-floating form-floating-outline mb-0">
+                <input type="email" class="form-control" id="emailId" placeholder="E-Mail ID" />
+                <label for="emailId">E-Mail ID</label>
+              </div> -->
+              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
+
+                <input type="email" class="form-control" placeholder="Email" formControlName="email"
+                  [validIndicator]="form.controls['email']" />
+
+                <label>E-Mail ID</label>
+
+                <small class="text-danger"
+                  *ngIf="form.controls['email'].touched && form.controls['email'].hasError('emailInvalid')">
+                  Enter valid email address
+                </small>
+              </div> -->
+              <div class="flex-1">
+                <div class="form-floating form-floating-outline flex-1">
+
+                  <input type="email" class="form-control" placeholder="Email" validatedInput="email" />
+
+                  <label>Email</label>
+
+                  <small class="text-danger mt-1 block" *ngIf="email.invalid()">
+                    Enter a valid email address
+                  </small>
+
                 </div>
               </div>
 
 
 
-              <!-- Other / Staff (fixed small width) -->
-              <div class="sm:col-span-3">
-                <div class="flex items-start gap-4">
-                  <div class="w-36 min-w-[9rem]">
-                    <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
-                      <select id="otherStaffType" class="form-select" [(ngModel)]="otherStaffType"
-                        (change)="onOtherStaffTypeChange()">
-                        <option value="O">Other</option>
-                        <option value="S">Staff</option>
-                      </select>
-                      <label for="otherStaffType">Other/Staff</label>
-                    </div>
-                  </div>
-
-                  <div class="flex-1">
-                    <div class="form-floating form-floating-outline flex-1">
-                      <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name"
-                        [(ngModel)]="otherStaffName" readonly (click)="openOtherStaffPicker()"
-                        style="cursor: pointer;" />
-                      <label for="otherStaffName">Other/Staff Name</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
 
             </div>
-          </div>
 
-          <!-- COMPANY/FIRM DETAILS: shown only for non-Individual -->
-          <div *ngIf="accountType !== '0'">
-            <h4 class="mb-4 text-lg font-semibold">Company/Firm Details</h4>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="regNo" placeholder="Reg.No." />
-                <label for="regNo">Reg.No.</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="regDate" placeholder="Reg.Date" />
-                <label for="regDate">Reg.Date</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="numBranches" placeholder="No.Of Branches" />
-                <label for="numBranches">No.Of Branches</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="businessNature" placeholder="Business Nature" />
-                <label for="businessNature">Business Nature</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="paidUpCapital" placeholder="Paid Up Capital" />
-                <label for="paidUpCapital">Paid Up Capital</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="lastYearTurnover" placeholder="Last Year TurnOver" />
-                <label for="lastYearTurnover">Last Year TurnOver</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                <input type="text" class="form-control" id="netWorth" placeholder="Net Worth Rs." />
-                <label for="netWorth">Net Worth Rs.</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                <input type="text" class="form-control" id="officerName1" placeholder="Officer Name 1" />
-                <label for="officerName1">Officer Name 1</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                <input type="text" class="form-control" id="officerName2" placeholder="Officer Name 2" />
-                <label for="officerName2">Officer Name 2</label>
-              </div>
+            <div class="mt-6 flex items-center justify-between gap-3">
+              <label for="step-3"
+                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+              <label for="step-5"
+                class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
             </div>
-          </div>
+          </section>
 
-          <div class="mt-6 flex items-center justify-between gap-3">
-            <label for="step-2"
-              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-            <label for="step-4"
-              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-          </div>
-        </section>
-
-        <!-- STEP 4: Other Details (omitted lengthy bits for brevity) -->
-        <section id="panel-4" class="panel" data-step="4" role="tabpanel" aria-labelledby="step-4">
-          <h4 class="mb-4 text-lg font-semibold">Other Details</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="form-floating form-floating-outline mb-0">
-              <input type="text" class="form-control" id="officeName" placeholder="Office Name" />
-              <label for="officeName">Office Name</label>
-            </div>
-
-            <div class="form-floating form-floating-outline mb-0">
-              <input type="text" class="form-control" id="officePin" placeholder="PinCode" />
-              <label for="officePin">PinCode</label>
-            </div>
-
-            <div class="hidden lg:block"></div>
-
-            <div class="form-floating form-floating-outline mb-0">
-              <input type="text" class="form-control" id="officeAddr1" placeholder="Office Address I" />
-              <label for="officeAddr1">Office Address</label>
-            </div>
-
-            <div class="form-floating form-floating-outline mb-0">
-              <input type="text" class="form-control" id="officeAddr2" placeholder="Office Address II" />
-              <label for="officeAddr2">Office Address II</label>
-            </div>
-
-            <div class="form-floating form-floating-outline mb-0">
-              <input type="text" class="form-control" id="officeAddr3" placeholder="Office Address III" />
-              <label for="officeAddr3">Office Address III</label>
-            </div>
-
-            <div class="form-floating form-floating-outline mb-0">
-              <input type="text" class="form-control" id="officePhone" placeholder="Office Phone No" />
-              <label for="officePhone">Office Phone No</label>
-            </div>
-
-            <div class="form-floating form-floating-outline mb-0">
-              <input type="text" class="form-control" id="faxNo" placeholder="Fax No" />
-              <label for="faxNo">Fax No.</label>
-            </div>
-
-            <div class="form-floating form-floating-outline mb-0">
-              <input type="email" class="form-control" id="emailId" placeholder="E-Mail ID" />
-              <label for="emailId">E-Mail ID</label>
-            </div>
-          </div>
-
-          <div class="mt-6 flex items-center justify-between gap-3">
-            <label for="step-3"
-              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-            <label for="step-5"
-              class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-          </div>
-        </section>
-
-        <!-- STEP 5: KYC Details -->
-        <section id="panel-5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step-5">
-          <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
+          <!-- STEP 5: KYC Details -->
+          <section id="panel-5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step-5">
+            <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
 
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- I.D. Proof -->
-            <div class="flex items-center gap-3">
-              <input type="checkbox" id="chk_idProof" name="idProofCheck"
-                class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
-              <div class="form-floating form-floating-outline flex-1">
-                <!-- <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- I.D. Proof -->
+              <div class="flex items-center gap-3">
+                <input type="checkbox" id="chk_idProof" name="idProofCheck"
+                  class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
+                <div class="form-floating form-floating-outline flex-1">
+                  <!-- <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
                   [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" /> -->
                   <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" [value]="idproofName"
-                readonly (click)="picker.openPicker('idproof','primary')" style="cursor:pointer"/>
-                <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode" />
-                <label for="IDProof">I.D.Proof</label>
+                    readonly (click)="picker.openPicker('idproof','primary')" style="cursor:pointer" />
+                  <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="IDProof">I.D.Proof</label>
+                </div>
               </div>
-            </div>
 
-            <!-- Address Proof -->
-            <div class="flex items-center gap-3">
-              <input type="checkbox" id="chk_addressProof" name="addressProofCheck"
-                class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
-              <div class="form-floating form-floating-outline flex-1">
-                <!-- <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
+              <!-- Address Proof -->
+              <div class="flex items-center gap-3">
+                <input type="checkbox" id="chk_addressProof" name="addressProofCheck"
+                  class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" />
+                <div class="form-floating form-floating-outline flex-1">
+                  <!-- <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
                   [value]="addrproofName" readonly (click)="openPicker('addrproof')" style="cursor:pointer"
                   name="Address Proof" /> -->
-                  <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof" [value]="addrproofName"
-                readonly (click)="picker.openPicker('addrproof','primary')" style="cursor:pointer"/>
-                <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName" />
-                <label for="AddressProof">Address Proof</label>
-              </div>
-            </div>
-
-            <!-- Empty third column -->
-            <div class="flex items-center gap-3">
-              <!-- Empty space -->
-            </div>
-          </div>
-
-          <div class="mt-6">
-            <hr
-              class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Photo -->
-            <div class="rounded-xl border border-gray-200 p-4">
-              <div class="text-sm font-semibold text-gray-800">Photo</div>
-              <div class="mt-3">
-                <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
-                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                  #photoInput data-key="photo">
-              </div>
-              <div class="mt-3">
-                <div
-                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                  (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
-                  (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
-                  aria-label="Preview Photo">
-                  <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
-                    alt="Photo preview" class="w-full h-full object-contain" />
-                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
+                  <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
+                    [value]="addrproofName" readonly (click)="picker.openPicker('addrproof','primary')"
+                    style="cursor:pointer" />
+                  <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName"
+                    [ngModelOptions]="{standalone: true}" />
+                  <label for="AddressProof">Address Proof</label>
                 </div>
               </div>
+
+              <!-- Empty third column -->
+              <div class="flex items-center gap-3">
+                <!-- Empty space -->
+              </div>
             </div>
 
-            <!-- Sign -->
-            <div class="rounded-xl border border-gray-200 p-4">
-              <div class="text-sm font-semibold text-gray-800">Sign</div>
-              <div class="mt-3">
-                <input type="file" accept="image/*" aria-label="Upload Signature"
-                  (change)="onFileChange($event, 'sign')"
-                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                  #signInput data-key="sign">
-              </div>
-              <div class="mt-3">
-                <div
-                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                  (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
-                  (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
-                  aria-label="Preview Signature">
-                  <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
-                    alt="Signature preview" class="w-full h-full object-contain" />
-                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
+            <div class="mt-6">
+              <hr
+                class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Photo -->
+              <div class="rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">Photo</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #photoInput data-key="photo">
                 </div>
-              </div>
-            </div>
-
-            <!-- PAN -->
-            <div class="rounded-xl border border-gray-200 p-4">
-              <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
-              <div class="mt-3">
-                <input type="file" accept="image/*,.pdf" aria-label="Upload PAN" (change)="onFileChange($event, 'pan')"
-                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                  #panInput data-key="pan">
-              </div>
-              <div class="mt-3">
-                <div
-                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                  (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
-                  (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button" aria-label="Preview PAN">
-                  <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)" alt="PAN preview"
-                    class="w-full h-full object-contain" />
-                  <div class="flex flex-col items-center gap-1 text-gray-500"
-                    *ngIf="previews.pan && !isImage(previews.pan)">
-                    <i class="fa-solid fa-file-pdf text-3xl"></i>
-                    <span class="text-sm">PDF Document</span>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
+                    (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
+                    aria-label="Preview Photo">
+                    <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
+                      alt="Photo preview" class="w-full h-full object-contain" />
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
                   </div>
-                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.pan">Preview</span>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            <!-- Aadhaar Front -->
-            <div class="rounded-xl border border-gray-200 p-4">
-              <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
-              <div class="mt-3">
-                <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
-                  (change)="onFileChange($event, 'aadhaarFront')"
-                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                  #aadhaarFrontInput data-key="aadhaarFront">
-              </div>
-              <div class="mt-3">
-                <div
-                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                  (click)="openPreview('aadhaarFront')" tabindex="0" (keydown.enter)="openPreview('aadhaarFront')"
-                  (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
-                  aria-label="Preview Aadhaar front">
-                  <img [src]="previews.aadhaarFront || ''"
-                    *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
-                    class="w-full h-full object-contain" />
-                  <div class="flex flex-col items-center gap-1 text-gray-500"
-                    *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
-                    <i class="fa-solid fa-file-pdf text-3xl"></i>
-                    <span class="text-sm">PDF Document</span>
+              <!-- Sign -->
+              <div class="rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">Sign</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*" aria-label="Upload Signature"
+                    (change)="onFileChange($event, 'sign')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #signInput data-key="sign">
+                </div>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
+                    (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
+                    aria-label="Preview Signature">
+                    <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
+                      alt="Signature preview" class="w-full h-full object-contain" />
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
                   </div>
-                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarFront">Preview</span>
                 </div>
               </div>
-            </div>
 
-            <!-- Aadhaar Back -->
-            <div class="rounded-xl border border-gray-200 p-4">
-              <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
-              <div class="mt-3">
-                <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
-                  (change)="onFileChange($event, 'aadhaarBack')"
-                  class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                  #aadhaarBackInput data-key="aadhaarBack">
-              </div>
-              <div class="mt-3">
-                <div
-                  class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                  (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
-                  (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
-                  aria-label="Preview Aadhaar back">
-                  <img [src]="previews.aadhaarBack || ''" *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)"
-                    alt="Aadhaar back preview" class="w-full h-full object-contain" />
-                  <div class="flex flex-col items-center gap-1 text-gray-500"
-                    *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
-                    <i class="fa-solid fa-file-pdf text-3xl"></i>
-                    <span class="text-sm">PDF Document</span>
+              <!-- PAN -->
+              <div class="rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*,.pdf" aria-label="Upload PAN"
+                    (change)="onFileChange($event, 'pan')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #panInput data-key="pan">
+                </div>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
+                    (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button"
+                    aria-label="Preview PAN">
+                    <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)" alt="PAN preview"
+                      class="w-full h-full object-contain" />
+                    <div class="flex flex-col items-center gap-1 text-gray-500"
+                      *ngIf="previews.pan && !isImage(previews.pan)">
+                      <i class="fa-solid fa-file-pdf text-3xl"></i>
+                      <span class="text-sm">PDF Document</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.pan">Preview</span>
                   </div>
-                  <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarBack">Preview</span>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="mt-6 flex items-center justify-between gap-3">
-            <label for="step-4"
-              class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-            <button type="button"
-              class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700">Save</button>
-          </div>
-        </section>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+              <!-- Aadhaar Front -->
+              <div class="rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
+                    (change)="onFileChange($event, 'aadhaarFront')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #aadhaarFrontInput data-key="aadhaarFront">
+                </div>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('aadhaarFront')" tabindex="0" (keydown.enter)="openPreview('aadhaarFront')"
+                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
+                    aria-label="Preview Aadhaar front">
+                    <img [src]="previews.aadhaarFront || ''"
+                      *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
+                      class="w-full h-full object-contain" />
+                    <div class="flex flex-col items-center gap-1 text-gray-500"
+                      *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
+                      <i class="fa-solid fa-file-pdf text-3xl"></i>
+                      <span class="text-sm">PDF Document</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarFront">Preview</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Aadhaar Back -->
+              <div class="rounded-xl border border-gray-200 p-4">
+                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
+                <div class="mt-3">
+                  <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
+                    (change)="onFileChange($event, 'aadhaarBack')"
+                    class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
+                    #aadhaarBackInput data-key="aadhaarBack">
+                </div>
+                <div class="mt-3">
+                  <div
+                    class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
+                    (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
+                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
+                    aria-label="Preview Aadhaar back">
+                    <img [src]="previews.aadhaarBack || ''"
+                      *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" alt="Aadhaar back preview"
+                      class="w-full h-full object-contain" />
+                    <div class="flex flex-col items-center gap-1 text-gray-500"
+                      *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
+                      <i class="fa-solid fa-file-pdf text-3xl"></i>
+                      <span class="text-sm">PDF Document</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarBack">Preview</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between gap-3">
+              <label for="step-4"
+                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+              <button type="button"
+                class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700">Save</button>
+            </div>
+          </section>
+        </form>
       </div> <!-- /wizard-panels -->
     </div>
   </div>

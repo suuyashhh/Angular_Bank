@@ -1,0 +1,22 @@
+.validity-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  pointer-events: none;
+}
+
+.form-control.ng-valid.ng-touched {
+  border-color: #1f7a3a !important;
+  box-shadow: 0 0 0 2px rgba(31, 122, 58, 0.15) !important;
+}
+
+.form-control.ng-invalid.ng-touched {
+  border-color: #b00020 !important;
+  box-shadow: 0 0 0 2px rgba(176, 0, 32, 0.12) !important;
+}
+
+.form-control {
+  transition: all 0.25s ease-in-out;
+}
