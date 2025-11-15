@@ -21,9 +21,13 @@ export class PassportFormatDirective {
       value = value.replace(/^[0-9]/, ''); // 1st must be letter
     }
 
-    this.control?.control?.setValue(value, {
-      emitEvent: false,
-      emitModelToViewChange: true
-    });
+    // after computing `value`
+if (this.control?.control) {
+  this.control.control.setValue(value, { emitEvent: false, emitModelToViewChange: true });
+} else {
+  // no NgControl (plain input), update native DOM value
+  (event.target as HTMLInputElement).value = value;
+}
+
   }
 }

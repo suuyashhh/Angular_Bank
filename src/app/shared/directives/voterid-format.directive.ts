@@ -7,12 +7,12 @@ import { NgControl } from '@angular/forms';
 })
 export class VoterIdFormatDirective {
 
-  constructor(@Self() @Optional() private control: NgControl) {}
+  constructor(@Self() @Optional() private control: NgControl) { }
 
   @HostListener('input', ['$event'])
   onInput(event: any) {
     console.log("Voter");
-    
+
     const input = event.target;
     let value = (input.value || '')
       .toUpperCase()
@@ -27,9 +27,13 @@ export class VoterIdFormatDirective {
         value.substring(3).replace(/[^0-9]/g, '');
     }
 
-    this.control?.control?.setValue(value, {
-      emitEvent: false,
-      emitModelToViewChange: true
-    });
+    // after computing `value`
+    if (this.control?.control) {
+      this.control.control.setValue(value, { emitEvent: false, emitModelToViewChange: true });
+    } else {
+      // no NgControl (plain input), update native DOM value
+      (event.target as HTMLInputElement).value = value;
+    }
+
   }
 }
