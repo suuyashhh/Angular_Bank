@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -22,6 +22,7 @@ import { ShowErrorsDirective } from '../../../shared/directives/show-errors.dire
 import { ValidationSignal } from '../../../shared/services/validation-signals.service';
 import { VoterIdFormatDirective } from '../../../shared/directives/voterid-format.directive';
 import { PassportFormatDirective } from '../../../shared/directives/passport-format.directive';
+import { InputRestrictionDirective } from '../../../shared/directives/input-restriction.directive';
 
 type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idproof' | 'addrproof' | 'otherstaff';
 type PickerTarget = 'primary' | 'corr';
@@ -67,7 +68,8 @@ type Option = {
     PanFormatDirective,
     ShowErrorsDirective,
     VoterIdFormatDirective,
-    PassportFormatDirective
+    PassportFormatDirective,
+    InputRestrictionDirective
   ],
 
   templateUrl: './partymast.component.html',
