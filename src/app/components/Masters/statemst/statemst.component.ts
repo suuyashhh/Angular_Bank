@@ -1,30 +1,34 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
-import { RouterModule } from '@angular/router';
+import { Console } from 'console';
+import { PickerService } from '../../../services/picker.service';
+import { PickerModalComponent } from '../../../shared/picker-modal/picker-modal.component';
 
 @Component({
-  selector: 'app-countrymst',
+  selector: 'app-statemst',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NgxPaginationModule,
-    RouterModule
-  ],
-  templateUrl: './countrymst.component.html',
-  styleUrls: ['./countrymst.component.css']
+      CommonModule,
+      ReactiveFormsModule,
+      FormsModule,PickerModalComponent,
+      NgxPaginationModule,RouterModule],
+  templateUrl: './statemst.component.html',
+  styleUrl: './statemst.component.css'
 })
-export class CountrymstComponent implements OnInit {
+export class StatemstComponent implements OnInit {
   @ViewChild('countryNameField') countryNameField!: ElementRef;
 
   isCreatingNew = false;
   btn: string = '';
   trn_no = 0;
+  
+  selectedCountryName = '';
+  selectedCountryCode: number | null = null;
   saving = false;
 
   countries: any[] = [];
@@ -36,7 +40,7 @@ export class CountrymstComponent implements OnInit {
 
   data!: FormGroup;
 
-  constructor(private api: ApiService, private toastr: ToastrService) {}
+  constructor(private api: ApiService, private toastr: ToastrService,public picker:PickerService) {}
 
   ngOnInit(): void {
     this.data = new FormGroup({
@@ -46,6 +50,34 @@ export class CountrymstComponent implements OnInit {
     });
 
     this.loadCountries();
+
+
+
+    
+  this.picker.resetSelections();
+
+  this.picker.pickerSelected$.subscribe(sel => {
+
+    if (!sel) return;
+
+    const { field, option, target } = sel;
+
+
+    if (target === 'primary') {
+
+      if (field === 'country') {
+
+        if (!option) {
+          this.selectedCountryName = '';
+          return;
+        }
+
+        this.selectedCountryName = option.name;
+        this.selectedCountryCode = Number(option.code ?? null);   
+        console.log(this.selectedCountryCode);
+    }
+  }
+  });
   }
 
   /**

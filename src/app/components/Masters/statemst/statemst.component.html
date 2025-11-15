@@ -7,7 +7,7 @@
           <ol class="flex items-center gap-2">
             <li><a routerLink="/USERMASTER/dashboard" class="hover:underline">Home</a></li>
             <li>/</li>
-            <li class="font-semibold">Country Master</li>
+            <li class="font-semibold">State Master</li>
           </ol>
         </nav>
         <div>
@@ -25,13 +25,19 @@
 
           <form [formGroup]="data" (ngSubmit)="submit()" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <!-- Country Name Field -->
-           <div class="form-floating form-floating-outline mb-0"></div>
+           <div class="form-floating form-floating-outline mb-0">
+             <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCountryName"
+                readonly (click)="picker.openPicker('country','primary')" style="cursor:pointer"/>
+
+              <input type="hidden" name="cityCode" [(ngModel)]="selectedCountryCode" [ngModelOptions]="{standalone: true}"/>
+              <label for="addr_city">Country</label>
+           </div>
             <div class="form-floating form-floating-outline mb-0">
             <input #countryNameField id="countryName" formControlName="COUNTRY_NAME" type="text"
                 class="form-control block w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                 placeholder="Country Name" />
 
-              <label for="countryName" class="text-gray-600 ml-1">Country Name</label>
+              <label for="countryName" class="text-gray-600 ml-1">City Name</label>
             </div>
 
             <!-- (optional) Display code read-only -->
@@ -180,4 +186,5 @@
       </div>
     </div>
   </div>
+  <app-picker-modal></app-picker-modal>
 </main>

@@ -236,8 +236,8 @@ export class PickerService {
     this.api.get('CountryMaster/GetAll').subscribe({
       next: (res: any[]) => {
         const list = res.map(x => ({
-          code: x.trN_NO,
-          name: x.countrY_NAME
+          code: x.code,
+          name: x.name
         }));
 
         this.pickerOptions$.next(list);
