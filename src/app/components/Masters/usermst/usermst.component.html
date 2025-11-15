@@ -1,0 +1,157 @@
+<main class="w-full px-6 py-8">
+  <div class="card wizard-card w-full rounded-2xl overflow-hidden bg-white shadow-md">
+    <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
+
+      <!-- HEADER -->
+      <div class="mb-6 flex items-center justify-between">
+        <nav class="text-sm text-gray-600" aria-label="Breadcrumb">
+          <ol class="flex items-center gap-2">
+            <li><a class="hover:underline text-gray-500" routerLink="/">Home</a></li>
+            <li class="text-gray-300">/</li>
+            <li class="font-semibold text-gray-800">User Master</li>
+          </ol>
+        </nav>
+
+        <!-- <button
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-violet-600 text-white text-sm font-medium shadow-sm hover:bg-violet-700">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+          Edit User
+        </button> -->
+      </div>
+
+      <!-- USER FORM -->
+      <form [formGroup]="userForm" class="space-y-6">
+        <h4 class="text-lg font-semibold text-gray-800 mb-2">User Information</h4>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+          <!-- city input -->
+          <!-- <div class="form-floating form-floating-outline mb-4">
+            <input type="text" id="country" class="form-control" placeholder="Country" [value]="selectedCountryName"
+              readonly (click)="picker.openPicker('area')" style="cursor: pointer" />
+            <label for="country">Country</label>
+          </div> -->
+
+          <!-- Shared picker modal -->
+          <!-- <app-picker-modal></app-picker-modal> -->
+
+          <!-- Employee Code -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="employeeCode" type="text" class="form-control" placeholder="Employee Code"
+              formControlName="employeeCode" />
+            <label for="employeeCode">Employee Code</label>
+          </div>
+
+          <!-- User ID -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="userId" type="text" class="form-control" placeholder="User ID" formControlName="userId" />
+            <label for="userId">User ID</label>
+          </div>
+
+          <!-- Name -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="name" type="text" class="form-control" placeholder="Name" formControlName="name" />
+            <label for="name">Name</label>
+          </div>
+
+          <!-- Mobile No -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="mobileNo" type="text" class="form-control" placeholder="Mobile No" formControlName="mobileNo" />
+            <label for="mobileNo">Mobile No</label>
+          </div>
+
+          <!-- Access -->
+          <div class="form-floating form-floating-outline mb-4">
+            <select id="access" class="form-select" formControlName="access">
+              <option value="">---Select---</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+            <label for="access">Access</label>
+          </div>
+
+          <!-- Cash Receipt -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="cashReceipt" type="text" class="form-control" placeholder="Cash Receipt"
+              formControlName="cashReceipt" />
+            <label for="cashReceipt">Cash Receipt</label>
+          </div>
+
+          <!-- Cash Payment -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="cashPayment" type="text" class="form-control" placeholder="Cash Payment"
+              formControlName="cashPayment" />
+            <label for="cashPayment">Cash Payment</label>
+          </div>
+
+          <!-- Passing Receipt -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="passingReceipt" type="text" class="form-control" placeholder="Passing Receipt"
+              formControlName="passingReceipt" />
+            <label for="passingReceipt">Passing Receipt</label>
+          </div>
+
+          <!-- Passing Payment -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="passingPayment" type="text" class="form-control" placeholder="Passing Payment"
+              formControlName="passingPayment" />
+            <label for="passingPayment">Passing Payment</label>
+          </div>
+
+          <!-- Voucher Srno -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="voucherSrNo" type="text" class="form-control" placeholder="Voucher Srno"
+              formControlName="voucherSrNo" />
+            <label for="voucherSrNo">Voucher Srno</label>
+          </div>
+
+          <!-- Working Branch -->
+          <div class="form-floating form-floating-outline mb-4">
+            <select id="workingBranch" class="form-select" formControlName="workingBranch">
+              <option value="">---Select Working Branch---</option>
+              <option value="branch1">Branch 1</option>
+              <option value="branch2">Branch 2</option>
+            </select>
+            <label for="workingBranch">Working Branch</label>
+          </div>
+
+          <!-- Counter Name -->
+          <div class="form-floating form-floating-outline mb-4">
+            <select id="counterName" class="form-select" formControlName="counterName">
+              <option value="">---Select---</option>
+              <option value="counter1">Counter 1</option>
+              <option value="counter2">Counter 2</option>
+            </select>
+            <label for="counterName">Counter Name</label>
+          </div>
+
+          <!-- Password -->
+          <div class="form-floating form-floating-outline mb-4">
+            <input id="password" type="password" class="form-control" placeholder="Password"
+              formControlName="password" />
+            <label for="password">Password</label>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="mt-8 flex items-center justify-end gap-3">
+          <button type="button" (click)="onSave()"
+            class="px-5 py-2.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 shadow-md">
+            Save
+          </button>
+          <button type="button" (click)="onCancel()"
+            class="px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200">
+            Cancel
+          </button>
+          <button type="button" (click)="onExit()"
+            class="px-5 py-2.5 rounded-lg bg-red-500 text-white hover:bg-red-600 shadow-md">
+            Exit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
