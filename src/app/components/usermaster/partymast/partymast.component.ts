@@ -1,12 +1,28 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from '../../../services/loader.service';
 import { PickerModalComponent } from '../../../shared/picker-modal/picker-modal.component';
 import { PickerService } from '../../../services/picker.service';
+import { ValidationService } from '../../../shared/services/validation.service';
+import { share } from 'rxjs';
+import { BasicContactInputsComponent } from '../../../shared/basic-contact-inputs/basic-contact-inputs.component';
+import { GstFormatDirective } from '../../../shared/directives/gst-format.directive';
+import { MobileFormatDirective } from '../../../shared/directives/mobile-format.directive';
+import { PhoneFormatDirective } from '../../../shared/directives/phone-format.directive';
+// import { ValidIndicatorDirective } from '../../../shared/directives/valid-indicator.directive';
+import { AadhaarFormatDirective } from '../../../shared/directives/aadhaar-format.directive';
+import { PanFormatDirective } from '../../../shared/directives/pan-format.directive';
+import { AsyncValidationService } from '../../../shared/services/async-validation.service';
+import { ValidatedInputDirective } from '../../../shared/directives/valid-indicator.directive';
+import { ShowErrorsDirective } from '../../../shared/directives/show-errors.directive';
+import { ValidationSignal } from '../../../shared/services/validation-signals.service';
+import { VoterIdFormatDirective } from '../../../shared/directives/voterid-format.directive';
+import { PassportFormatDirective } from '../../../shared/directives/passport-format.directive';
+import { InputRestrictionDirective } from '../../../shared/directives/input-restriction.directive';
 
 type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idproof' | 'addrproof' | 'otherstaff';
 type PickerTarget = 'primary' | 'corr';
@@ -33,7 +49,29 @@ type Option = {
 @Component({
   selector: 'app-partymast',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, PickerModalComponent, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    PickerModalComponent,
+    ReactiveFormsModule,
+
+    // Our standalone contact component
+    BasicContactInputsComponent,
+
+    // standalone directives
+    AadhaarFormatDirective,
+    GstFormatDirective,
+    MobileFormatDirective,
+    PhoneFormatDirective,
+    ValidatedInputDirective,
+    PanFormatDirective,
+    ShowErrorsDirective,
+    VoterIdFormatDirective,
+    PassportFormatDirective,
+    InputRestrictionDirective
+  ],
+
   templateUrl: './partymast.component.html',
   styleUrls: ['./partymast.component.css']
 })
@@ -83,7 +121,7 @@ export class PartymastComponent implements OnInit {
   selectedCityUnicId: number | null = null;
   selectedAreaCode: number | null = null;
   selectedAreaName = '';
-  selectedPincode : number | null = null;
+  selectedPincode: number | null = null;
 
   // ---------- Corresponding Address ----------
   corrCityName = '';
@@ -99,7 +137,7 @@ export class PartymastComponent implements OnInit {
   corrTalukaName = '';
   corrSelectedAreaCode: number | null = null;
   corrAreaName = '';
-  corrPincode : number | null = null;
+  corrPincode: number | null = null;
 
   // ---------- Religion / Caste / Occupation ----------
   religionName = '';
@@ -112,7 +150,7 @@ export class PartymastComponent implements OnInit {
   idproofCode: number | null = null;
   addrproofName = '';
   addrproofCode: number | null = null;
-
+  form: any;
   // ---------- File Previews ----------
   previews: Record<PreviewKey, string | null> = {
     photo: null,
@@ -123,6 +161,11 @@ export class PartymastComponent implements OnInit {
   };
   activeKey: PreviewKey | null = null;
   modalOpen = false;
+
+  // input fields
+  child!: BasicContactInputsComponent;
+  contactForm!: FormGroup;
+  contactFormValid: boolean = false;
 
   // ---------- Template Refs ----------
   @ViewChild('photoInput') photoInput!: ElementRef<HTMLInputElement>;
@@ -137,163 +180,190 @@ export class PartymastComponent implements OnInit {
     private toastr: ToastrService,
     private loader: LoaderService,
     public picker: PickerService,
+    public fb: FormBuilder,
+    public vs: ValidationService,
+    public asyncVs: AsyncValidationService,
   ) { }
+   pan = new ValidationSignal(this.vs, 'pan');
+  aadhaar = new ValidationSignal(this.vs, 'aadhaar');
+  gst = new ValidationSignal(this.vs, 'gst');
+  mobile = new ValidationSignal(this.vs, 'mobile');
+  phone = new ValidationSignal(this.vs, 'phone');
+  email = new ValidationSignal(this.vs, 'email');
+  voterid = new ValidationSignal(this.vs, 'voterid');
+passport = new ValidationSignal(this.vs, 'passport');
 
-ngOnInit(): void {
+  ngOnInit(): void {
 
-  this.picker.resetSelections();
+    this.form = this.fb.group({
+  // pan: ['', {
+  //   validators: [this.vs.panValidator.bind(this.vs)],
+  //   asyncValidators: [
+  //     this.asyncVs.panExistsValidator('https://api.example.com/check-pan')
+  //   ],
+  //   updateOn: 'blur'
+  // }],
+  // aadhaar: ['', [this.vs.aadhaarValidator.bind(this.vs)]],
+  // gst: ['', [this.vs.gstValidator.bind(this.vs)]],
+  // phone: ['', [this.vs.phoneValidator.bind(this.vs)]],
+  // mobile: ['', [this.vs.mobileValidator.bind(this.vs)]],
+  // email: ['', [this.vs.emailValidator.bind(this.vs)]],
+});
 
-  this.picker.pickerSelected$.subscribe(sel => {
-
-    if (!sel) return;
-
-    const { field, option, target } = sel;
 
 
-    /* ---------------------------------------
-     * PRIMARY ADDRESS
-     * --------------------------------------- */
-    if (target === 'primary') {
+    this.picker.resetSelections();
 
-      /* 🔵 CITY (PRIMARY) */
-      if (field === 'city') {
+    this.picker.pickerSelected$.subscribe(sel => {
 
-        if (!option) {
-          this.selectedCityName = '';
-          return;
+      if (!sel) return;
+
+      const { field, option, target } = sel;
+
+
+      /* ---------------------------------------
+       * PRIMARY ADDRESS
+       * --------------------------------------- */
+      if (target === 'primary') {
+
+        /* 🔵 CITY (PRIMARY) */
+        if (field === 'city') {
+
+          if (!option) {
+            this.selectedCityName = '';
+            return;
+          }
+
+          this.selectedCityName = option.name;
+          this.selectedCityCode = Number(option.code ?? null);
+          this.selectedCityUnicId = Number(option.uniqCode ?? option.code ?? 0);
+
+          // Dependencies
+          this.selectedTalukaName = option.talukA_NAME ?? '';
+          this.selectedDistrictName = option.disT_NAME ?? '';
+          this.selectedStateName = option.statE_NAME ?? '';
+          this.selectedCountryName = option.countrY_NAME ?? '';
+
+          this.selectedTalukaCode = Number(option.talukA_CODE ?? 0);
+          this.selectedDistrictCode = Number(option.disT_CODE ?? 0);
+          this.selectedStateCode = Number(option.statE_CODE ?? 0);
+          this.selectedCountryCode = Number(option.countrY_CODE ?? 0);
+
+          console.log('PRIMARY CITY:', option);
         }
 
-        this.selectedCityName = option.name;
-        this.selectedCityCode = Number(option.code ?? null);
-        this.selectedCityUnicId = Number(option.uniqCode ?? option.code ?? 0);
 
-        // Dependencies
-        this.selectedTalukaName = option.talukA_NAME ?? '';
-        this.selectedDistrictName = option.disT_NAME ?? '';
-        this.selectedStateName = option.statE_NAME ?? '';
-        this.selectedCountryName = option.countrY_NAME ?? '';
+        /* 🔵 AREA (PRIMARY) */
+        if (field === 'area') {
 
-        this.selectedTalukaCode = Number(option.talukA_CODE ?? 0);
-        this.selectedDistrictCode = Number(option.disT_CODE ?? 0);
-        this.selectedStateCode = Number(option.statE_CODE ?? 0);
-        this.selectedCountryCode = Number(option.countrY_CODE ?? 0);
+          if (!option) {
+            this.selectedAreaName = '';
+            return;
+          }
 
-        console.log('PRIMARY CITY:', option);
-      }
+          this.selectedAreaName = option.name;
+          this.selectedAreaCode = Number(option.areA_CODE ?? null);
+          this.selectedPincode = Number(option.piN_CODE ?? 0);
 
-
-      /* 🔵 AREA (PRIMARY) */
-      if (field === 'area') {
-
-        if (!option) {
-          this.selectedAreaName = '';
-          return;
+          console.log('PRIMARY AREA:', option);
         }
 
-        this.selectedAreaName = option.name;
-        this.selectedAreaCode = Number(option.areA_CODE ?? null);
-        this.selectedPincode = Number(option.piN_CODE ?? 0);
 
-        console.log('PRIMARY AREA:', option);
-      }
+        /* 🔵 RELIGION (PRIMARY) */
+        if (field === 'religion') {
+          this.religionName = option?.name ?? '';
+          this.religionCode = Number(option?.code ?? 0);
 
-
-      /* 🔵 RELIGION (PRIMARY) */
-      if (field === 'religion') {
-        this.religionName = option?.name ?? '';
-        this.religionCode = Number(option?.code ?? 0);
-
-        console.log("PRIMARY RELIGION:", option);
-      }
-
-      /* 🔵 CASTE (PRIMARY) */
-      if (field === 'cast') {
-        this.castName = option?.name ?? '';
-        this.castCode = Number(option?.code ?? 0);
-
-        console.log("PRIMARY CAST:", option);
-      }
-
-      /* 🔵 OCCUPATION (PRIMARY) */
-      if (field === 'occupation') {
-        this.occupationName = option?.name ?? '';
-        this.occupationCode = Number(option?.code ?? 0);
-
-        console.log("PRIMARY OCCUPATION:", option);
-      }
-
-      /* 🔵 ID PROOF (PRIMARY) */
-      if (field === 'idproof') {
-        this.idproofName = option?.name ?? '';
-        this.idproofCode = Number(option?.code ?? 0);
-
-        console.log("PRIMARY ID PROOF:", option);
-      }
-
-      /* 🔵 ADDRESS PROOF (PRIMARY) */
-      if (field === 'addrproof') {
-        this.addrproofName = option?.name ?? '';
-        this.addrproofCode = Number(option?.code ?? 0);
-
-        console.log("PRIMARY ADDRESS PROOF:", option);
-      }
-
-    }
-
-
-
-    /* ---------------------------------------
-     * CORRESPONDING ADDRESS
-     * --------------------------------------- */
-    if (target === 'corr') {
-
-      /* 🔵 CITY (CORR) */
-      if (field === 'city') {
-
-        if (!option) {
-          this.corrCityName = '';
-          return;
+          console.log("PRIMARY RELIGION:", option);
         }
 
-        this.corrCityName = option.name;
-        this.corrSelectedCityCode = Number(option.code ?? null);
-        this.corrSelectedCityUnicId = Number(option.uniqCode ?? option.code ?? 0);
+        /* 🔵 CASTE (PRIMARY) */
+        if (field === 'cast') {
+          this.castName = option?.name ?? '';
+          this.castCode = Number(option?.code ?? 0);
 
-        this.corrTalukaName = option.talukA_NAME ?? '';
-        this.corrDistrictName = option.disT_NAME ?? '';
-        this.corrStateName = option.statE_NAME ?? '';
-        this.corrCountryName = option.countrY_NAME ?? '';
-
-        this.corrSelectedTalukaCode = Number(option.talukA_CODE ?? 0);
-        this.corrSelectedDistrictCode = Number(option.disT_CODE ?? 0);
-        this.corrSelectedStateCode = Number(option.statE_CODE ?? 0);
-        this.corrSelectedCountryCode = Number(option.countrY_CODE ?? 0);
-
-        console.log('CORR CITY:', option);
-      }
-
-
-      /* 🔵 AREA (CORR) */
-      if (field === 'area') {
-
-        if (!option) {
-          this.corrAreaName = '';
-          return;
+          console.log("PRIMARY CAST:", option);
         }
 
-        this.corrAreaName = option.name;
-        this.corrSelectedAreaCode = Number(option.areA_CODE ?? null);
-        this.corrPincode = Number(option.piN_CODE ?? 0);
+        /* 🔵 OCCUPATION (PRIMARY) */
+        if (field === 'occupation') {
+          this.occupationName = option?.name ?? '';
+          this.occupationCode = Number(option?.code ?? 0);
 
-        console.log('CORR AREA:', option);
+          console.log("PRIMARY OCCUPATION:", option);
+        }
+
+        /* 🔵 ID PROOF (PRIMARY) */
+        if (field === 'idproof') {
+          this.idproofName = option?.name ?? '';
+          this.idproofCode = Number(option?.code ?? 0);
+
+          console.log("PRIMARY ID PROOF:", option);
+        }
+
+        /* 🔵 ADDRESS PROOF (PRIMARY) */
+        if (field === 'addrproof') {
+          this.addrproofName = option?.name ?? '';
+          this.addrproofCode = Number(option?.code ?? 0);
+
+          console.log("PRIMARY ADDRESS PROOF:", option);
+        }
+
       }
 
 
-    }
 
-  });
-}
+      /* ---------------------------------------
+       * CORRESPONDING ADDRESS
+       * --------------------------------------- */
+      if (target === 'corr') {
 
+        /* 🔵 CITY (CORR) */
+        if (field === 'city') {
+
+          if (!option) {
+            this.corrCityName = '';
+            return;
+          }
+
+          this.corrCityName = option.name;
+          this.corrSelectedCityCode = Number(option.code ?? null);
+          this.corrSelectedCityUnicId = Number(option.uniqCode ?? option.code ?? 0);
+
+          this.corrTalukaName = option.talukA_NAME ?? '';
+          this.corrDistrictName = option.disT_NAME ?? '';
+          this.corrStateName = option.statE_NAME ?? '';
+          this.corrCountryName = option.countrY_NAME ?? '';
+
+          this.corrSelectedTalukaCode = Number(option.talukA_CODE ?? 0);
+          this.corrSelectedDistrictCode = Number(option.disT_CODE ?? 0);
+          this.corrSelectedStateCode = Number(option.statE_CODE ?? 0);
+          this.corrSelectedCountryCode = Number(option.countrY_CODE ?? 0);
+
+          console.log('CORR CITY:', option);
+        }
+
+
+        /* 🔵 AREA (CORR) */
+        if (field === 'area') {
+
+          if (!option) {
+            this.corrAreaName = '';
+            return;
+          }
+
+          this.corrAreaName = option.name;
+          this.corrSelectedAreaCode = Number(option.areA_CODE ?? null);
+          this.corrPincode = Number(option.piN_CODE ?? 0);
+
+          console.log('CORR AREA:', option);
+        }
+
+
+      }
+
+    });
+  }
 
 
 
@@ -474,8 +544,8 @@ ngOnInit(): void {
             countryName: String(x.countrY_NAME ?? x.COUNTRy_NAME ?? x.country_name ?? '').trim() || undefined
           } as Option;
         })
-        .filter(o => o.name && o.name !== 'null')
-        .sort((a, b) => a.name.localeCompare(b.name));
+          .filter(o => o.name && o.name !== 'null')
+          .sort((a, b) => a.name.localeCompare(b.name));
 
         this.pickerOptions = mapped;
         this.pickerOptionsFiltered = [...this.pickerOptions];
@@ -865,17 +935,17 @@ ngOnInit(): void {
   }
 
   formatCityMeta(opt: Option | null | undefined): string {
-  if (!opt) return '';
-  const parts = [
-    opt.talukaName,
-    opt.distName,
-    opt.stateName,
-    opt.countryName
-  ].filter(p => p !== null && p !== undefined && String(p).trim() !== '' && String(p).toLowerCase() !== 'null')
-   .map(p => String(p).trim());
+    if (!opt) return '';
+    const parts = [
+      opt.talukaName,
+      opt.distName,
+      opt.stateName,
+      opt.countryName
+    ].filter(p => p !== null && p !== undefined && String(p).trim() !== '' && String(p).toLowerCase() !== 'null')
+      .map(p => String(p).trim());
 
-  return parts.length ? parts.join(' · ') : '';
-}
+    return parts.length ? parts.join(' · ') : '';
+  }
 
   @HostListener('window:keydown.escape', ['$event'])
   onEscKey(event: Event | KeyboardEvent) {
