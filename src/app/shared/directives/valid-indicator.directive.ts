@@ -9,6 +9,7 @@ import { ApiService } from '../../services/api.service';
 import { ValidationService } from '../services/validation.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Directive({
   selector: '[validatedInput]',
@@ -30,8 +31,9 @@ export class ValidatedInputDirective {
     private el: ElementRef,
     private renderer: Renderer2,
     private http: HttpClient,
-    private auth: AuthService
-  ) {}
+    private auth: AuthService,
+    private toastr: ToastrService,
+  ) { }
 
   private getParent(): HTMLElement {
     return this.el.nativeElement.parentElement as HTMLElement;
@@ -42,7 +44,7 @@ export class ValidatedInputDirective {
     if (raw == null) return '';
     let v = raw.trim();
     // For alphanumeric IDs we want uppercase comparisons
-    if (['pan','gst','passport','voterid'].includes(this.type)) {
+    if (['pan', 'gst', 'passport', 'voterid'].includes(this.type)) {
       v = v.toUpperCase();
     }
     return v;
@@ -128,14 +130,14 @@ export class ValidatedInputDirective {
     const parent = this.getParent();
 
     // Map endpoint & param name by type
-    const map: Record<string,{endpoint:string,param:string}> = {
+    const map: Record<string, { endpoint: string, param: string }> = {
       aadhaar: { endpoint: 'ValidationService/AadharNo', param: 'aadharNo' },
-      pan:     { endpoint: 'ValidationService/PanNo', param: 'panNo' },
-      gst:     { endpoint: 'ValidationService/GstNo', param: 'gstNo' },
-      mobile:  { endpoint: 'ValidationService/MobileNo', param: 'mobileNo' },
-      phone:   { endpoint: 'ValidationService/PhoneNo', param: 'phone1' },
+      pan: { endpoint: 'ValidationService/PanNo', param: 'panNo' },
+      gst: { endpoint: 'ValidationService/GstNo', param: 'gstNo' },
+      mobile: { endpoint: 'ValidationService/MobileNo', param: 'mobileNo' },
+      phone: { endpoint: 'ValidationService/PhoneNo', param: 'phone1' },
       voterid: { endpoint: 'ValidationService/VoterIdNo', param: 'voterIdNo' },
-      passport:{ endpoint: 'ValidationService/PassportNo', param: 'passportNo' }
+      passport: { endpoint: 'ValidationService/PassportNo', param: 'passportNo' }
     };
 
     const cfg = map[this.type];
@@ -155,6 +157,7 @@ export class ValidatedInputDirective {
           this.serverValid = false;
           this.invalidExistsUI(input, parent);
           this.shake(input);
+          this.toastr.warning('Details Already Exist');
         } else {
           // does not exist -> valid ✔
           this.serverValid = true;

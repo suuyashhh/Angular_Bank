@@ -20,48 +20,70 @@ import { FocusTrap, FocusTrapFactory } from '@angular/cdk/a11y';
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css']
 })
-export class ModalComponent implements OnChanges, OnDestroy {
-  @Input() show = false;
-  @Input() title = '';
-  @Output() closed = new EventEmitter<void>();
+export class ModalComponent{
+ data = {
+    applicationType: 'New',
+    kycNumber: 'KYC1234567890',
+    accountType: 'Normal',
+    fullName: 'Prathmesh Kanekar',
+    maidenName: '-',
+    fatherName: 'Kanekar Ramesh',
+    motherName: 'Kanekar Sunita',
+    dob: '16-11-1995',
+    gender: 'Male',
+    pan: 'ABCDE1234F',
+    form60: 'No',
 
-  @ViewChild('modalRoot', { static: true }) modalRoot!: ElementRef<HTMLDivElement>;
-  private focusTrap?: FocusTrap;
-  private previouslyFocusedElement?: HTMLElement | null;
+    ovdType: 'Aadhaar',
+    ovdNumber: 'XXXX-XXXX-1234',
+    maskedAadhaar: 'XXXX-XXXX-1234',
+    verificationMode: 'e-KYC',
 
-  constructor(private focusTrapFactory: FocusTrapFactory) {}
+    address1: 'Flat 12, Example Residency',
+    address2: 'MG Road',
+    address3: 'Pune',
+    district: 'Pune',
+    pin: '411001',
+    state: 'MH',
+    country: 'IN',
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['show']) {
-      if (this.show) this.activateModal();
-      else this.deactivateModal();
-    }
-  }
+    isCurrentSame: 'Yes',
+    currentDocType: 'N/A',
+    currentAddress: 'Same as above',
 
-  ngOnDestroy(): void {
-    this.deactivateModal();
-  }
+    mobile: '91-9876543210',
+    email: 'prathmesh@example.com',
+    telRes: '020-12345678',
+    telOff: '020-87654321',
 
-  private activateModal(): void {
-    this.previouslyFocusedElement = document.activeElement as HTMLElement;
-    this.focusTrap = this.focusTrapFactory.create(this.modalRoot.nativeElement);
-    this.modalRoot.nativeElement.removeAttribute('inert');
-    this.focusTrap.focusInitialElement();
-  }
+    remarks: 'No remarks',
 
-  private deactivateModal(): void {
-    this.modalRoot.nativeElement.setAttribute('inert', '');
-    this.focusTrap?.destroy();
-    this.previouslyFocusedElement?.focus();
-  }
+    // Page 2 fields
+    docVerified: 'Certified Copies Received',
+    ekycDataReceived: 'Yes',
+    videoKyc: 'No',
+    empName: 'Employee Name',
+    empCode: 'EMP123',
+    empDesignation: 'KYC Officer',
+    empBranch: 'Pune Branch',
+    ipvDone: 'Yes',
+    ipvEmpName: 'Verifier Name',
+    ipvDate: '16-11-2025',
 
-  close(): void {
-    this.closed.emit();
-  }
-
-  // Allow closing with ESC key
-  @HostListener('document:keydown.escape')
-  handleEscape(): void {
-    if (this.show) this.close();
-  }
+    // For tables in page3 (abbreviated - you can expand)
+    stateCodes: [
+      { name: 'Andhra Pradesh', code: 'AP' },
+      { name: 'Maharashtra', code: 'MH' },
+      { name: 'Karnataka', code: 'KA' },
+      { name: 'Delhi', code: 'DL' },
+      // add rest...
+    ],
+    countryCodes: [
+      { name: 'India', code: 'IN' },
+      { name: 'United States', code: 'US' },
+      { name: 'United Kingdom', code: 'GB' },
+      { name: 'Australia', code: 'AU' },
+      // add rest...
+    ],
+  };
 }
