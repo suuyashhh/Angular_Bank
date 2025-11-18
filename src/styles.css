@@ -19,4 +19,30 @@
   .custom-btn { width:100% !important; justify-content:center !important; }
 }
 
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+.shake-anim {
+  animation: shake 0.35s ease-in-out;
+}
+
+.input-loader {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid #cbd5e1;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  z-index: 20; /* 🟣 ensures loader stays visible */
+}
+
+
 

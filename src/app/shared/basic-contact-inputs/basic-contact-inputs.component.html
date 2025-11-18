@@ -1,0 +1,76 @@
+<form [formGroup]="form" class="bank-form">
+
+  <!-- PHONE -->
+  <div class="input-row" [class.shake]="shakeField.phone">
+    <label class="input-wrap">
+      <i class="icon icon-phone"></i>
+      <input type="text" placeholder="Phone No" formControlName="phone" mobileFormat>
+      <span class="tag" [ngClass]="statusTag('phone')">
+        {{ statusTag('phone') === 'valid' ? 'VALID' : (statusTag('phone') === 'invalid' ? 'INVALID' : '') }}
+      </span>
+    </label>
+    <span class="hint" *ngIf="control('phone').hasError('phoneInvalid')">Enter 10 digits</span>
+  </div>
+
+  <!-- MOBILE -->
+  <div class="input-row" [class.shake]="shakeField.mobile">
+    <label class="input-wrap">
+      <i class="icon icon-mobile"></i>
+      <input type="text" placeholder="Mobile No" formControlName="mobile" mobileFormat>
+      <span class="tag" [ngClass]="statusTag('mobile')">
+        {{ statusTag('mobile') === 'valid' ? 'VALID' : (statusTag('mobile') === 'invalid' ? 'INVALID' : '') }}
+      </span>
+    </label>
+    <span class="hint" *ngIf="control('mobile').hasError('required')">Required</span>
+    <span class="hint" *ngIf="control('mobile').hasError('mobileInvalid')">Invalid mobile number</span>
+  </div>
+
+  <!-- PAN -->
+  <div class="input-row" [class.shake]="shakeField.pan">
+    <label class="input-wrap">
+      <i class="icon icon-id"></i>
+      <input type="text" placeholder="PAN No" formControlName="pan" panFormat>
+      <span class="tag" [ngClass]="statusTag('pan')">
+        {{ statusTag('pan') === 'valid' ? 'VALID' : (statusTag('pan') === 'invalid' ? 'INVALID' : '') }}
+      </span>
+    </label>
+    <span class="hint" *ngIf="control('pan').hasError('panInvalid')">ABCDE1234F</span>
+  </div>
+
+  <!-- AADHAAR -->
+  <div *ngIf="accountType === '0'" class="input-row" [class.shake]="shakeField.aadhaar">
+    <label class="input-wrap">
+      <i class="icon icon-aadhaar"></i>
+      <input type="text" placeholder="Aadhaar No" formControlName="aadhaar" aadhaarFormat>
+      <span class="tag" [ngClass]="statusTag('aadhaar')">
+        {{ statusTag('aadhaar') === 'valid' ? 'VALID' : (statusTag('aadhaar') === 'invalid' ? 'INVALID' : '') }}
+      </span>
+    </label>
+    <span class="hint" *ngIf="control('aadhaar').hasError('aadhaarInvalid')">12 digits</span>
+  </div>
+
+  <!-- GST -->
+  <div class="input-row" [class.shake]="shakeField.gst">
+    <label class="input-wrap">
+      <i class="icon icon-gst"></i>
+      <input type="text" placeholder="GST No" formControlName="gst" gstFormat>
+      <span class="tag" [ngClass]="statusTag('gst')">
+        {{ statusTag('gst') === 'valid' ? 'VALID' : (statusTag('gst') === 'invalid' ? 'INVALID' : '') }}
+      </span>
+    </label>
+    <span class="hint" *ngIf="control('gst').hasError('gstInvalid')">15 characters</span>
+  </div>
+
+  <!-- EMAIL -->
+  <div class="input-row" [class.shake]="shakeField.email">
+    <label class="input-wrap">
+      <i class="icon icon-mail"></i>
+      <input type="email" placeholder="Email Address" formControlName="email">
+      <span class="tag" [ngClass]="statusTag('email')">
+        {{ statusTag('email') === 'valid' ? 'VALID' : (statusTag('email') === 'invalid' ? 'INVALID' : '') }}
+      </span>
+    </label>
+    <span class="hint" *ngIf="control('email').hasError('emailInvalid')">Invalid email</span>
+  </div>
+
+</form>
