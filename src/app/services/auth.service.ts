@@ -40,6 +40,8 @@ export class AuthService {
   public isRestoringSession$ = new BehaviorSubject<boolean>(true);
   private restorePromise: Promise<void>;
 
+  private authorizeInterval: any = null;
+
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       this.currentTabId = this.generateTabId();
@@ -112,7 +114,14 @@ export class AuthService {
       console.warn('Failed to restore session', err);
     } finally {
       this.isRestoringSession$.next(false);
+
+      if (this.isLoggedIn()) {
+        this.startAuthorizeHeartbeat();
+      }
     }
+
+
+
   }
 
   async ensureInitialized(): Promise<void> {
@@ -121,6 +130,8 @@ export class AuthService {
 
   setToken(res: any): void {
     if (!isPlatformBrowser(this.platformId)) return;
+
+    this.startAuthorizeHeartbeat();
 
     this.inMemoryToken = res?.token ?? null;
     this.inMemoryUser = res?.userDetails ?? null;
@@ -177,13 +188,37 @@ export class AuthService {
       'Content-Type': 'application/json',
       Authorization: this.getToken() ? `Bearer ${this.getToken()}` : ''
     });
-    this.http.post(`${this.baseUrl}Login/Logout`, {}, { headers }).subscribe({ next: () => {}, error: () => {} });
+    this.http.post(`${this.baseUrl}Login/Logout`, {}, { headers }).subscribe({ next: () => { }, error: () => { } });
 
     this.ngZone.run(() => {
       this.router.navigate(['/'], { replaceUrl: true }).then(() => {
         this.isLoggingOut = false;
       });
     });
+  }
+
+  startAuthorizeHeartbeat() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (this.authorizeInterval) return;
+
+    this.authorizeInterval = setInterval(() => {
+      if (this.isLoggedIn()) {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${this.getToken()}`
+        });
+
+        this.http.get(`${this.baseUrl}Login/CheckAuthorize`, { headers })
+          .subscribe({
+            next: () => {
+              // authorized
+            },
+            error: () => {
+              // unauthorized → auto logout
+              this.logout('unauthorized');
+            }
+          });
+      }
+    }, 3000); // 30 seconds
   }
 
   setSelectedBranch(code: number, name: string): void {
@@ -197,7 +232,7 @@ export class AuthService {
   // ===== Inactivity Tracking =====
   private setupInactivityTracking(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    const events = ['mousemove','mousedown','keydown','touchstart','scroll','click'];
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
     const handler = () => this.resetInactivityTimer();
     events.forEach(ev => window.addEventListener(ev, handler, { passive: true }));
     this.resetInactivityTimer();
@@ -242,28 +277,45 @@ export class AuthService {
   }
 
   private setupSingleTabEnforcement(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+  if (!isPlatformBrowser(this.platformId)) return;
 
-    window.addEventListener('storage', (event) => {
-      if (event.key === 'active_tab_id') {
-        if (event.newValue && event.newValue !== this.currentTabId && this.isLoggedIn()) {
-          this.toastr?.warning('Your session opened in another tab. Logging out.', 'Session Ended');
-          this.logout('another tab login');
-        }
-      }
-    });
-
-    const activeTabId = this.safeGetStorage('active_tab_id');
-    if (activeTabId && activeTabId !== this.currentTabId && this.isLoggedIn()) {
-      this.toastr?.warning('Your session opened in another tab. Logging out.', 'Session Ended');
-      this.logout('another tab login');
-    }
+  // Write this tab ID ONLY if no other tab exists
+  const existing = this.safeGetStorage('active_tab_id');
+  if (!existing) {
+    this.safeSetStorage('active_tab_id', this.currentTabId);
   }
+
+  // Watch for changes
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'active_tab_id') {
+      const newTabId = event.newValue;
+
+      // If another tab becomes active, log out this tab
+      if (newTabId && newTabId !== this.currentTabId && this.isLoggedIn()) {
+        this.toastr?.warning(
+          'Your session is active in another browser tab. Logging out.',
+          'Session Ended'
+        );
+        this.logout('another tab login');
+      }
+    }
+  });
+
+  // On load: if another tab is already active, logout
+  if (existing && existing !== this.currentTabId && this.isLoggedIn()) {
+    this.toastr?.warning(
+      'Your session is active in another browser tab. Logging out.',
+      'Session Ended'
+    );
+    this.logout('another tab login');
+  }
+}
+
 
   private generateTabId(): string {
     return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
-    setLastRoute(url: string) {
+  setLastRoute(url: string) {
     this.safeSetStorage(this.LAST_ROUTE_KEY, url);
   }
 

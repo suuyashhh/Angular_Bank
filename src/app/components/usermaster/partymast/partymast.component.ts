@@ -23,6 +23,8 @@ import { ValidationSignal } from '../../../shared/services/validation-signals.se
 import { VoterIdFormatDirective } from '../../../shared/directives/voterid-format.directive';
 import { PassportFormatDirective } from '../../../shared/directives/passport-format.directive';
 import { InputRestrictionDirective } from '../../../shared/directives/input-restriction.directive';
+import { DropdownOption, DropdownService } from '../../../shared/services/dropdown.service.ts.service';
+import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
 
 type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idproof' | 'addrproof' | 'otherstaff';
 type PickerTarget = 'primary' | 'corr';
@@ -58,6 +60,7 @@ type Option = {
 
     // Our standalone contact component
     BasicContactInputsComponent,
+    DropdpwnModalComponent,
 
     // standalone directives
     AadhaarFormatDirective,
@@ -82,7 +85,7 @@ export class PartymastComponent implements OnInit {
 
   // Other/Staff fields
   otherStaffType = 'O'; // Default to 'Other'
-  otherStaffName = '';
+  otherStaffName : DropdownOption | null = null;
   otherStaffCode: number | null = null;
 
   // Corresponding address toggle
@@ -183,6 +186,7 @@ export class PartymastComponent implements OnInit {
     public fb: FormBuilder,
     public vs: ValidationService,
     public asyncVs: AsyncValidationService,
+    public dropdown: DropdownService
   ) { }
    pan = new ValidationSignal(this.vs, 'pan');
   aadhaar = new ValidationSignal(this.vs, 'aadhaar');
@@ -370,37 +374,37 @@ passport = new ValidationSignal(this.vs, 'passport');
   // ---------- Other/Staff Type Change Handler ----------
   onOtherStaffTypeChange() {
     // Reset the name and code when type changes
-    this.otherStaffName = '';
+    // this.otherStaffName = '';
     this.otherStaffCode = null;
   }
 
   // ---------- Open Other/Staff Picker ----------
-  openOtherStaffPicker() {
-    if (!this.otherStaffType) {
-      this.toastr.error('Please select Other or Staff type first.');
-      return;
-    }
+  // openOtherStaffPicker() {
+  //   if (!this.otherStaffType) {
+  //     this.toastr.error('Please select Other or Staff type first.');
+  //     return;
+  //   }
 
-    this.pickerField = 'otherstaff';
-    this.pickerTarget = 'primary';
-    this.pickerTitle = this.otherStaffType === 'O' ? 'Other' : 'Staff';
-    this.pickerSearch = '';
-    this.pickerSelectedCode = null;
-    this.pickerSelectedName = null;
-    this.pickerSelectedObj = null;
-    this.pickerOptions = [];
-    this.pickerOptionsFiltered = [];
-    this.pickerLoading = true;
-    this.pickerOpen = true;
-    this.dropdownOpen = false;
-    document.body.style.overflow = 'hidden';
+  //   this.pickerField = 'otherstaff';
+  //   this.pickerTarget = 'primary';
+  //   this.pickerTitle = this.otherStaffType === 'O' ? 'Other' : 'Staff';
+  //   this.pickerSearch = '';
+  //   this.pickerSelectedCode = null;
+  //   this.pickerSelectedName = null;
+  //   this.pickerSelectedObj = null;
+  //   this.pickerOptions = [];
+  //   this.pickerOptionsFiltered = [];
+  //   this.pickerLoading = true;
+  //   this.pickerOpen = true;
+  //   this.dropdownOpen = false;
+  //   document.body.style.overflow = 'hidden';
 
-    this.loadOtherStaffList();
+  //   this.loadOtherStaffList();
 
-    setTimeout(() => {
-      try { this.pickerSearchInput?.nativeElement?.focus(); } catch { }
-    }, 0);
-  }
+  //   setTimeout(() => {
+  //     try { this.pickerSearchInput?.nativeElement?.focus(); } catch { }
+  //   }, 0);
+  // }
 
   // ---------- Picker Handling ----------
   openPicker(field: PickerField, target: PickerTarget = 'primary') {
@@ -475,44 +479,42 @@ passport = new ValidationSignal(this.vs, 'passport');
   }
 
   // ---------- API LOADERS ----------
-  private loadOtherStaffList() {
-    this.pickerLoading = true;
+   loadOtherStaffList() {
+  this.pickerLoading = true;
 
-    const apiUrl = this.otherStaffType === 'O'
-      ? `DireMast/GetAllOther`
-      : `StaffMaster/GetAllStaff`;
-    this.api.get(apiUrl).subscribe({
-      next: (res: any) => {
-        const list: any[] = Array.isArray(res) ? res : Object.values(res || {});
+  const apiUrl = this.otherStaffType === 'O'
+    ? `DireMast/GetAllOther`
+    : `StaffMaster/GetAllStaff`;
 
-        const mapped: Option[] = (list || []).map(x => {
-          if (this.otherStaffType === 'O') {
-            const code = Number(x.otheR_CODE ?? x.OTHER_CODE ?? 0);
-            const name = String(x.otheR_NAME ?? x.OTHER_NAME ?? '').trim();
-            return { code, name, selectId: code };
-          } else {
-            const code = Number(x.stafF_CODE);
-            const name = String(x.stafF_NAME ?? '').trim();
-            return { code, name, selectId: code };
-          }
-        }).filter(x => x.name && x.name !== 'null')
-          .sort((a, b) => a.name.localeCompare(b.name));
+  this.api.get(apiUrl).subscribe({
+    next: (res: any) => {
 
-        this.pickerOptions = mapped;
-        this.pickerOptionsFiltered = [...this.pickerOptions];
-        this.pickerLoading = false;
-        this.dropdownOpen = true;
-      },
-      error: (err: any) => {
-        console.error('Error loading other/staff list', err);
-        this.pickerOptions = [];
-        this.pickerOptionsFiltered = [];
-        this.pickerLoading = false;
-        this.dropdownOpen = false;
-        this.toastr.error(`Unable to load ${this.otherStaffType === 'O' ? 'Other' : 'Staff'} list.`);
-      }
-    });
-  }
+      const arr = Array.isArray(res) ? res : Object.values(res || {});
+
+      // ✅ Convert to DropdownOption[]
+      const list: DropdownOption[] = arr.map((x: any) => ({
+        name: x.otheR_NAME || x.stafF_NAME,     // adjust if staff uses another field
+        meta: x.deparT_NAME || '',              // optional subtext under name
+        code: x.otheR_CODE || x.stafF_CODE,     // useful for selection
+        ...x                                    // keep all original properties
+      }));
+
+      // ✅ OPEN PICKER WITH PROPER LIST
+      this.dropdown.openPicker('Other/Staff Name', list).then(sel => {
+        if (sel) {
+          this.otherStaffName = sel;
+          console.log('Selected staff:', sel);
+        }
+      });
+
+    },
+    error: (err: any) => {
+      console.error('Error loading other/staff list', err);
+      this.toastr.error(`Unable to load ${this.otherStaffType === 'O' ? 'Other' : 'Staff'} list.`);
+    }
+  });
+}
+
 
   // ---------- City loader: uses the new GetAllDependencies API ----------
   private loadCityList() {
@@ -745,7 +747,7 @@ passport = new ValidationSignal(this.vs, 'passport');
     // -------------------- OTHER/STAFF --------------------
     if (this.pickerField === 'otherstaff') {
       this.otherStaffCode = Number(this.pickerSelectedCode);
-      this.otherStaffName = this.pickerSelectedName ?? '';
+      // this.otherStaffName = this.pickerSelectedName ?? '';
       this.toastr.success(`${this.otherStaffType === 'O' ? 'Other' : 'Staff'} selected.`);
       this.closePicker();
       return;

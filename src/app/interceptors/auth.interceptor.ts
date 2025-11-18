@@ -17,21 +17,53 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const token = auth.getToken();
   let authReq = req;
+
   if (token) {
-    authReq = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+    authReq = req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` }
+    });
   }
 
   return next(authReq).pipe(
     catchError((error) => {
       if (!isPlatformBrowser(platformId)) return throwError(() => error);
 
-      if ((error.status === 401 || error.status === 403) && !auth.isLoggingOut) {
-        if (auth.isLoggedIn()) {
-          toastr?.warning('Your session has expired. Please log in again.', 'Session Ended');
-          setTimeout(() => auth.logout('unauthorized'), 500);
-        }
-      } else if (error.status === 0 && !auth.isLoggingOut) {
+      const alreadyLoggingOut = auth.isLoggingOut;
+
+      // Extract message safely
+      let serverMsg = '';
+      if (error?.error?.message) serverMsg = error.error.message;
+      else if (typeof error.error === 'string') serverMsg = error.error;
+      serverMsg = serverMsg.toUpperCase();
+
+      // Network failure / server unreachable
+      if (error.status === 0 && !alreadyLoggingOut) {
         toastr?.warning('Network error. Check your connection.', 'Connection Lost');
+        return throwError(() => error);
+      }
+
+      // Unauthorized or Forbidden
+      if ((error.status === 401 || error.status === 403) && !alreadyLoggingOut) {
+        if (auth.isLoggedIn()) {
+
+          if (serverMsg.includes('LOGGED_OUT_OTHER_DEVICE')) {
+            toastr?.warning(
+              'Your session ended because you logged in on another device.',
+              'Session Ended'
+            );
+          } else if (serverMsg.includes('INVALID_TOKEN')) {
+            toastr?.warning('Your session is invalid. Please login again.', 'Session Ended');
+          } else {
+            toastr?.warning(
+              'Your session has expired. Please log in again.',
+              'Session Ended'
+            );
+          }
+
+          setTimeout(() => auth.logout('unauthorized'), 500);
+        } else {
+          router.navigate(['/']).catch(() => {});
+        }
       }
 
       return throwError(() => error);
