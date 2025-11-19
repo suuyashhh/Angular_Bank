@@ -1,20 +1,116 @@
-<div
-  #modalRoot
-  class="modal-overlay"
-  [class.show]="show"
-  role="dialog"
-  aria-modal="true"
-  [attr.aria-hidden]="!show"
-  (click)="close()"
->
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h5>{{ title }}</h5>
-      <button type="button" class="close-btn" (click)="close()" aria-label="Close">×</button>
+<div class="w-full px-8 py-6 bg-gray-100">
+
+  <!-- HEADER -->
+  <div class="mb-6 flex justify-between items-center">
+    <h2 class="text-3xl font-semibold text-gray-800">Customer KYC Profile</h2>
+    <button class="px-5 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700">
+      Edit Details
+    </button>
+  </div>
+
+  <!-- CUSTOMER SUMMARY CARD -->
+  <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
+          <i class="fa-solid fa-user text-blue-600 text-2xl"></i>
+        </div>
+        <div>
+          <div class="text-sm text-gray-500">Name</div>
+          <div class="text-xl font-semibold">{{ data.fullName }}</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="text-sm text-gray-500">Mobile</div>
+        <div class="text-gray-800 font-medium">{{ data.mobile }}</div>
+      </div>
+
+      <div>
+        <div class="text-sm text-gray-500">Email</div>
+        <div class="text-gray-800 font-medium">{{ data.email }}</div>
+      </div>
+
+      <div>
+        <div class="text-sm text-gray-500">KYC Status</div>
+        <div class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+          Verified
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: PERSONAL INFORMATION -->
+  <div class="section-card">
+    <div class="section-title">Personal Information</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div><label>Full Name</label><p>{{ data.fullName }}</p></div>
+      <div><label>Father Name</label><p>{{ data.fatherName }}</p></div>
+      <div><label>Mother Name</label><p>{{ data.motherName }}</p></div>
+
+      <div><label>Date of Birth</label><p>{{ data.dob }}</p></div>
+      <div><label>Gender</label><p>{{ data.gender }}</p></div>
+      <div><label>PAN</label><p>{{ data.pan }}</p></div>
+    </div>
+  </div>
+
+  <!-- SECTION: IDENTITY DOCUMENTS -->
+  <div class="section-card">
+    <div class="section-title">Identity Verification</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div><label>OVD Type</label><p>{{ data.ovdType }}</p></div>
+      <div><label>Document Number</label><p>{{ data.ovdNumber }}</p></div>
+      <div><label>Aadhaar (Masked)</label><p>{{ data.maskedAadhaar }}</p></div>
     </div>
 
-    <div class="modal-body">
-      <ng-content></ng-content>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+      <div><label>Verification Mode</label><p>{{ data.verificationMode }}</p></div>
+      <div><label>Application Type</label><p>{{ data.applicationType }}</p></div>
+      <div><label>Account Type</label><p>{{ data.accountType }}</p></div>
+    </div>
+  </div>
+
+  <!-- SECTION: ADDRESS -->
+  <div class="section-card">
+    <div class="section-title">Address Details</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div><label>Address Line 1</label><p>{{ data.address1 }}</p></div>
+      <div><label>Address Line 2</label><p>{{ data.address2 }}</p></div>
+      <div><label>Address Line 3</label><p>{{ data.address3 }}</p></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+      <div><label>District</label><p>{{ data.district }}</p></div>
+      <div><label>PIN Code</label><p>{{ data.pin }}</p></div>
+      <div><label>State</label><p>{{ data.state }}</p></div>
+      <div><label>Country</label><p>{{ data.country }}</p></div>
+    </div>
+  </div>
+
+  <!-- SECTION: CURRENT ADDRESS -->
+  <div class="section-card">
+    <div class="section-title">Current Address</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div><label>Same as Permanent?</label><p>{{ data.isCurrentSame }}</p></div>
+      <div><label>Document Type</label><p>{{ data.currentDocType }}</p></div>
+      <div><label>Current Address</label><p>{{ data.currentAddress }}</p></div>
+    </div>
+  </div>
+
+  <!-- SECTION: CONTACT -->
+  <div class="section-card">
+    <div class="section-title">Contact Details</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div><label>Mobile</label><p>{{ data.mobile }}</p></div>
+      <div><label>Email</label><p>{{ data.email }}</p></div>
+      <div><label>Telephone (Res)</label><p>{{ data.telRes }}</p></div>
+      <div><label>Telephone (Off)</label><p>{{ data.telOff }}</p></div>
     </div>
   </div>
 </div>

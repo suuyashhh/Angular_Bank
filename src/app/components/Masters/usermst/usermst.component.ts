@@ -1,26 +1,50 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PickerService } from '../../../services/picker.service';
+import { PickerService } from '../../../services/picker.service'; 
+import { DropdownService, DropdownOption } from '../../../shared/services/dropdown.service.ts.service'; 
 import { PickerModalComponent } from '../../../shared/picker-modal/picker-modal.component';
 import { ApiService } from '../../../services/api.service';
+import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
 
 @Component({
   selector: 'app-usermst',
   standalone: true,
-  imports: [ReactiveFormsModule, PickerModalComponent],
+  imports: [ReactiveFormsModule, PickerModalComponent,DropdpwnModalComponent],
   templateUrl: './usermst.component.html',
   styleUrl: './usermst.component.css'
 })
 export class UsermstComponent implements OnInit {
   userForm!: FormGroup;
-  selectedCountryName = '';
+  selectedCountry: DropdownOption | null = null;
   list: any[] = [];
+  data:any;
 
   constructor(
     private fb: FormBuilder,
     public picker: PickerService,
-    private api: ApiService
+    private api: ApiService,
+    private dropdown: DropdownService
   ) {}
+
+   selectedDemo: DropdownOption | null = null;
+
+openCountry() {
+  const list = [
+    { name: 'India', code: 1 },
+    { name: 'USA', code: 2 },
+    { name: 'Japan', code: 3 }
+  ];
+
+  this.dropdown.openPicker('Country', list).then(sel => {
+    if (sel) {
+      this.selectedCountry = sel;
+      console.log(this.selectedCountry);
+      
+    }
+  });
+}
+
+
 
   ngOnInit(): void {
     this.userForm = this.fb.group({
@@ -39,13 +63,14 @@ export class UsermstComponent implements OnInit {
       password: ['', Validators.required]
     });
 
+
     
     this.picker.resetSelections();
     // this.loadCountryList();
     
     this.picker.pickerSelected$.subscribe((selected:any) => {
       if (selected && selected.name) {
-        this.selectedCountryName = selected.name; // ✅ updates your input
+        this.selectedCountry = selected.name; // ✅ updates your input
         console.log(selected);
       }
     });

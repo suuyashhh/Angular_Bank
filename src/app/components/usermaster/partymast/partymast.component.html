@@ -628,6 +628,7 @@
           <div *ngIf="dropdownOpen" class="dropdown-backdrop" (click)="dropdownOpen = false"></div>
           <!-- Shared picker modal -->
           <app-picker-modal></app-picker-modal>
+          <app-dropdpwn-modal></app-dropdpwn-modal>
 
           <!-- STEP 3: Personal + Company/Firm conditional content -->
           <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
@@ -769,9 +770,11 @@
 
                     <div class="flex-1">
                       <div class="form-floating form-floating-outline flex-1">
-                        <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name"
+                        <!-- <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name"
                           [(ngModel)]="otherStaffName" readonly (click)="openOtherStaffPicker()"
-                          style="cursor: pointer;" [ngModelOptions]="{standalone: true}" />
+                          style="cursor: pointer;" [ngModelOptions]="{standalone: true}" /> -->
+                          <input class="form-control" readonly (click)="loadOtherStaffList()" [value]="otherStaffName?.name || ''"
+              placeholder="Select Country" />
                         <label for="otherStaffName">Other/Staff Name</label>
                       </div>
                     </div>

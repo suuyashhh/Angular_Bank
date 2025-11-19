@@ -26,13 +26,23 @@ export const UserMaster_Routes: Routes = [
       import('./partymast/partymast.component').then((m) => m.PartymastComponent),
     title: 'Party Master | SmartBank',
   },
+  
+  
+  // Checkr (protected)
+  {
+    path: 'checkr',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../modal/modal/modal.component').then((m) => m.ModalComponent),
+    title: 'Checkr | SmartBank',
+  },
 
   // Country Master 
   {
     path: 'countrymst',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./countrymst/countrymst.component').then((m) => m.CountrymstComponent),
+      import('../Masters/countrymst/countrymst.component').then((m) => m.CountrymstComponent),
     title: 'Country Master | SmartBank',
   },
   {
