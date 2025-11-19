@@ -92,9 +92,9 @@ export class PartymastComponent implements OnInit {
   useDifferentCorresponding = false;
 
   // Corresponding address fields
-  corrAddrLine1 = '';
-  corrAddrLine2 = '';
-  corrAddrLine3 = '';
+  CorrAddr1 = '';
+  CorrAddr2 = '';
+  CorrAddr3 = '';
 
   // ---------- Picker State ----------
   pickerOpen = false;
@@ -198,8 +198,96 @@ export class PartymastComponent implements OnInit {
 passport = new ValidationSignal(this.vs, 'passport');
 
   ngOnInit(): void {
-
     this.form = this.fb.group({
+  // Step 1 – Basic Details
+  AcType: ['0'],
+  panNo: [''],
+  AdharNo: [''],
+  GSTNo: [''],
+  nmprefix: [''],
+  name: [''],
+
+  // Step 2 – Address (Permanent)
+  ADDR1: [''],
+  ADDR2: [''],
+  ADDR3: [''],
+  City: [''],
+  cityCode: [null],
+  countryCode: [null],
+  stateCode: [null],
+  districtCode: [null],
+  talukaCode: [null],
+  areaCode: [null],
+  pincode: [''],
+  phone: [''],
+  mobile: [''],
+
+  // Corresponding Address toggle
+  useDifferentCorresponding: [false],
+
+  // Corresponding Address
+  CorrAddr1: [''],
+  CorrAddr2: [''],
+  CorrAddr3: [''],
+  corrCityCode: [null],
+  corrCountryCode: [null],
+  corrStateCode: [null],
+  corrDistrictCode: [null],
+  corrTalukaCode: [null],
+  corrAreaCode: [null],
+  corrPincode: [''],
+
+  // Step 3 – Personal Details
+  Religon: [null],
+  Cast: [null],
+  OCCU: [null],
+  passportno: [''],
+  passexpdate: [''],
+  passauth: [''],
+  voteridno: [''],
+  birthdate: [''],
+  AGE: [''],
+  SEX: [''],
+  otherStaffType: ['O'],
+  otherStaffCode: [null],
+  otherStaffName: [''],
+
+  // Company / Firm Details
+  COMPREGNO: [''],
+  COMPREGDT: [''],
+  COMPBRANCH: [''],
+  COMPNATURE: [''],
+  COMPPAIDCAPT: [''],
+  COMPTURNOVER: [''],
+  COMPNETWORTH: [''],
+  Propritor1: [''],
+  Propritor2: [''],
+
+  // Step 4 – Other Details
+  officename: [''],
+  OFFICEPIN: [''],
+  OFFICEADDR1: [''],
+  OFFICEADDR2: [''],
+  OFFICEADDR3: [''],
+  OFFICEPHONE: [''],
+  OFFICEPHONE1: [''],
+  EMAIL_ID: [''],
+
+  // Step 5 – KYC Details
+  KycIdProof: [false],
+  idProofCode: [null],
+  KycAddrProof: [false],
+  addressProofCode: [null],
+
+  // File uploads
+  photo: [null],
+  sign: [null],
+  panFile: [null],
+  aadhaarFront: [null],
+  aadhaarBack: [null]
+});
+
+    // this.form = this.fb.group({
   // pan: ['', {
   //   validators: [this.vs.panValidator.bind(this.vs)],
   //   asyncValidators: [
@@ -212,7 +300,7 @@ passport = new ValidationSignal(this.vs, 'passport');
   // phone: ['', [this.vs.phoneValidator.bind(this.vs)]],
   // mobile: ['', [this.vs.mobileValidator.bind(this.vs)]],
   // email: ['', [this.vs.emailValidator.bind(this.vs)]],
-});
+// });
 
 
 
@@ -368,6 +456,155 @@ passport = new ValidationSignal(this.vs, 'passport');
 
     });
   }
+
+  submit() {
+  if (!this.form) return;
+
+  // -----------------------------
+  // 1️⃣  COLLECT FORM VALUES
+  // -----------------------------
+  const f = this.form.value;
+
+  // -----------------------------
+  // 2️⃣ COLLECT PICKER SELECTIONS
+  // -----------------------------
+  const payload: any = {
+    // STEP 1 – BASIC DETAILS
+    AcType: f.AcType,
+    pan_no: f.panNo,
+    AdharNo: f.AdharNo,
+    GstNo: f.GSTNo,
+    nmprefix: f.nmprefix,
+    Name: f.name,
+
+    // STEP 2 – PERMANENT ADDRESS
+    ADDR1: f.ADDR1,
+    ADDR2: f.ADDR2,
+    ADDR3: f.ADDR3,
+    City: this.selectedCityName,
+    CityCode: this.selectedCityCode,
+    NationalityCode: this.selectedCountryCode,
+    NATIONALITY: this.selectedCountryName,
+    StateCode: this.selectedStateCode,
+    State: this.selectedStateName,
+    DistCode: this.selectedDistrictCode,
+    District: this.selectedDistrictName,
+    TalukaCode: this.selectedTalukaCode,
+    Taluka: this.selectedTalukaName,
+    Area_code: this.selectedAreaCode,
+    Area: this.selectedAreaName,
+    PIN: this.selectedPincode,
+    PHONE: f.phone,
+    PHONE1: f.mobile,
+
+    // CORRESPONDING ADDRESS
+    chkSameadd: this.useDifferentCorresponding ? 1 : 0,
+
+    CorADDR1: f.CorrAddr1,
+    CorADDR2: f.CorrAddr2,
+    CorADDR3: f.CorrAddr3,
+    Cor_CityCode: this.corrSelectedCityCode,
+    Cor_City: this.corrCityName,
+    Cor_NationalityCode: this.corrSelectedCountryCode,
+    Cor_NATIONALITY: this.corrCountryName,
+    Cor_StateCode: this.corrSelectedStateCode,
+    Cor_State: this.corrStateName,
+    Cor_DistCode: this.corrSelectedDistrictCode,
+    Cor_District: this.corrDistrictName,
+    Cor_TalukaCode: this.corrSelectedTalukaCode,
+    Cor_Taluka: this.corrTalukaName,
+    Cor_Area_code: this.corrSelectedAreaCode,
+    Cor_Area: this.corrAreaName,
+    CorPIN: this.corrPincode,
+
+    // STEP 3 – PERSONAL DETAILS
+    Religon: this.religionCode,
+    Cast: this.castCode,
+    OCCU: this.occupationCode,
+    passportno: f.passportno,
+    passexpdate: f.passexpdate,
+    passauth: f.passauth,
+    voteridno: f.voteridno,
+    birthdate: f.birthdate,
+    AGE: f.AGE,
+    SEX: f.SEX,
+
+    // Other/Staff
+    OtherStaffType: this.otherStaffType,
+    OtherStaffCode: this.otherStaffName?.code ?? null,
+    OtherStaffName: this.otherStaffName?.name ?? null,
+
+    // COMPANY DETAILS
+
+    COMPREGNO: f.COMPREGNO,
+    COMPREGDT: f.COMPREGDT,
+    COMPBRANCH: f.COMPBRANCH,
+    COMPNATURE: f.COMPNATURE,
+    COMPPAIDCAPT: f.COMPPAIDCAPT,
+    COMPTURNOVER: f.COMPTURNOVER,
+    COMPNETWORTH: f.COMPNETWORTH,
+    Propritor1: f.Propritor1,
+    Propritor2: f.Propritor2,
+
+    // STEP 4 – OTHER DETAILS
+    officename: f.officename,
+    OFFICEPIN: f.OFFICEPIN,
+    OFFICEADDR1: f.OFFICEADDR1,
+    OFFICEADDR2: f.OFFICEADDR2,
+    OFFICEADDR3: f.OFFICEADDR3,
+    OFFICEPHONE: f.OFFICEPHONE,
+    OFFICEPHONE1: f.OFFICEPHONE1,
+    EMAIL_ID: f.EMAIL_ID,
+
+    // STEP 5 – KYC DETAILS
+    KycIdProof: f.KycIdProof ? 1 : 0 ,
+    KycIdProof_Code: this.idproofCode,
+    KycAddrProof: f.KycAddrProof ? 1 : 0 ,
+    KycAddrProof_Code: this.addrproofCode,
+  };
+
+  // -----------------------------
+  // 3️⃣ FILES
+  // -----------------------------
+  const files: any = {
+    Photo: this.previews.photo,
+    Sign: this.previews.sign,
+    PanFile: this.previews.pan,
+    AadhaarFront: this.previews.aadhaarFront,
+    AadhaarBack: this.previews.aadhaarBack
+  };
+
+  // -----------------------------
+  // 4️⃣ COMBINE ALL FINAL DATA
+  // -----------------------------
+  const finalPayload = {
+    ...payload,
+    Files: files
+  };
+
+  console.log("FINAL PAYLOAD →", finalPayload);
+
+  // -----------------------------
+  // 5️⃣ SEND TO API
+  // -----------------------------
+  this.loader.show();
+
+  console.log(finalPayload);
+  
+  this.api.post("PartyMaster/save", finalPayload).subscribe({
+    next: (res: any) => {
+      this.loader.hide();
+      this.toastr.success("Party Master Saved Successfully!");
+      console.log("API RESPONSE →", res);
+    },
+    error: (err: any) => {
+      this.loader.hide();
+      this.toastr.error("Error saving Party Master");
+      console.error("API ERROR →", err);
+    }
+  });
+}
+
 
 
 
