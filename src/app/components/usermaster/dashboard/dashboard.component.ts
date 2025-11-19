@@ -20,6 +20,7 @@ export class DashboardComponent {
     { pathName: 'Home', link: '/USERMASTER/dashboard' },
     { pathName: 'Customer Party Account', link: '/USERMASTER/partymast' },
     { pathName: 'Country Master', link: '/USERMASTER/countrymst' },
+    { pathName: 'District Master', link: '/USERMASTER/districtmst' },
   ];
   filtered: Array<{ pathName: string; link: string }> = []; // empty initially → "No records found"
 
