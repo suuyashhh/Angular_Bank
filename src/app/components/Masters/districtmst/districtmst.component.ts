@@ -56,7 +56,7 @@ export class DistrictmstComponent implements OnInit {
     private toastr: ToastrService,
     public picker: PickerService,
     private dropdown: DropdownService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.data = new FormGroup({
@@ -152,7 +152,11 @@ export class DistrictmstComponent implements OnInit {
   }
 
   openState() {
-    this.api.get('StateMaster/GetAll').subscribe({
+    if (!this.selectedCountryCode || Number(this.selectedCountryCode) <= 0) {
+      this.toastr.error('Please select country first..!');
+      return;
+    }
+    this.api.get('StateMaster/GetState', { countryCode: this.selectedCountryCode }).subscribe({
       next: (res: any) => {
         const raw = Array.isArray(res) ? res : (res?.data && Array.isArray(res.data) ? res.data : (res ? [res] : []));
         const list = raw.map((x: any) => ({
