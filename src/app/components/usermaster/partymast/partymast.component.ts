@@ -8,7 +8,7 @@ import { LoaderService } from '../../../services/loader.service';
 import { PickerModalComponent } from '../../../shared/picker-modal/picker-modal.component';
 import { PickerService } from '../../../services/picker.service';
 import { ValidationService } from '../../../shared/services/validation.service';
-import { share } from 'rxjs';
+import { finalize, share } from 'rxjs';
 import { BasicContactInputsComponent } from '../../../shared/basic-contact-inputs/basic-contact-inputs.component';
 import { GstFormatDirective } from '../../../shared/directives/gst-format.directive';
 import { MobileFormatDirective } from '../../../shared/directives/mobile-format.directive';
@@ -170,6 +170,9 @@ export class PartymastComponent implements OnInit {
   contactForm!: FormGroup;
   contactFormValid: boolean = false;
 
+  isOtherStaffSelected = false;
+
+
   // ---------- Template Refs ----------
   @ViewChild('photoInput') photoInput!: ElementRef<HTMLInputElement>;
   @ViewChild('signInput') signInput!: ElementRef<HTMLInputElement>;
@@ -248,9 +251,8 @@ passport = new ValidationSignal(this.vs, 'passport');
   birthdate: [''],
   AGE: [''],
   SEX: [''],
-  otherStaffType: ['O'],
-  otherStaffCode: [null],
-  otherStaffName: [''],
+  ST_DIR: ['O'],
+  Ref_STDIR: [null],
 
   // Company / Firm Details
   COMPREGNO: [''],
@@ -530,9 +532,8 @@ passport = new ValidationSignal(this.vs, 'passport');
     SEX: f.SEX,
 
     // Other/Staff
-    OtherStaffType: this.otherStaffType,
-    OtherStaffCode: this.otherStaffName?.code ?? null,
-    OtherStaffName: this.otherStaffName?.name ?? null,
+    ST_DIR: this.otherStaffType,
+    Ref_STDIR: this.otherStaffName?.code ?? null,
 
     // COMPANY DETAILS
 
@@ -609,11 +610,11 @@ passport = new ValidationSignal(this.vs, 'passport');
 
 
   // ---------- Other/Staff Type Change Handler ----------
-  onOtherStaffTypeChange() {
+  // onOtherStaffTypeChange() {
     // Reset the name and code when type changes
     // this.otherStaffName = '';
-    this.otherStaffCode = null;
-  }
+    
+  // }
 
   // ---------- Open Other/Staff Picker ----------
   // openOtherStaffPicker() {
@@ -716,41 +717,71 @@ passport = new ValidationSignal(this.vs, 'passport');
   }
 
   // ---------- API LOADERS ----------
-   loadOtherStaffList() {
+loadOtherStaffList() {
+  // ❌ If already selected → do NOT call API
+  if (this.isOtherStaffSelected) {
+    console.log("Already selected, skipping API call.");
+    return;
+  }
+
   this.pickerLoading = true;
 
   const apiUrl = this.otherStaffType === 'O'
     ? `DireMast/GetAllOther`
     : `StaffMaster/GetAllStaff`;
 
-  this.api.get(apiUrl).subscribe({
-    next: (res: any) => {
+  this.api.get(apiUrl)
+    .pipe(finalize(() => this.pickerLoading = false))
+    .subscribe({
+      next: (res: any) => {
+        const arr = Array.isArray(res) ? res : Object.values(res || {});
 
-      const arr = Array.isArray(res) ? res : Object.values(res || {});
+        const list: DropdownOption[] = arr.map((x: any) => ({
+          name: this.otherStaffType === 'O' ? x.otheR_NAME : x.stafF_NAME,
+          meta: x.deparT_NAME || '',
+          code: this.otherStaffType === 'O' ? x.otheR_CODE : x.stafF_CODE,
+          ...x
+        }));
 
-      // ✅ Convert to DropdownOption[]
-      const list: DropdownOption[] = arr.map((x: any) => ({
-        name: x.otheR_NAME || x.stafF_NAME,     // adjust if staff uses another field
-        meta: x.deparT_NAME || '',              // optional subtext under name
-        code: x.otheR_CODE || x.stafF_CODE,     // useful for selection
-        ...x                                    // keep all original properties
-      }));
-
-      // ✅ OPEN PICKER WITH PROPER LIST
-      this.dropdown.openPicker('Other/Staff Name', list).then(sel => {
-        if (sel) {
-          this.otherStaffName = sel;
-          console.log('Selected staff:', sel);
-        }
-      });
-
-    },
-    error: (err: any) => {
-      console.error('Error loading other/staff list', err);
-      this.toastr.error(`Unable to load ${this.otherStaffType === 'O' ? 'Other' : 'Staff'} list.`);
-    }
-  });
+        const result = this.dropdown.openPicker('Other/Staff Name', list);
+        result?.then?.((sel: any) => this.handleSelection(sel));
+      }
+    });
 }
+
+
+handleSelection(sel: any) {
+  if (!sel) return;
+
+  this.otherStaffName = sel;
+
+  // Set DB fields
+  // if (this.otherStaffType === 'O') {
+  //   this.form.patchValue({
+  //     ST_DIR: 'O',
+  //     Ref_STDIR: sel.otheR_CODE
+  //   });
+  // } else {
+  //   this.form.patchValue({
+  //     ST_DIR: 'S',
+  //     Ref_STDIR: sel.stafF_CODE
+  //   });
+  // }
+
+  // 🔒 Disable further clicks
+  this.isOtherStaffSelected = true;
+
+  console.log("Selected:", sel);
+}
+
+onOtherStaffTypeChange() {
+  this.otherStaffCode = null;
+  this.otherStaffName = null;
+  this.isOtherStaffSelected = false;
+
+}
+
+
 
 
   // ---------- City loader: uses the new GetAllDependencies API ----------
@@ -1121,7 +1152,9 @@ passport = new ValidationSignal(this.vs, 'passport');
     const input = event.target as HTMLInputElement | null;
     const file = input?.files?.[0];
     if (!file) return;
-
+    console.log(input);
+    console.log(file);
+    
     const reader = new FileReader();
     reader.onload = () => {
       this.previews[key] = reader.result as string;
@@ -1192,4 +1225,21 @@ passport = new ValidationSignal(this.vs, 'passport');
     if (this.modalOpen) this.closePreview();
     if (this.pickerOpen) this.closePicker();
   }
+
+  base64Image: string | ArrayBuffer | null = null;
+
+
+  onFileSelected(event: any) {
+  const file = event.target.files[0];
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);  // Encode → Base64
+
+  reader.onload = () => {
+    this.base64Image = reader.result;  // "data:image/jpeg;base64,/9j/4AAQSk..."
+    console.log(this.base64Image);
+    
+  };
+}
+
 }
