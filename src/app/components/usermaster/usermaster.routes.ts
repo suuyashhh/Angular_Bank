@@ -26,8 +26,8 @@ export const UserMaster_Routes: Routes = [
       import('./partymast/partymast.component').then((m) => m.PartymastComponent),
     title: 'Party Master | SmartBank',
   },
-  
-  
+
+
   // Checkr (protected)
   {
     path: 'checkr',
@@ -58,5 +58,18 @@ export const UserMaster_Routes: Routes = [
     loadComponent: () =>
       import('../Masters/districtmst/districtmst.component').then((m) => m.DistrictmstComponent),
     title: 'District Master | SmartBank',
-  },  
+  }, {
+    path: 'statemst',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Masters/statemst/statemst.component').then((m) => m.StatemstComponent),
+    title: 'State Master | SmartBank',
+  },
+  {
+    path: 'talukamst',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Masters/talukamst/talukamst.component').then((m) => m.TalukamstComponent),
+    title: 'Taluka Master | SmartBank',
+  },
 ];

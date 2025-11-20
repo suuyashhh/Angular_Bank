@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterModule,CommonModule],
+  imports: [RouterModule, CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -21,10 +21,12 @@ export class DashboardComponent {
     { pathName: 'Customer Party Account', link: '/USERMASTER/partymast' },
     { pathName: 'Country Master', link: '/USERMASTER/countrymst' },
     { pathName: 'District Master', link: '/USERMASTER/districtmst' },
+    { pathName: 'State Master', link: '/USERMASTER/statemst' },
+    { pathName: 'Taluka Master', link: '/USERMASTER/talukamst' },
   ];
   filtered: Array<{ pathName: string; link: string }> = []; // empty initially → "No records found"
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService) { }
 
   ngOnInit() {
     this.user = this.auth.getUser();
