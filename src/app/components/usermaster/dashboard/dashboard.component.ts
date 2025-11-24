@@ -23,6 +23,7 @@ export class DashboardComponent {
     { pathName: 'District Master', link: '/USERMASTER/districtmst' },
     { pathName: 'State Master', link: '/USERMASTER/statemst' },
     { pathName: 'Taluka Master', link: '/USERMASTER/talukamst' },
+    { pathName: 'User Menu Access', link: '/USERMASTER/UserMenuAccess' },
   ];
   filtered: Array<{ pathName: string; link: string }> = []; // empty initially → "No records found"
 
