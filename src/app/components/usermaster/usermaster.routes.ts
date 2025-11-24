@@ -72,4 +72,11 @@ export const UserMaster_Routes: Routes = [
       import('../Masters/talukamst/talukamst.component').then((m) => m.TalukamstComponent),
     title: 'Taluka Master | SmartBank',
   },
+  {
+    path: 'UserMenuAccess',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Tools/usermenuaccess/usermenuaccess.component').then((m) => m.UsermenuaccessComponent),
+    title: 'User Menu Access | SmartBank',
+  },
 ];
