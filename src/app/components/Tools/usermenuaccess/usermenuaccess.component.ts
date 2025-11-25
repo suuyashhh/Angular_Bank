@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from '../../../services/loader.service';
 
 interface DTOUserGrade {
   code: number;
@@ -43,7 +44,17 @@ export class UsermenuaccessComponent implements OnInit {
   readonly programeId = 1;
 
   userGrades: DTOUserGrade[] = [];
+
+  // value bound to main dropdown (null = Select, -1 = Select Multiple, >0 = single grade)
+  userGradeSelectValue: number | null = null;
+
+  // single-selection mode
   selectedUserGradeCode: number | null = null;
+
+  // multi-selection mode
+  multiMode = false;
+  selectedGradesMulti: number[] = [];
+  showMultiGradeDropdown = false;
 
   menuTree: MenuNode[] = [];
   private flatMenus: DTOMenuMasterItem[] = [];
@@ -56,7 +67,8 @@ export class UsermenuaccessComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+     private loader: LoaderService
   ) { }
 
   ngOnInit(): void {
@@ -110,6 +122,12 @@ export class UsermenuaccessComponent implements OnInit {
       this.clearSelection();
       return;
     }
+    // in multi mode we don't load anything (we want blank tree)
+    if (this.multiMode) {
+      this.clearSelection();
+      return;
+    }
+
     this.loadingSelection = true;
 
     this.api.get('UserMenuAccess/SelectedMenus', {
@@ -158,12 +176,12 @@ export class UsermenuaccessComponent implements OnInit {
     };
   }
 
-  // ---------- Tree building (translation of RootNodes logic) ----------
+  // ---------- Tree building ----------
 
   private buildTreeFromMenus(menus: DTOMenuMasterItem[]): MenuNode[] {
     const result: MenuNode[] = [];
 
-    // Root nodes: SeqNo1 = 0 (like RootNodes main query)
+    // Root nodes: SeqNo1 = 0
     const roots = menus
       .filter(m => m.seqNo1 === 0)
       .sort((a, b) => a.mainMenuId - b.mainMenuId);
@@ -329,55 +347,147 @@ export class UsermenuaccessComponent implements OnInit {
     this.menuTree.forEach(n => setExpanded(n, isChecked));
   }
 
-  // ---------- UI actions ----------
+  // ---------- Mode / dropdown logic ----------
 
-  onUserGradeChange(gradeCode: number | null): void {
+  onUserGradeChange(val: number | null): void {
+    // reset common state
     this.clearSelection();
-    if (gradeCode && gradeCode > 0) {
-      this.loadSelectedMenusForGrade(gradeCode);
+    this.showMultiGradeDropdown = false;
+
+    if (val === -1) {
+      // multi mode selected
+      this.multiMode = true;
+      this.selectedUserGradeCode = null;
+      this.selectedGradesMulti = [];
+      return;
+    }
+
+    // single mode
+    this.multiMode = false;
+    this.selectedGradesMulti = [];
+    this.selectedUserGradeCode = val && val > 0 ? val : null;
+
+    if (this.selectedUserGradeCode) {
+      this.loadSelectedMenusForGrade(this.selectedUserGradeCode);
     }
   }
 
-  onSave(): void {
+  toggleMultiGradeDropdown(): void {
+    this.showMultiGradeDropdown = !this.showMultiGradeDropdown;
+  }
+
+  isGradeSelectedMulti(code: number): boolean {
+    return this.selectedGradesMulti.includes(code);
+  }
+
+  onMultiGradeCheckboxChange(code: number, checked: boolean): void {
+    if (checked) {
+      if (!this.selectedGradesMulti.includes(code)) {
+        this.selectedGradesMulti.push(code);
+      }
+    } else {
+      this.selectedGradesMulti = this.selectedGradesMulti.filter(x => x !== code);
+    }
+  }
+
+  // ---------- UI actions ----------
+
+onSave(): void {
+  // SINGLE MODE VALIDATION
+  if (!this.multiMode) {
     if (!this.selectedUserGradeCode || this.selectedUserGradeCode <= 0) {
       this.toastr.warning('Please select User Type');
       return;
     }
+  } else {
+    // MULTI MODE VALIDATION
+    if (this.selectedGradesMulti.length === 0) {
+      this.toastr.warning('Please select at least one User Grade');
+      return;
+    }
+  }
 
-    const collectIds = (nodes: MenuNode[]): number[] => {
-      const result: number[] = [];
-      const walk = (n: MenuNode) => {
-        if (n.checked) result.push(n.id);
-        n.children?.forEach(walk);
-      };
-      nodes.forEach(walk);
-      return result;
+  const collectIds = (nodes: MenuNode[]): number[] => {
+    const result: number[] = [];
+    const walk = (n: MenuNode) => {
+      if (n.checked) result.push(n.id);
+      n.children?.forEach(walk);
     };
+    nodes.forEach(walk);
+    return result;
+  };
 
-    const selectedIds = collectIds(this.menuTree);
+  const selectedIds = collectIds(this.menuTree);
 
+  if (selectedIds.length === 0) {
+    this.toastr.warning('Please select at least one menu');
+    return;
+  }
+
+  this.saving = true;
+
+  // ----- SINGLE GRADE: existing Save API -----
+  if (!this.multiMode) {
     const payload = {
       userGrad: this.selectedUserGradeCode,
       programeId: this.programeId,
       selectedMenuIds: selectedIds
     };
-
-    this.saving = true;
+    this.loader.show();
     this.api.post('UserMenuAccess/Save', payload).subscribe({
       next: (res: any) => {
         this.toastr.success(res?.message ?? 'Settings saved');
         this.saving = false;
+        this.loader.hide();
+
+        // 🔁 reload current selection like user re-selected same grade
+        if (this.userGradeSelectValue !== null) {
+          this.onUserGradeChange(this.userGradeSelectValue);
+        }
       },
       error: err => {
         console.error('Save error', err);
         this.toastr.error('Failed to save menu access');
         this.saving = false;
+        this.loader.hide();
+      }
+    });
+
+  } else {
+    // ----- MULTIPLE GRADE: MultipleGradeSave API -----
+    const payload = {
+      selectedusergradelist: this.selectedGradesMulti,
+      programeId: this.programeId,
+      selectedMenuIds: selectedIds
+    };
+    this.loader.show();
+    this.api.post('UserMenuAccess/MultipleGradeSave', payload).subscribe({
+      next: (res: any) => {
+        this.toastr.success(res?.message ?? 'Settings saved for selected grades');
+        this.saving = false;
+        this.loader.hide();
+
+        // 🔁 re-apply current mode/value (for -1 = Select Multiple)
+        if (this.userGradeSelectValue !== null) {
+          this.onUserGradeChange(this.userGradeSelectValue);
+        }
+      },
+      error: err => {
+        console.error('Save error (multi)', err);
+        this.toastr.error('Failed to save menu access for selected grades');
+        this.saving = false;
+        this.loader.hide();
       }
     });
   }
+}
 
   onCancel(): void {
+    this.userGradeSelectValue = null;
     this.selectedUserGradeCode = null;
+    this.multiMode = false;
+    this.selectedGradesMulti = [];
+    this.showMultiGradeDropdown = false;
     this.clearSelection();
   }
 }
