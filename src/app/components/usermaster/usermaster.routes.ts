@@ -26,8 +26,8 @@ export const UserMaster_Routes: Routes = [
       import('./partymast/partymast.component').then((m) => m.PartymastComponent),
     title: 'Party Master | SmartBank',
   },
-  
-  
+
+
   // Checkr (protected)
   {
     path: 'checkr',
@@ -52,4 +52,38 @@ export const UserMaster_Routes: Routes = [
       import('../Masters/usermst/usermst.component').then((m) => m.UsermstComponent),
     title: 'User Master | SmartBank',
   },
+  {
+    path: 'districtmst',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Masters/districtmst/districtmst.component').then((m) => m.DistrictmstComponent),
+    title: 'District Master | SmartBank',
+  }, {
+    path: 'statemst',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Masters/statemst/statemst.component').then((m) => m.StatemstComponent),
+    title: 'State Master | SmartBank',
+  },
+  {
+    path: 'talukamst',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Masters/talukamst/talukamst.component').then((m) => m.TalukamstComponent),
+    title: 'Taluka Master | SmartBank',
+  },
+  {
+    path: 'UserMenuAccess',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Tools/usermenuaccess/usermenuaccess.component').then((m) => m.UsermenuaccessComponent),
+    title: 'User Menu Access | SmartBank',
+  },
+  {
+    path: 'CheckMenuId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Tools/checkmenuid/checkmenuid.component').then((m) => m.CheckmenuidComponent),
+    title: 'Check MenuId | SmartBank',
+  }
 ];

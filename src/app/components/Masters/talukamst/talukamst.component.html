@@ -1,0 +1,219 @@
+<main class="w-full px-6 py-8">
+  <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
+    <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
+      <!-- Header -->
+      <div class="mb-6 flex items-center justify-between">
+        <nav class="text-sm text-gray-600">
+          <ol class="flex items-center gap-2">
+            <li><a routerLink="/USERMASTER/dashboard" class="hover:underline">Home</a></li>
+            <li>/</li>
+            <li class="font-semibold">Taluka Master</li>
+          </ol>
+        </nav>
+        <div>
+          <button class="btn btn-primary" (click)="resetTalukaForm()"><i class="ri-add-box-fill"></i> New</button>
+        </div>
+      </div>
+
+      <!-- Inline form (add / edit) -->
+      <div *ngIf="isCreatingNew" class="mb-6">
+        <div class="card p-4 rounded-lg shadow-sm border-0">
+          <div class="d-flex justify-content-between items-center mb-3">
+            <h5 class="mb-0">{{ btn === 'E' ? 'Edit Taluka' : 'New Taluka' }}</h5>
+            <button class="btn-close" type="button" (click)="isCreatingNew=false" aria-label="Close"></button>
+          </div>
+
+          <!-- reactive form -->
+          <form [formGroup]="data" (ngSubmit)="submit()" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+            <!-- Country readonly input (opens picker) -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" id="addr_Country" class="form-control" placeholder="Select Country" readonly
+                (click)="!pickersDisabled && openCountry()" [value]="selectedCountryName" style="cursor:pointer"
+                #countryNameField [attr.aria-disabled]="pickersDisabled"
+                [title]="pickersDisabled ? 'Codes locked while editing' : 'Click to pick country'" />
+              <!-- hidden form control stores the selected Country code -->
+              <input type="hidden" formControlName="COUNTRY_CODE" />
+              <label for="addr_Country">Country</label>
+            </div>
+
+            <!-- State readonly input (opens picker) -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" placeholder="Select State" readonly
+                (click)="!pickersDisabled && openState()" [value]="selectedStateName" style="cursor:pointer"
+                [attr.aria-disabled]="pickersDisabled"
+                [title]="pickersDisabled ? 'Codes locked while editing' : 'Click to pick state'" />
+              <input type="hidden" formControlName="STATE_CODE" />
+              <label for="addr_state">State</label>
+            </div>
+
+            <!-- District readonly input (opens picker) -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" placeholder="Select District" readonly
+                (click)="!pickersDisabled && openDistrict()" [value]="selectedDistrictName" style="cursor:pointer"
+                [attr.aria-disabled]="pickersDisabled"
+                [title]="pickersDisabled ? 'Codes locked while editing' : 'Click to pick district'" />
+              <input type="hidden" formControlName="DIST_CODE" />
+              <label for="addr_district">District</label>
+            </div>
+
+            <!-- Taluka Name (editable) -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input id="talukaName" #talukaNameField formControlName="STATE_NAME" type="text"
+                class="form-control block w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+                placeholder="Taluka Name" />
+              <label for="talukaName" class="text-gray-600 ml-1">Taluka Name</label>
+            </div>
+
+            <!-- TRN_NO (hidden) -->
+            <div class="hidden form-floating form-floating-outline mb-0">
+              <input id="trnNo" formControlName="TRN_NO" type="text"
+                class="form-control block w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-md"
+                placeholder="Taluka Code" readonly />
+              <label for="trnNo" class="text-gray-600 ml-1">Taluka Code</label>
+            </div>
+
+            <!-- Submit Button Row -->
+            <div class="sm:col-span-3 mt-4 flex items-center justify-end gap-3">
+              <button type="button"
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200"
+                (click)="afterSaveOrUpdateCleanup()">
+                Cancel
+              </button>
+
+              <button type="submit"
+                class="px-5 py-2.5 rounded-xl bg-violet-600 text-white font-medium shadow hover:bg-violet-700"
+                [disabled]="saving">
+                {{ saving ? 'Saving...' : (btn === 'E' ? 'Update' : 'Save') }}
+              </button>
+            </div>
+          </form>
+
+        </div>
+
+        <div class="mt-6">
+          <hr
+            class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="container-xxl flex-grow-1 mt-6">
+        <div class="card">
+          <div class="p-3 d-flex justify-content-end">
+            <div class="form-floating form-floating-outline">
+              <input class="form-control" type="search" placeholder="Search ..." [(ngModel)]="searchTerm"
+                (ngModelChange)="page = 1" id="html5-search-input" />
+              <label for="html5-search-input"><i class="ri-search-2-fill"></i> Search by Name</label>
+            </div>
+          </div>
+
+          <div *ngIf="loading" class="text-center p-4">
+            <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+          </div>
+
+          <div *ngIf="!loading">
+            <div class="table-responsive text-nowrap">
+              <table class="table">
+                <thead class="table-dark" style="--bs-table-bg: #8c57ff !important;">
+                  <tr>
+                    <th>sr</th>
+                    <th>Actions</th>
+                    <th>Taluka</th>
+                    <th>District</th>
+                    <th>State</th>
+                    <th>Country</th>
+                    <th>Code</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let t of filteredTaluka() | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+                    <td>{{ (page - 1) * pageSize + i + 1 }}</td>
+                    <td>
+                      <div class="btn-group btn-group-sm" role="group" style="gap: 6px;">
+                        <button class="btn btn-purple text-white"
+                          (click)="openInlineForm(t.TRN_NO || t.code, t.STATE_CODE || t.state_code, t.DIST_CODE || t.dist_code, t.COUNTRY_CODE || t.country_Code, 'E')"
+                          title="Edit">
+                          <i class="ri-pencil-line"></i> <span class="d-none d-sm-inline">Edit</span>
+                        </button>
+                        <button class="btn btn-danger text-white"
+                          (click)="deleteTaluka(t.TRN_NO || t.code, t.STATE_NAME || t.name, t.DIST_CODE || t.dist_code, t.STATE_CODE || t.state_code, t.COUNTRY_CODE || t.country_Code)">
+                          <i class="ri-delete-bin-6-line"></i> Delete
+                        </button>
+
+                      </div>
+                      <style>
+                        .btn-purple {
+                          background-color: #6f42c1;
+                          border-color: #6f42c1;
+                        }
+
+                        .btn-purple:hover {
+                          background-color: #5a2d9c;
+                        }
+                      </style>
+                    </td>
+                    <td><strong>{{ t.STATE_NAME || t.name }}</strong></td>
+                    <td><strong>{{ t.DISTRICT_NAME }}</strong></td>
+                    <td><strong>{{ t.STATE_NAME_DISPLAY }}</strong></td>
+                    <td><strong>{{ t.COUNTRY_NAME }}</strong></td>
+                    <td><strong>{{ t.TRN_NO || t.code }}</strong></td>
+                  </tr>
+
+                  <tr *ngIf="(filteredTaluka()||[]).length === 0">
+                    <td colspan="7" class="text-center text-muted py-4">No talukas found.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center p-3">
+              <div class="text-muted" *ngIf="(filteredTaluka()||[]).length > 0">
+                Showing {{ (page - 1) * pageSize + 1 }} to {{ page * pageSize > (filteredTaluka()||[]).length ?
+                (filteredTaluka()||[]).length : page * pageSize }} of {{ (filteredTaluka()||[]).length }} entries
+              </div>
+              <pagination-controls (pageChange)="page = $event" [autoHide]="true"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; width: 90%;">
+      <div class="modal-content" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+        <div class="modal-header"
+          style="background-color: #e74c3c; color: #fff; border-bottom: none; padding: 12px 16px;">
+          <h5 class="modal-title" style="font-size: 1rem; margin: 0; display: flex; align-items: center;">
+            <i class="ri-delete-bin-6-line" style="margin-right: 8px; font-size: 1.2rem;"></i> Confirm Deletion
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
+            style="filter: invert(1);"></button>
+        </div>
+        <div class="modal-body" style="text-align: center; padding: 24px 16px;">
+          <i class="ri-alert-fill" style="font-size: 3rem; color: #e74c3c;"></i>
+          <h5 style="margin-top: 12px; font-size: 1.25rem; font-weight: 600;">Are you sure?</h5>
+          <p style="margin-top: 8px; color: #6c757d; font-size: 0.9rem;">
+            You are about to delete the Taluka
+            <strong style="color: #e74c3c;">{{ data.get('STATE_NAME')?.value }}</strong>.
+            This action cannot be undone.
+          </p>
+        </div>
+        <div class="modal-footer"
+          style="display: flex; justify-content: center; gap: 12px; border-top: none; padding: 16px;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+            style="padding: 8px 20px; border-radius: 20px; font-weight: 500;">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="executeDelete()" data-bs-dismiss="modal"
+            style="padding: 8px 20px; border-radius: 20px; font-weight: 500; display: flex; align-items: center;">
+            <i class="ri-delete-bin-6-line" style="margin-right: 6px;"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-dropdpwn-modal></app-dropdpwn-modal>
+</main>

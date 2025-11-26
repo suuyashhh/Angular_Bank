@@ -5,6 +5,12 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { RouterModule } from '@angular/router';
+import { finalize } from 'rxjs/operators';
+
+interface CountryDTO {
+  code: number;
+  name: string;
+}
 
 @Component({
   selector: 'app-countrymst',
@@ -13,20 +19,21 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    NgxPaginationModule,RouterModule
+    NgxPaginationModule,
+    RouterModule
   ],
   templateUrl: './countrymst.component.html',
   styleUrls: ['./countrymst.component.css']
 })
 export class CountrymstComponent implements OnInit {
-  @ViewChild('countryNameField') countryNameField!: ElementRef;
+  @ViewChild('countryNameField') countryNameField!: ElementRef<HTMLInputElement>;
 
   isCreatingNew = false;
   btn: string = '';
-  trn_no = 0;
+  currentCode = 0;
   saving = false;
 
-  countries: any[] = [];
+  countries: CountryDTO[] = [];
   loading = false;
 
   page = 1;
@@ -39,92 +46,70 @@ export class CountrymstComponent implements OnInit {
 
   ngOnInit(): void {
     this.data = new FormGroup({
-      TRN_NO: new FormControl(0),
-      COUNTRY_NAME: new FormControl('', Validators.required),
-      DATE: new FormControl('')
+      Code: new FormControl(0),
+      Name: new FormControl('', { nonNullable: true, validators: [Validators.required] })
     });
 
     this.loadCountries();
   }
 
-  // Normalize incoming server object to the fields the template expects
-  private normalizeServerObject(c: any) {
-    
-      debugger;
-    // Accept many variants of property names from backend
-    const trnNo = c.trN_NO ?? null;
-    const countryName =
-      c.countrY_NAME ?? 
-      '';
-    const dateVal = c.date ?? null;
-
-    // Convert string-ish date to JS Date if possible
-    let dateObj: Date | null = null;
-    if (dateVal) {
-      const d = new Date(dateVal);
-      if (!isNaN(d.getTime())) dateObj = d;
-    }
+  // Normalize server object (accept variant property names)
+  private normalizeServerObject(c: any): CountryDTO {
+    const code = c.Code ?? c.code ?? c.TRN_NO ?? c.trn_no ?? c.COUNTRY_CODE ?? c.country_code ?? 0;
+    const name = c.Name ?? c.name ?? c.COUNTRY_NAME ?? c.country_name ?? c.countrY_NAME ?? '';
 
     return {
-      TRN_NO: trnNo,
-      COUNTRY_NAME: countryName,
-      DATE: dateObj // either Date or null
+      code: Number(code || 0),
+      name: String(name || '')
     };
   }
 
   loadCountries(): void {
     this.loading = true;
-    this.api.get('CountryMaster/GetAll').subscribe({
-      next: (res: any) => {
-        // Defensive: if server wraps list in property (like { data: [...] }) handle that
-        const list = Array.isArray(res) ? res : (res?.data && Array.isArray(res.data) ? res.data : []);
-        console.log('raw countries response', res);
-        this.countries = (list || []).map((c: any) => this.normalizeServerObject(c));
-        console.log('normalized countries', this.countries);
-      },
-      error: (err) => {
-        console.error('Failed to load countries', err);
-        this.toastr.error('Failed to load country');
-      },
-      complete: () => (this.loading = false)
-    });
+    this.api.get('CountryMaster/GetAll')
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (res: any) => {
+          const list = Array.isArray(res) ? res : (res?.data && Array.isArray(res.data) ? res.data : []);
+          this.countries = (list || []).map((c: any) => this.normalizeServerObject(c));
+        },
+        error: (err) => {
+          console.error('Failed to load countries', err);
+          this.toastr.error('Failed to load countries');
+        }
+      });
   }
 
   resetCountryForm(): void {
     this.isCreatingNew = true;
     this.btn = '';
-    this.trn_no = 0;
-    this.data.reset({ TRN_NO: 0, COUNTRY_NAME: '', DATE: '' });
+    this.currentCode = 0;
+    this.data.reset({ Code: 0, Name: '' });
     setTimeout(() => this.countryNameField?.nativeElement?.focus?.(), 50);
   }
 
-  openInlineForm(trnNo: number | null, action: string): void {
-    debugger;
-    // allow both TRN_NO or other id forms
-    if (!trnNo && trnNo !== 0) {
+  openInlineForm(code: number | null, action: string): void {
+    if (code === null || code === undefined) {
       this.toastr.warning('Invalid country id for edit');
       return;
     }
     this.isCreatingNew = true;
     this.btn = action;
-    this.getDataById(trnNo as number);
+    this.getDataById(code);
   }
 
-  getDataById(trnNo: number): void {
-    this.api.get(`CountryMaster/GetCountryById?countryCode=${trnNo}`).subscribe({
+  getDataById(code: number): void {
+    this.api.get(`CountryMaster/GetCountryById?countryCode=${code}`).subscribe({
       next: (res: any) => {
         if (!res) {
           this.toastr.error('Country not found');
           return;
         }
-
-        // normalize single object (API might return {TRN_NO...} or trn_NO...)
         const obj = this.normalizeServerObject(res);
-        this.trn_no = obj.TRN_NO ?? trnNo;
+        this.currentCode = obj.code || code;
         this.data.patchValue({
-          TRN_NO: this.trn_no,
-          COUNTRY_NAME: obj.COUNTRY_NAME,
-          DATE: obj.DATE ?? ''
+          Code: obj.code,
+          Name: obj.name
         });
         setTimeout(() => this.countryNameField?.nativeElement?.focus?.(), 50);
       },
@@ -142,43 +127,39 @@ export class CountrymstComponent implements OnInit {
       return;
     }
 
+    const code = Number(this.data.get('Code')?.value || 0);
+    const name = String(this.data.get('Name')?.value || '').trim();
+
     const payload = {
-      TRN_NO: this.data.get('TRN_NO')?.value || 0,
-      COUNTRY_NAME: this.data.get('COUNTRY_NAME')?.value,
-      // send DATE as ISO if present; backend expects datetime
-      DATE: this.data.get('DATE')?.value ? new Date(this.data.get('DATE')?.value).toISOString() : new Date().toISOString()
+      Code: code,
+      Name: name
     };
 
     this.saving = true;
-    const isEdit = payload.TRN_NO && payload.TRN_NO > 0;
+    const isEdit = code && code > 0;
+    const apiCall$ = isEdit ? this.api.post('CountryMaster/Update', payload) : this.api.post('CountryMaster/Save', payload);
 
-    const apiCall$ = isEdit
-      ? this.api.post('CountryMaster/Update', payload)
-      : this.api.post('CountryMaster/Save', payload);
-
-    apiCall$.subscribe({
+    apiCall$.pipe(finalize(() => (this.saving = false))).subscribe({
       next: (res: any) => {
         this.toastr.success(res?.message ?? (isEdit ? 'Updated' : 'Saved'));
-        this.saving = false;
         this.isCreatingNew = false;
-        this.data.reset({ TRN_NO: 0, COUNTRY_NAME: '', DATE: '' });
         this.loadCountries();
       },
       error: (err) => {
         console.error('Save error', err);
         this.toastr.error('Failed to save country');
-        this.saving = false;
       }
     });
   }
 
-  deleteCountry(trnNo: number | null, name: string): void {
-    if (!trnNo && trnNo !== 0) {
+  // Delete flow
+  deleteCountry(code: number | null, name: string): void {
+    if (code === null || code === undefined) {
       this.toastr.warning('Invalid country id');
       return;
     }
-    this.trn_no = trnNo as number;
-    this.data.patchValue({ COUNTRY_NAME: name });
+    this.currentCode = code;
+    this.data.patchValue({ Name: name });
 
     const modalEl = document.getElementById('deleteConfirmModal');
     if (modalEl) {
@@ -190,16 +171,16 @@ export class CountrymstComponent implements OnInit {
   }
 
   executeDelete(): void {
-    if (!this.trn_no && this.trn_no !== 0) {
+    if (this.currentCode === null || this.currentCode === undefined) {
       this.toastr.warning('Invalid country selected');
       return;
     }
-    this.api.delete(`CountryMaster/Delete/${this.trn_no}`).subscribe({
+    this.api.delete(`CountryMaster/Delete/${this.currentCode}`).subscribe({
       next: (res: any) => {
         this.toastr.success(res?.message ?? 'Country deleted');
         this.loadCountries();
         this.isCreatingNew = false;
-        this.trn_no = 0;
+        this.currentCode = 0;
       },
       error: (err) => {
         console.error('Delete error', err);
@@ -213,8 +194,8 @@ export class CountrymstComponent implements OnInit {
     if (this.searchTerm) {
       const s = this.searchTerm.toLowerCase();
       result = result.filter((c: any) =>
-        (c.COUNTRY_NAME || '').toLowerCase().includes(s) ||
-        String(c.TRN_NO || '').includes(s)
+        (c.name || '').toLowerCase().includes(s) ||
+        String(c.code || '').includes(s)
       );
     }
     return result;

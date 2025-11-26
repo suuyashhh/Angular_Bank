@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DropdownService } from '../services/dropdown.service.ts.service';
+import { DropdownService } from '../services/dropdown.service';
 
 @Component({
   selector: 'app-dropdpwn-modal',

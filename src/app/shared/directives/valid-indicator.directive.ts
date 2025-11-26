@@ -135,7 +135,7 @@ export class ValidatedInputDirective {
       pan: { endpoint: 'ValidationService/PanNo', param: 'panNo' },
       gst: { endpoint: 'ValidationService/GstNo', param: 'gstNo' },
       mobile: { endpoint: 'ValidationService/MobileNo', param: 'mobileNo' },
-      phone: { endpoint: 'ValidationService/PhoneNo', param: 'phone1' },
+      phone: { endpoint: 'ValidationService/PhoneNo', param: 'PhoneNo' },
       voterid: { endpoint: 'ValidationService/VoterIdNo', param: 'voterIdNo' },
       passport: { endpoint: 'ValidationService/PassportNo', param: 'passportNo' }
     };

@@ -7,7 +7,7 @@
           <ol class="flex items-center gap-2">
             <li><a routerLink="/USERMASTER/dashboard" class="hover:underline">Home</a></li>
             <li>/</li>
-            <li class="font-semibold">Country Master</li>
+            <li class="font-semibold">District Master</li>
           </ol>
         </nav>
         <div>
@@ -19,20 +19,46 @@
       <div *ngIf="isCreatingNew" class="mb-6">
         <div class="card p-4 rounded-lg shadow-sm border-0">
           <div class="d-flex justify-content-between items-center mb-3">
-            <h5 class="mb-0">{{ btn === 'E' ? 'Edit Country' : 'Add Country' }}</h5>
+            <h5 class="mb-0">{{ btn === 'E' ? 'Edit District' : 'New District' }}</h5>
             <button class="btn-close" type="button" (click)="isCreatingNew=false" aria-label="Close"></button>
           </div>
 
-          <form [formGroup]="data" (ngSubmit)="submit()" class="grid grid-cols-1 gap-4 sm:grid-cols-3" novalidate>
-            <!-- Hidden Code -->
-            <input formControlName="Code" type="hidden" />
+          <!-- reactive form -->
+          <form [formGroup]="data" (ngSubmit)="submit()" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
-            <!-- Country Name Field -->
-            <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
-              <input #countryNameField id="countryName" formControlName="Name" type="text"
+            <!-- Country readonly input (opens picker) -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" id="addr_Country" class="form-control" placeholder="Select Country" readonly
+                (click)="btn !== 'E' && openCountry()" [value]="selectedCountryName" style="cursor:pointer" />
+
+              <!-- hidden form control stores the selected Country code -->
+              <input type="hidden" formControlName="COUNTRY_CODE" />
+              <label for="addr_city">Country</label>
+            </div>
+
+            <!-- State readonly input (opens picker) -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input type="text" class="form-control" placeholder="Select State" readonly
+                (click)="btn !== 'E' && openState()" [value]="selectedStateName" style="cursor:pointer" />
+
+              <input type="hidden" formControlName="STATE_CODE" />
+              <label for="addr_city">State</label>
+            </div>
+
+            <!-- District Name -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input id="districtName" formControlName="DISTRICT_NAME" type="text"
                 class="form-control block w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
-                placeholder="Country Name" />
-              <label for="countryName" class="text-gray-600 ml-1">Country Name</label>
+                placeholder="District Name" />
+              <label for="districtName" class="text-gray-600 ml-1">District Name</label>
+            </div>
+
+            <!-- District Code (hidden) -->
+            <div class="hidden form-floating form-floating-outline mb-0">
+              <input id="DistrictCode" formControlName="DISTRICT_CODE" type="text"
+                class="form-control block w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-md"
+                placeholder="Code" readonly />
+              <label for="DistrictCode" class="text-gray-600 ml-1">Code</label>
             </div>
 
             <!-- Submit Button Row -->
@@ -78,37 +104,43 @@
                   <tr>
                     <th>sr</th>
                     <th>Actions</th>
-                    <th>Name</th>
+                    <th>District</th>
+                    <th>State</th>
+                    <th>Country</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr
-                    *ngFor="let c of (filteredCountries() | paginate: { itemsPerPage: pageSize, currentPage: page }); let i = index">
+                    *ngFor="let c of filteredCountries() | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
                     <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                     <td>
                       <div class="btn-group btn-group-sm" role="group" style="gap: 6px;">
-                        <button class="btn btn-primary text-white" (click)="openInlineForm(c.code, 'E')" title="Edit"
-                          aria-label="Edit country">
+
+                        <button class="btn btn-primary text-white"
+                          (click)="openInlineForm(c.DISTRICT_CODE, c.STATE_CODE, c.COUNTRY_CODE, 'E')" title="Edit">
                           <i class="ri-pencil-line"></i><span class="d-none d-sm-inline">Edit</span> </button>
 
-                        <button class="btn btn-danger text-white" (click)="deleteCountry(c.code, c.name)"
+                        <button class="btn btn-danger text-white"
+                          (click)="deleteCountry(c.DISTRICT_CODE, c.DISTRICT_NAME, c.STATE_CODE, c.COUNTRY_CODE)"
                           title="Delete">
                           <i class="ri-delete-bin-6-line"></i> <span class="d-none d-sm-inline">Delete</span>
                         </button>
                       </div>
                     </td>
-                    <td><strong>{{ c.name }}</strong></td>
+                    <td><strong>{{ c.DISTRICT_NAME }}</strong></td>
+                    <td><strong>{{ c.STATE_NAME }}</strong></td>
+                    <td><strong>{{ c.COUNTRY_NAME }}</strong></td>
                   </tr>
 
                   <tr *ngIf="(filteredCountries()||[]).length === 0">
-                    <td colspan="3" class="text-center text-muted py-4">No countries found.</td>
+                    <td colspan="5" class="text-center text-muted py-4">No districts found.</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             <div class="d-flex justify-content-between align-items-center p-3">
-              <div class="text-muted">
+              <div class="text-muted" *ngIf="(filteredCountries()||[]).length > 0">
                 Showing {{ (page - 1) * pageSize + 1 }} to {{ page * pageSize > (filteredCountries()||[]).length ?
                 (filteredCountries()||[]).length : page * pageSize }} of {{ (filteredCountries()||[]).length }} entries
               </div>
@@ -124,6 +156,8 @@
   <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; width: 90%;">
       <div class="modal-content" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+
+        <!-- Header -->
         <div class="modal-header"
           style="background-color: #e74c3c; color: #fff; border-bottom: none; padding: 12px 16px;">
           <h5 class="modal-title" style="font-size: 1rem; margin: 0; display: flex; align-items: center;">
@@ -133,16 +167,18 @@
             style="filter: invert(1);"></button>
         </div>
 
+        <!-- Body -->
         <div class="modal-body" style="text-align: center; padding: 24px 16px;">
           <i class="ri-alert-fill" style="font-size: 3rem; color: #e74c3c;"></i>
           <h5 style="margin-top: 12px; font-size: 1.25rem; font-weight: 600;">Are you sure?</h5>
           <p style="margin-top: 8px; color: #6c757d; font-size: 0.9rem;">
-            You are about to delete the Country
-            <strong style="color: #e74c3c;">{{ data.get('Name')?.value }}</strong>.
+            You are about to delete the District
+            <strong style="color: #e74c3c;">{{ data.get('DISTRICT_NAME')?.value }}</strong>.
             This action cannot be undone.
           </p>
         </div>
 
+        <!-- Footer -->
         <div class="modal-footer"
           style="display: flex; justify-content: center; gap: 12px; border-top: none; padding: 16px;">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
@@ -158,4 +194,6 @@
       </div>
     </div>
   </div>
+
+  <app-dropdpwn-modal></app-dropdpwn-modal>
 </main>

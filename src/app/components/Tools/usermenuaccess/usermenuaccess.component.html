@@ -1,0 +1,192 @@
+<main class="w-full px-6 py-8">
+  <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
+    <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
+
+      <!-- Header -->
+      <div class="mb-6 flex items-center justify-between">
+        <nav class="text-sm text-gray-600">
+          <ol class="flex items-center gap-2">
+            <li><a routerLink="/USERMASTER/dashboard" class="hover:underline">Home</a></li>
+            <li>/</li>
+            <li class="font-semibold">User Menu Setting</li>
+          </ol>
+        </nav>
+      </div>
+
+      <!-- Controls row -->
+      <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+        <!-- LEFT SIDE: User type + multi-grade dropdown -->
+        <div class="flex flex-col md:flex-row md:items-center gap-4">
+
+          <!-- Select User Type -->
+          <div class="flex items-center gap-3">
+            <label class="text-sm font-medium text-gray-700">Select User Type</label>
+            <select
+              class="form-select block w-60 px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+              [(ngModel)]="userGradeSelectValue"
+              (ngModelChange)="onUserGradeChange($event)">
+              <option [ngValue]="null">Select</option>
+              <!-- Special option -->
+              <option [ngValue]="-1">Select Multiple</option>
+              <!-- Actual grades -->
+              <option *ngFor="let g of userGrades" [ngValue]="g.code">
+                {{ g.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Multiple grade dropdown (only visible in multiMode) -->
+          <div *ngIf="multiMode" class="flex items-center gap-3">
+            <label class="text-sm font-medium text-gray-700">Apply To User Grades</label>
+
+            <div class="relative">
+              <button type="button"
+                class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white hover:bg-gray-50 flex items-center gap-2 min-w-[220px]"
+                (click)="toggleMultiGradeDropdown()">
+                <span *ngIf="selectedGradesMulti.length === 0">
+                  Select user grades
+                </span>
+                <span *ngIf="selectedGradesMulti.length === 1">
+                  1 grade selected
+                </span>
+                <span *ngIf="selectedGradesMulti.length > 1">
+                  {{ selectedGradesMulti.length }} grades selected
+                </span>
+                <svg
+                  class="w-4 h-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              <!-- dropdown panel -->
+              <div *ngIf="showMultiGradeDropdown"
+                class="absolute z-20 mt-1 w-64 max-h-64 overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg p-2">
+          <div *ngFor="let g of userGrades" class="flex items-center gap-2 px-2 py-1 hover:bg-gray-50 rounded-lg">
+  <input
+    type="checkbox"
+    class="h-4 w-4 rounded border-gray-300"
+    [checked]="isGradeSelectedMulti(g.code)"
+    (change)="onMultiGradeCheckboxChange(g.code, $any($event.target).checked)" />
+  <span class="text-sm text-gray-800">{{ g.name }}</span>
+</div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE: expand + buttons -->
+        <div class="flex items-center gap-4">
+          <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+            <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-300"
+              [(ngModel)]="expandAllChecked"
+              (ngModelChange)="onExpandAllToggle($event)"
+              [disabled]="(!selectedUserGradeCode && !multiMode) || menuTree.length === 0" />
+            <span>Expand All Menu</span>
+          </label>
+
+          <div class="flex items-center gap-2">
+            <button type="button"
+              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200 text-sm"
+              (click)="onCancel()">
+              Cancel
+            </button>
+            <button type="button"
+              class="px-5 py-2.5 rounded-xl bg-violet-600 text-white font-medium shadow hover:bg-violet-700 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              (click)="onSave()"
+              [disabled]="((!selectedUserGradeCode && !multiMode) || saving || menuTree.length === 0)">
+              {{ saving ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <hr
+        class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-4" />
+
+      <!-- Main content: tree -->
+      <div class="mt-4">
+        <!-- Loading states -->
+        <div *ngIf="loadingMenus || loadingSelection" class="flex justify-center py-10">
+          <div class="flex flex-col items-center gap-2 text-gray-500 text-sm">
+            <div
+              class="spinner-border animate-spin inline-block w-6 h-6 border-4 rounded-full border-violet-500 border-t-transparent">
+            </div>
+            <span>Loading menu structure...</span>
+          </div>
+        </div>
+
+        <!-- No user selected (and not in multi mode) -->
+        <div *ngIf="!loadingMenus && !selectedUserGradeCode && !multiMode"
+          class="py-10 text-center text-gray-500 text-sm">
+          Please select a <span class="font-semibold">User Type</span> to configure menu access.
+        </div>
+
+        <!-- Tree -->
+        <div *ngIf="!loadingMenus && (selectedUserGradeCode || multiMode)"
+          class="border border-gray-200 rounded-2xl bg-white shadow-sm max-h-[450px] overflow-auto p-4"
+          [class.opacity-60]="!selectedUserGradeCode && !multiMode">
+
+          <ng-container *ngIf="menuTree && menuTree.length > 0; else noMenuData">
+            <ul class="space-y-1">
+              <ng-container *ngFor="let node of menuTree">
+                <ng-template [ngTemplateOutlet]="treeNodeTemplate"
+                  [ngTemplateOutletContext]="{ node: node }">
+                </ng-template>
+              </ng-container>
+            </ul>
+          </ng-container>
+
+          <ng-template #noMenuData>
+            <div class="py-10 text-center text-gray-500 text-sm">
+              No menu data found for this programme.
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Recursive node template -->
+      <ng-template #treeNodeTemplate let-node="node">
+        <li class="flex flex-col">
+          <div class="flex items-center gap-2 py-0.5">
+            <!-- expand / collapse button -->
+            <button *ngIf="node.children && node.children.length > 0" type="button"
+              class="w-5 h-5 flex items-center justify-center text-xs border border-gray-300 rounded bg-gray-50 hover:bg-gray-100"
+              (click)="toggleExpand(node)">
+              <span *ngIf="node.expanded">−</span>
+              <span *ngIf="!node.expanded">+</span>
+            </button>
+            <span *ngIf="!node.children || node.children.length === 0" class="w-5"></span>
+
+            <!-- checkbox -->
+            <input type="checkbox" class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm"
+              [checked]="node.checked"
+              (change)="toggleCheck(node, $any($event.target).checked)" />
+
+            <!-- label -->
+            <span class="text-sm text-gray-800">
+              {{ node.name }}
+            </span>
+          </div>
+
+          <!-- children -->
+          <ul *ngIf="node.children && node.children.length > 0 && node.expanded"
+            class="pl-6 mt-1 space-y-1">
+            <ng-container *ngFor="let child of node.children">
+              <ng-template [ngTemplateOutlet]="treeNodeTemplate"
+                [ngTemplateOutletContext]="{ node: child }">
+              </ng-template>
+            </ng-container>
+          </ul>
+        </li>
+      </ng-template>
+
+    </div>
+  </div>
+</main>
