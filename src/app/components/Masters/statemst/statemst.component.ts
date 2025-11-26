@@ -7,7 +7,7 @@ import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { PickerService } from '../../../services/picker.service';
 import { PickerModalComponent } from '../../../shared/picker-modal/picker-modal.component';
-import { DropdownOption, DropdownService } from '../../../shared/services/dropdown.service.ts.service';
+import { DropdownOption, DropdownService } from '../../../shared/services/dropdown.service';
 import { DropdpwnModalComponent } from "../../../shared/dropdpwn-modal/dropdpwn-modal.component";
 
 @Component({

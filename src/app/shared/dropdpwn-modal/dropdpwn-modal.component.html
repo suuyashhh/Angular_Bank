@@ -24,7 +24,7 @@
               <input #modalSearchInput type="text"
        class="form-control branch-input"
        [value]="(picker.searchText$ | async) || ''"
-       (input)="picker.filter($any($event.target).value)"
+       (input)="picker.searchChanged$.next($any($event.target).value)"
        (focus)="picker.dropdownOpen$.next(true)"
        placeholder="{{ picker.pickerTitle$ | async }}"
        autocomplete="off" />

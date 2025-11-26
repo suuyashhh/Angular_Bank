@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PickerService } from '../../../services/picker.service'; 
-import { DropdownService, DropdownOption } from '../../../shared/services/dropdown.service.ts.service'; 
+import { DropdownService, DropdownOption } from '../../../shared/services/dropdown.service'; 
 import { PickerModalComponent } from '../../../shared/picker-modal/picker-modal.component';
 import { ApiService } from '../../../services/api.service';
 import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
