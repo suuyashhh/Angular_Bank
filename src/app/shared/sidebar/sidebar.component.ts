@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewChecked, Component, OnDestroy, OnInit, ElementRef, ViewChild, inject, NgZone, Renderer2 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
   user: any;
+  AccessMenusList: any[] = [];
 
   private initialized = false;
   private resizeListener!: () => void;
@@ -22,7 +24,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   @ViewChild('layoutMenu', { static: false }) layoutMenuRef!: ElementRef;
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private api: ApiService) { }
 
   ngOnInit(): void {
     // Only keep minimal user info to avoid exposing sensitive data
@@ -30,6 +32,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.user = fullUser
       ? { ini: fullUser.ini, workinG_BRANCH: fullUser.workinG_BRANCH }
       : null;
+
+    this.GetMenuAccess();
   }
 
   ngAfterViewChecked(): void {
@@ -39,6 +43,26 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.initialized = true;
     }
   }
+
+  public GetMenuAccess(programId: number = 1): void {
+    const fullUser = this.auth.getUser();
+    const userLevel = fullUser?.useR_LAVEL;
+
+    const url = `UserMenuAccess/SelectedMenus?userGrad=${encodeURIComponent(userLevel)}&programeId=${encodeURIComponent(programId)}`;
+
+    this.api.get(url).subscribe({
+      next: (res: any) => {
+        if (Array.isArray(res)) {
+          this.AccessMenusList = res;
+        } 
+      },
+      error: (err: any) => {
+        console.error('Error fetching selected menus:', err);
+        this.AccessMenusList = [];
+      }
+    });
+  }
+
 
   private initializeMenu(): void {
     try {
