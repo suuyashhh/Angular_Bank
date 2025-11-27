@@ -78,4 +78,8 @@
   100% { transform: translateX(0); }
 }
 
+.step {
+  transition: all 0.25s ease;
+}
+
 

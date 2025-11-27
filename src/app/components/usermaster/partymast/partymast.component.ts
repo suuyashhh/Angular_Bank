@@ -1574,7 +1574,7 @@ export class PartymastComponent implements OnInit {
     console.log("✔ PATCHED SUCCESSFULLY");
   }
 
-stepValidators: any = {
+stepValidators:any = {
   1: () => this.validateStep1(),
   2: () => this.validateStep2(),
   3: () => this.validateStep3(),
@@ -1582,12 +1582,14 @@ stepValidators: any = {
   5: () => true
 };
 
+
+// null = not checked yet, true = valid, false = invalid
 stepStatus: any = {
-  1: false,
-  2: false,
-  3: false,
-  4: false,
-  5: false
+  1: null,
+  2: null,
+  3: null,
+  4: null,
+  5: null
 };
 
 currentStep = 1;
@@ -1619,38 +1621,75 @@ validateStep1(): boolean {
 
   let valid = true;
 
-  controls.forEach(c => {
+  for (let c of controls) {
     const ctrl = this.form.get(c);
-    if (ctrl && ctrl.invalid) {
-      ctrl.markAsTouched({ onlySelf: true });
+    if (ctrl && !ctrl.disabled && ctrl.invalid) {
+      
+      // ❗ Detect exists error
+      if (ctrl.errors?.['exists']) {
+  this.toastr.error("Fill correct data — your data already exists");
+
+  // shake step
+  const stepEl = document.querySelector(
+    `label[for="step-${this.currentStep}"]`
+  ) as HTMLElement;
+  if (stepEl) {
+    stepEl.classList.add('step-shake');
+    setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+  }
+
+  this.scrollToFirstInvalid();
+}
+else {
+  this.toastr.error("Please fill required fields");
+  this.scrollToFirstInvalid();
+}
+
+
+      ctrl.markAsTouched();
       valid = false;
     }
-  });
+  }
 
   return valid;
 }
 
+
 validateStep2(): boolean {
 
-  const controls = [
-    'ADDR1',
-    'ADDR2',
-    'ADDR3',
-    'phone',
-    'mobile'
-  ];
+  const controls = ['ADDR1', 'ADDR2', 'ADDR3', 'phone', 'mobile'];
 
   let valid = true;
 
-  controls.forEach(c => {
+  for (let c of controls) {
     const ctrl = this.form.get(c);
-    if (ctrl && ctrl.invalid) {
+    if (ctrl && !ctrl.disabled && ctrl.invalid) {
+
+      if (ctrl.errors?.['exists']) {
+  this.toastr.error("Fill correct data — your data already exists");
+
+  // shake step
+  const stepEl = document.querySelector(
+    `label[for="step-${this.currentStep}"]`
+  ) as HTMLElement;
+  if (stepEl) {
+    stepEl.classList.add('step-shake');
+    setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+  }
+
+  this.scrollToFirstInvalid();
+}
+else {
+  this.toastr.error("Please fill required fields");
+  this.scrollToFirstInvalid();
+}
+
+
       ctrl.markAsTouched();
       valid = false;
     }
-  });
+  }
 
-  // picker-based fields
   if (!this.selectedCityCode
     || !this.selectedAreaCode
     || !this.selectedCountryCode
@@ -1658,11 +1697,13 @@ validateStep2(): boolean {
     || !this.selectedDistrictCode
     || !this.selectedTalukaCode
   ) {
+    this.toastr.error("Please fill required fields");
     valid = false;
   }
 
   return valid;
 }
+
 
 validateStep3(): boolean {
   let valid = true;
@@ -1676,15 +1717,35 @@ validateStep3(): boolean {
     'SEX'
   ];
 
-  controls.forEach(c => {
+  for (let c of controls) {
     const ctrl = this.form.get(c);
-    if (ctrl && ctrl.invalid) {
+    if (ctrl && !ctrl.disabled && ctrl.invalid) {
+
+      if (ctrl.errors?.['exists']) {
+  this.toastr.error("Fill correct data — your data already exists");
+
+  // shake step
+  const stepEl = document.querySelector(
+    `label[for="step-${this.currentStep}"]`
+  ) as HTMLElement;
+  if (stepEl) {
+    stepEl.classList.add('step-shake');
+    setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+  }
+
+  this.scrollToFirstInvalid();
+}
+else {
+  this.toastr.error("Please fill required fields");
+  this.scrollToFirstInvalid();
+}
+
+
       ctrl.markAsTouched();
       valid = false;
     }
-  });
+  }
 
-  // picker-based fields
   if (!this.religionCode || !this.castCode || !this.occupationCode) {
     valid = false;
   }
@@ -1703,38 +1764,72 @@ validateStep4(): boolean {
     'EMAIL_ID'
   ];
 
-  controls.forEach(c => {
+  for (let c of controls) {
     const ctrl = this.form.get(c);
-    if (ctrl && ctrl.invalid) {
+    if (ctrl && !ctrl.disabled && ctrl.invalid) {
+
+      if (ctrl.errors?.['exists']) {
+  this.toastr.error("Fill correct data — your data already exists");
+
+  // shake step
+  const stepEl = document.querySelector(
+    `label[for="step-${this.currentStep}"]`
+  ) as HTMLElement;
+  if (stepEl) {
+    stepEl.classList.add('step-shake');
+    setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+  }
+
+  this.scrollToFirstInvalid();
+}
+else {
+  this.toastr.error("Please fill required fields");
+  this.scrollToFirstInvalid();
+}
+
+
       ctrl.markAsTouched();
       valid = false;
     }
-  });
+  }
 
   return valid;
 }
 
 
 goToStep(step: number) {
-
   const current = this.currentStep;
 
   const isValid = this.stepValidators[current]();
-
   this.stepStatus[current] = isValid;
 
   if (!isValid) {
-    this.toastr.error("Please fill all required fields");
+    this.toastr.error("Please fill required fields");
+
+    // scroll to the first invalid field
+    this.scrollToFirstInvalid();
+
+    // shake step circle
+    const stepEl = document.querySelector(
+      `label[for="step-${current}"]`
+    ) as HTMLElement;
+
+    if (stepEl) {
+      stepEl.classList.add('step-shake');
+      setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+    }
+
     return;
   }
 
   this.navigateTo(step);
 }
 
-tryOpenStep(step: number) {
 
+tryOpenStep(step: number) {
+  // user cannot open step N if any previous step invalid or not completed
   for (let i = 1; i < step; i++) {
-    if (!this.stepStatus[i]) {
+    if (this.stepStatus[i] !== true) {
       this.toastr.error(`Step ${i} is not completed`);
       return;
     }
@@ -1747,19 +1842,53 @@ navigateTo(step: number) {
   const r = document.getElementById(`step-${step}`) as HTMLInputElement;
   if (r) {
     r.checked = true;
-    this.currentStep = step;
+    this.currentStep = step;  // ⭐ THIS SETS ACTIVE STEP
   }
 }
+
 
 getStepClass(step: number) {
   const status = this.stepStatus[step];
 
   return {
-    'border-green-500 bg-green-50 text-green-700': status === true,
-    'border-red-500 bg-red-50 text-red-700': status === false,
-    'border-gray-300 bg-gray-50 text-gray-500': status === null
+    // ACTIVE STEP (blue border background)
+    'border-violet-600 bg-violet-50 text-violet-700': this.currentStep === step,
+
+    // VALID (green)
+    'border-green-500 bg-green-50 text-green-700': status === true && this.currentStep !== step,
+
+    // INVALID (red)
+    'border-red-500 bg-red-50 text-red-700': status === false && this.currentStep !== step,
+
+    // DEFAULT (gray)
+    'border-gray-300 bg-gray-50 text-gray-500': status === null && this.currentStep !== step
   };
 }
+
+
+
+getStepIcon(step: number) {
+  if (this.stepStatus[step] === true) return '✔';
+  if (this.stepStatus[step] === false) return '✖';
+  return ''; // null status = empty
+}
+scrollToFirstInvalid() {
+  setTimeout(() => {
+    const invalidField: HTMLElement | null =
+      document.querySelector('.ng-invalid:not([disabled])');
+
+    if (invalidField) {
+      invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // add shake animation to invalid field
+      invalidField.classList.add('shake-anim');
+      setTimeout(() => {
+        invalidField.classList.remove('shake-anim');
+      }, 350);
+    }
+  }, 50);
+}
+
 
 
 
