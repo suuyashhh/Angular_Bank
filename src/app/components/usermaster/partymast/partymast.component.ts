@@ -476,6 +476,18 @@ export class PartymastComponent implements OnInit {
     });
   }
   submit() {
+      // make sure last step also validated
+  const lastValid = this.stepValidators[5]();
+  this.stepStatus[5] = lastValid;
+
+  // ensure all steps true
+  for (let i = 1; i <= 5; i++) {
+    if (this.stepStatus[i] !== true) {
+      this.toastr.error(`Step ${i} is not completed correctly`);
+      this.navigateTo(i);
+      return;
+    }
+  }
     if (!this.form) return;
 
     // -----------------------------
@@ -692,6 +704,7 @@ export class PartymastComponent implements OnInit {
         console.log(res);
 
         this.patchPartyMaster(res);
+        this.validateAllStepsOnEdit();
       }
     });
   }
@@ -1347,6 +1360,9 @@ export class PartymastComponent implements OnInit {
       this.form.reset();
     }
 
+    this.form.AcType = '0';
+    this.form.nmprefix = '';
+
     // 2️⃣ Reset picker selections
     this.selectedCountryCode = null;
     this.selectedCountryName = '';
@@ -1579,7 +1595,7 @@ stepValidators:any = {
   2: () => this.validateStep2(),
   3: () => this.validateStep3(),
   4: () => this.validateStep4(),
-  5: () => true
+  5: () => this.validateStep5()
 };
 
 
@@ -1796,6 +1812,80 @@ else {
   return valid;
 }
 
+validateStep5(): boolean {
+  let valid = true;
+
+  // ---------------------------
+  // 1️⃣ CHECKBOX + PICKER VALIDATION
+  // ---------------------------
+  if (!this.form.get('KycIdProof')?.value || !this.idproofCode) {
+    this.toastr.error("Please select I.D. Proof");
+    valid = false;
+  }
+
+  if (!this.form.get('KycAddrProof')?.value || !this.addrproofCode) {
+    this.toastr.error("Please select Address Proof");
+    valid = false;
+  }
+
+  // ---------------------------
+  // 2️⃣ REQUIRED FILES
+  // ---------------------------
+  const requiredFiles: { key: PreviewKey; label: string }[] = [
+    { key: 'photo', label: 'Photo' },
+    { key: 'sign', label: 'Signature' },
+    { key: 'pan', label: 'PAN Card' },
+    { key: 'aadhaarFront', label: 'Aadhaar Front' },
+    { key: 'aadhaarBack', label: 'Aadhaar Back' },
+  ];
+
+  for (let f of requiredFiles) {
+    if (!this.previews[f.key]) {
+      this.toastr.error(`${f.label} is required`);
+      valid = false;
+    }
+  }
+
+  // ---------------------------
+  // 3️⃣ IF INVALID → SHAKE + SCROLL
+  // ---------------------------
+  if (!valid) {
+    const stepEl = document.querySelector(
+      `label[for="step-${this.currentStep}"]`
+    ) as HTMLElement;
+
+    if (stepEl) {
+      stepEl.classList.add('step-shake');
+      setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+    }
+
+    this.scrollToMissingFile();
+  }
+
+  return valid;
+}
+
+private scrollToMissingFile() {
+  const fileKeys: PreviewKey[] = [
+    'photo',
+    'sign',
+    'pan',
+    'aadhaarFront',
+    'aadhaarBack'
+  ];
+
+  for (const key of fileKeys) {
+    if (!this.previews[key]) {
+      const el = document.querySelector(`[data-key="${key}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        break;
+      }
+    }
+  }
+}
+
+
 
 goToStep(step: number) {
   const current = this.currentStep;
@@ -1867,11 +1957,31 @@ getStepClass(step: number) {
 
 
 
-getStepIcon(step: number) {
-  if (this.stepStatus[step] === true) return '✔';
-  if (this.stepStatus[step] === false) return '✖';
-  return ''; // null status = empty
+getStepIcon(step: number): string {
+  const activeIcons: any = {
+    1: 'user',
+    2: 'home',
+    3: 'id',
+    4: 'office',
+    5: 'check-circle'
+  };
+
+  const current = this.currentStep;
+  const status = this.stepStatus[step];
+
+  // ACTIVE → main SVG
+  if (current === step) return activeIcons[step];
+
+  // VALID → green check
+  if (status === true) return 'check';
+
+  // INVALID → red cross
+  if (status === false) return 'cross';
+
+  // DEFAULT
+  return 'number';
 }
+
 scrollToFirstInvalid() {
   setTimeout(() => {
     const invalidField: HTMLElement | null =
@@ -1887,6 +1997,12 @@ scrollToFirstInvalid() {
       }, 350);
     }
   }, 50);
+}
+private validateAllStepsOnEdit() {
+  for (let s = 1; s <= 5; s++) {
+    const isValid = this.stepValidators[s]();
+    this.stepStatus[s] = isValid;
+  }
 }
 
 

@@ -1,3 +1,47 @@
+<svg style="display: none;">
+  <!-- USER -->
+  <symbol id="icon-user" viewBox="0 0 24 24">
+    <path d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 
+    2.2-5 5 2.2 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+  </symbol>
+
+  <!-- HOME -->
+  <symbol id="icon-home" viewBox="0 0 24 24">
+    <path d="M12 3l9 8h-3v10h-12v-10h-3z" />
+  </symbol>
+
+  <!-- ID CARD -->
+  <symbol id="icon-id" viewBox="0 0 24 24">
+    <path d="M3 4h18v16h-18v-16zm2 3v2h4v-2h-4zm8 0v2h6v-2h-6zm-8 4v2h4v-2h-4zm8 
+    0v2h6v-2h-6zm-8 4v2h10v-2h-10z" />
+  </symbol>
+
+  <!-- OFFICE -->
+  <symbol id="icon-office" viewBox="0 0 24 24">
+    <path d="M3 3h18v18h-18v-18zm4 4h2v2h-2v-2zm4 0h2v2h-2v-2zm4 
+    0h2v2h-2v-2zm-8 4h2v2h-2v-2zm4 0h2v2h-2v-2zm4 
+    0h2v2h-2v-2zm-8 4h10v2h-10v-2z" />
+  </symbol>
+
+  <!-- CHECK CIRCLE -->
+  <symbol id="icon-check-circle" viewBox="0 0 24 24">
+    <path d="M12 2c5.5 0 10 4.5 10 10s-4.5 10-10 
+    10-10-4.5-10-10 4.5-10 10-10zm-1 14l7-7-1.4-1.4-5.6 
+    5.6-2.6-2.6-1.4 1.4 4 4z" />
+  </symbol>
+
+  <!-- CHECK -->
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="M20 6l-11 11-5-5 1.4-1.4 3.6 3.6 9.6-9.6z" />
+  </symbol>
+
+  <!-- CROSS -->
+  <symbol id="icon-cross" viewBox="0 0 24 24">
+    <path d="M6 6l12 12m0-12l-12 12" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" />
+  </symbol>
+</svg>
+
+
 <!-- Full-bleed Wizard Page (complete) -->
 <main class="w-full px-6 py-8">
   <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
@@ -42,62 +86,219 @@
       <!-- /HEADER -->
 
       <!-- STEP radios (hidden) -->
-<input class="wizard-state" type="radio" name="wizard" id="step-1" checked />
-<input class="wizard-state" type="radio" name="wizard" id="step-2" />
-<input class="wizard-state" type="radio" name="wizard" id="step-3" />
-<input class="wizard-state" type="radio" name="wizard" id="step-4" />
-<input class="wizard-state" type="radio" name="wizard" id="step-5" />
+      <input class="wizard-state" type="radio" name="wizard" id="step-1" checked />
+      <input class="wizard-state" type="radio" name="wizard" id="step-2" />
+      <input class="wizard-state" type="radio" name="wizard" id="step-3" />
+      <input class="wizard-state" type="radio" name="wizard" id="step-4" />
+      <input class="wizard-state" type="radio" name="wizard" id="step-5" />
 
-<!-- Stepper -->
-<div class="wizard-steps my-6 w-full">
-  <div
-    class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
+      <!-- Stepper -->
+      <div class="wizard-steps my-6 w-full">
+        <div
+          class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
 
-    <div
-      class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-      [ngClass]="getStepClass(1)"
-      (click)="tryOpenStep(1)">
-      <span>{{ getStepIcon(1) || '1' }}</span>
-    </div>
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(1)" (click)="tryOpenStep(1)">
+            <ng-container [ngSwitch]="getStepIcon(1)">
 
-    <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
 
-    <div
-      class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-      [ngClass]="getStepClass(2)"
-      (click)="tryOpenStep(2)">
-      <span>{{ getStepIcon(2) || '2' }}</span>
-    </div>
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
 
-    <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
 
-    <div
-      class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-      [ngClass]="getStepClass(3)"
-      (click)="tryOpenStep(3)">
-      <span>{{ getStepIcon(3) || '3' }}</span>
-    </div>
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 1 }}</span>
 
-    <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+            </ng-container>
+          </div>
 
-    <div
-      class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-      [ngClass]="getStepClass(4)"
-      (click)="tryOpenStep(4)">
-      <span>{{ getStepIcon(4) || '4' }}</span>
-    </div>
 
-    <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
 
-    <div
-      class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-      [ngClass]="getStepClass(5)"
-      (click)="tryOpenStep(5)">
-      <span>{{ getStepIcon(5) || '5' }}</span>
-    </div>
+          <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
 
-  </div>
-</div>
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(2)" (click)="tryOpenStep(2)">
+            <ng-container [ngSwitch]="getStepIcon(2)">
+
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 2 }}</span>
+
+            </ng-container>
+          </div>
+
+          <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(3)" (click)="tryOpenStep(3)">
+            <ng-container [ngSwitch]="getStepIcon(3)">
+
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 3 }}</span>
+
+            </ng-container>
+          </div>
+
+          <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(4)" (click)="tryOpenStep(4)">
+            <ng-container [ngSwitch]="getStepIcon(4)">
+
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 4 }}</span>
+
+            </ng-container>
+          </div>
+
+          <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(5)" (click)="tryOpenStep(5)">
+            <ng-container [ngSwitch]="getStepIcon(5)">
+
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 5 }}</span>
+
+            </ng-container>
+          </div>
+
+        </div>
+      </div>
 
 
 
@@ -272,15 +473,21 @@
             </div>
 
             <div class="mt-6 flex items-center justify-between gap-3">
-              <label for="step-1"
-                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Cancel</label>
-              <label for="step-2" (click)="goToStep(2)"
-                class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-              <button type="button" (click)="goToStep(2)" class="btn-next">
-                Next
-              </button>
 
-            </div>
+  <!-- PREVIOUS -->
+  <button type="button" (click)="navigateTo(1)"
+    class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+    Previous
+  </button>
+
+  <!-- NEXT -->
+  <button type="button" (click)="goToStep(2)"
+    class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+    Next
+  </button>
+
+</div>
+
           </section>
 
           <!-- STEP 2: Address Details -->
@@ -563,18 +770,21 @@
 
             <!-- Nav buttons -->
             <div class="mt-6 flex items-center justify-between gap-3">
-              <label for="step-1"
+
+              <!-- PREVIOUS -->
+              <button type="button" (click)="navigateTo(1)"
                 class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
                 Previous
-              </label>
-              <label for="step-3" class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
-                Next
-              </label>
-              <button type="button" (click)="goToStep(3)" class="btn-next">
+              </button>
+
+              <!-- NEXT -->
+              <button type="button" (click)="goToStep(3)"
+                class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
                 Next
               </button>
 
             </div>
+
           </section>
 
 
@@ -803,15 +1013,21 @@
             </div>
 
             <div class="mt-6 flex items-center justify-between gap-3">
-              <label for="step-2"
-                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-              <label for="step-4"
-                class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-              <button type="button" (click)="goToStep(4)" class="btn-next">
-                Next
-              </button>
 
-            </div>
+  <!-- PREVIOUS -->
+  <button type="button" (click)="navigateTo(2)"
+    class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+    Previous
+  </button>
+
+  <!-- NEXT -->
+  <button type="button" (click)="goToStep(4)"
+    class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+    Next
+  </button>
+
+</div>
+
           </section>
 
           <!-- STEP 4: Other Details (omitted lengthy bits for brevity) -->
@@ -900,15 +1116,20 @@
             </div>
 
             <div class="mt-6 flex items-center justify-between gap-3">
-              <label for="step-3"
-                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-              <label for="step-5"
-                class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-              <button type="button" (click)="goToStep(2)" class="btn-next">
-                Next
-              </button>
 
-            </div>
+  <!-- PREVIOUS -->
+  <button type="button" (click)="navigateTo(3)"
+    class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+    Previous
+  </button>
+
+  <!-- NEXT -->
+  <button type="button" (click)="goToStep(5)"
+    class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+    Next
+  </button>
+
+</div>
           </section>
 
           <!-- STEP 5: KYC Details -->
