@@ -24,6 +24,20 @@
         <div class="menu-inner-shadow"></div>
 
         <ul class="menu-inner py-1">
+
+          <!-- Hardcoded Home -->
+          <li class="menu-item"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }">
+            <a routerLink="/USERMASTER/dashboard" 
+               class="menu-link"
+               title="Home">   <!-- tooltip added -->
+              <i class="menu-icon tf-icons ri-home-smile-line"></i>
+              <div>Home</div>
+            </a>
+          </li>
+
+          <!-- Dynamic tree -->
           <ng-container *ngFor="let root of menuTree">
             <ng-container *ngIf="root.visible">
               <ng-container *ngTemplateOutlet="menuNodeTpl; context: { $implicit: root }"></ng-container>
@@ -31,12 +45,12 @@
           </ng-container>
         </ul>
       </aside>
-      <!-- / Menu -->
     </div>
   </div>
 </nav>
 
-<!-- Reusable node template: produces exactly ONE <li> per node -->
+
+<!-- Reusable node template -->
 <ng-template #menuNodeTpl let-node>
   <ng-container *ngIf="node.visible">
     <li class="menu-item"
@@ -44,9 +58,12 @@
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: false }">
 
-      <!-- If node has visible children: show toggle and nested UL -->
+      <!-- Parent node -->
       <ng-container *ngIf="hasVisibleChildren(node); else leafTemplate">
-        <a href="javascript:void(0);" class="menu-link menu-toggle" (click)="toggleExpand(node)">
+        <a href="javascript:void(0);"
+           class="menu-link menu-toggle"
+           (click)="toggleExpand(node)"
+           [title]="node.name">  <!-- tooltip added -->
           <i class="menu-icon ri-folder-2-fill"></i>
           <div>{{ node.name }}</div>
         </a>
@@ -60,16 +77,19 @@
         </ul>
       </ng-container>
 
-      <!-- Leaf template -->
+      <!-- Leaf node -->
       <ng-template #leafTemplate>
         <a *ngIf="node.routerLink"
            [routerLink]="node.routerLink"
-           class="menu-link">
+           class="menu-link"
+           [title]="node.name">  <!-- tooltip added -->
           <i class="menu-icon ri-file-text-line"></i>
           <div>{{ node.name }}</div>
         </a>
 
-        <a *ngIf="!node.routerLink" class="menu-link">
+        <a *ngIf="!node.routerLink"
+           class="menu-link"
+           [title]="node.name">  <!-- tooltip added -->
           <i class="menu-icon ri-file-text-line"></i>
           <div>{{ node.name }}</div>
         </a>
