@@ -29,7 +29,8 @@ export class CitymstComponent {
 
   @ViewChild('countryNameField') countryNameField!: ElementRef;
 
-  isCreatingNew = false;
+  isCreatingNew = false;   // controls visibility of inline form
+  isEditMode = false;      // true when editing existing city
   btn: string = '';
   city_code = 0;
 
@@ -160,6 +161,10 @@ export class CitymstComponent {
   }
 
   openCountry() {
+    // if (!this.isEditMode) {
+    //   this.toastr.info('Country cannot be changed in edit mode.');
+    //   return;
+    // }
     this.api.get('CountryMaster/GetAll').subscribe({
       next: (res: any) => {
         const raw = Array.isArray(res) ? res : (res?.data && Array.isArray(res.data) ? res.data : (res ? [res] : []));
@@ -180,6 +185,10 @@ export class CitymstComponent {
   }
 
   openState() {
+    // if (!this.isEditMode) {
+    //   this.toastr.info('State cannot be changed in edit mode.');
+    //   return;
+    // }
     this.api.get('StateMaster/GetAll').subscribe({
       next: (res: any) => {
         const raw = Array.isArray(res) ? res : (res?.data && Array.isArray(res.data) ? res.data : (res ? [res] : []));
@@ -199,39 +208,71 @@ export class CitymstComponent {
     });
   }
 
-  openTaluka() {
-    this.api.get('TalukaMaster/GetAll').subscribe({
-      next: (res: any) => {
-        const raw = Array.isArray(res) ? res : (res?.data && Array.isArray(res.data) ? res.data : (res ? [res] : []));
-        const list = raw.map((x: any) => ({
-          code: Number(x.code ?? x.Code ?? x.TALUKA_CODE ?? 0),
-          name: String(x.name ?? x.Name ?? x.taluka_Name ?? x.TALUKA_NAME ?? '')
-        }));
-        this.dropdown.openPicker('taluka', list).then(sel => {
-          if (sel) {
-            this.SelectedTalukaName = sel.name;
-            this.SelectedTalukaCode = Number(sel.code ?? 0);
-            this.data.patchValue({ TALUKA_CODE: this.SelectedTalukaCode });
-          }
-        });
-      },
-      error: () => this.toastr.error('Failed to load Taluka.')
-    });
-  }
-
   openDistrict() {
-    this.api.get('DistrictMaster/GetAll').subscribe({
+    // if (!this.isEditMode) {
+    //   this.toastr.info('Disrict cannot be changed in edit mode.');
+    //   return;
+    // }
+    // 1. Guard: need country + state selected first
+    if (!this.selectedCountryCode) {
+      this.toastr.error('Please select Country first.');
+      return;
+    }
+    if (!this.selectedStateCode) {
+      this.toastr.error('Please select State first.');
+      return;
+    }
+
+    // ✅ names match controller: countryCode, stateCode
+    const url =
+      `CityMaster/GetDistrictsByState` +
+      `?countryCode=${encodeURIComponent(this.selectedCountryCode!)}` +
+      `&stateCode=${encodeURIComponent(this.selectedStateCode!)}`;
+
+    this.api.get(url).subscribe({
       next: (res: any) => {
-        const raw = Array.isArray(res) ? res : (res?.data && Array.isArray(res.data) ? res.data : (res ? [res] : []));
+        const raw = Array.isArray(res)
+          ? res
+          : (res?.data && Array.isArray(res.data)
+            ? res.data
+            : (res ? [res] : []));
+        console.log('district raw from API:', raw);
+
+        // IMPORTANT: use DIST_CODE / DIST_NAME (as per SQL/DTO)
         const list = raw.map((x: any) => ({
-          code: Number(x.code ?? x.Code ?? x.DISTRICT_CODE ?? 0),
-          name: String(x.name ?? x.Name ?? x.dist_Name ?? x.DISTRICT_NAME ?? '')
+          code: Number(
+            x.DIST_CODE ??
+            x.DISTRICT_CODE ??
+            x.Code ??
+            x.code ??
+            0
+          ),
+          name: String(
+            x.DIST_NAME ??
+            x.DISTRICT_NAME ??
+            x.Name ??
+            x.name ??
+            ''
+          )
         }));
+
         this.dropdown.openPicker('district', list).then(sel => {
           if (sel) {
             this.SelectedDistrictName = sel.name;
             this.SelectedDistrictCode = Number(sel.code ?? 0);
-            this.data.patchValue({ DISTRICT_CODE: this.SelectedDistrictCode });
+
+            this.data.patchValue({
+              DISTRICT_CODE: this.SelectedDistrictCode,
+              DISTRICT_NAME: this.SelectedDistrictName
+            });
+
+            // reset taluka when district changes
+            this.SelectedTalukaName = '';
+            this.SelectedTalukaCode = 0;
+            this.data.patchValue({
+              TALUKA_CODE: null,
+              TALUKA_NAME: ''
+            });
           }
         });
       },
@@ -239,8 +280,75 @@ export class CitymstComponent {
     });
   }
 
+
+
+
+  openTaluka() {
+    // if (!this.isEditMode) {
+    //   this.toastr.info('Taluka cannot be changed in edit mode.');
+    //   return;
+    // }
+    if (!this.selectedCountryCode) {
+      this.toastr.error('Please select Country first.');
+      return;
+    }
+    if (!this.selectedStateCode) {
+      this.toastr.error('Please select State first.');
+      return;
+    }
+    if (!this.SelectedDistrictCode) {
+      this.toastr.error('Please select District first.');
+      return;
+    }
+
+    // ✅ names match controller: countryCode, stateCode, distCode
+    const url =
+      `CityMaster/GetTalukasByDistrict` +
+      `?countryCode=${encodeURIComponent(this.selectedCountryCode!)}` +
+      `&stateCode=${encodeURIComponent(this.selectedStateCode!)}` +
+      `&distCode=${encodeURIComponent(this.SelectedDistrictCode!)}`;
+
+    this.api.get(url).subscribe({
+      next: (res: any) => {
+        const raw = Array.isArray(res)
+          ? res
+          : (res?.data && Array.isArray(res.data)
+            ? res.data
+            : (res ? [res] : []));
+
+        const list = raw.map((x: any) => ({
+          code: Number(
+            x.TALUKA_CODE ??
+            x.Code ??
+            x.code ??
+            0
+          ),
+          name: String(
+            x.TALUKA_NAME ??
+            x.Name ??
+            x.name ??
+            ''
+          )
+        }));
+
+        this.dropdown.openPicker('taluka', list).then(sel => {
+          if (sel) {
+            this.SelectedTalukaName = sel.name;
+            this.SelectedTalukaCode = Number(sel.code ?? 0);
+            this.data.patchValue({
+              TALUKA_CODE: this.SelectedTalukaCode,
+              TALUKA_NAME: this.SelectedTalukaName
+            });
+          }
+        });
+      },
+      error: () => this.toastr.error('Failed to load Taluka.')
+    });
+  }
+
   resetCityForm(): void {
-    this.isCreatingNew = true;
+    this.isCreatingNew = true;   // show form
+    this.isEditMode = false;     // NEW mode, not edit
     this.btn = '';
     this.city_code = 0;
     this.selectedCountryCode = null;
@@ -261,7 +369,8 @@ export class CitymstComponent {
       this.toastr.warning('Invalid city id for edit');
       return;
     }
-    this.isCreatingNew = true;
+    this.isCreatingNew = true;  // show form
+    this.isEditMode = true;     // EDIT mode
     this.btn = action;
 
     this.SelectedCityCode = cityCode ?? null;
@@ -319,15 +428,15 @@ export class CitymstComponent {
   // Save or Update
   submit(): void {
     debugger
-  const cityName = this.data.get('CITY_NAME')?.value?.trim();
+    const cityName = this.data.get('CITY_NAME')?.value?.trim();
 
-  if (!cityName) {
-    this.toastr.warning('Please enter city name', 'Validation');
-    // better focus on city input instead of country
-    const cityInput = document.getElementById('cityName') as HTMLInputElement | null;
-    cityInput?.focus();
-    return;
-  }
+    if (!cityName) {
+      this.toastr.warning('Please enter city name', 'Validation');
+      // better focus on city input instead of country
+      const cityInput = document.getElementById('cityName') as HTMLInputElement | null;
+      cityInput?.focus();
+      return;
+    }
 
 
     const v = this.data.value;
@@ -359,6 +468,7 @@ export class CitymstComponent {
         this.toastr.success(res?.message ?? (isEdit ? 'Updated' : 'Saved'));
         this.saving = false;
         this.isCreatingNew = false;
+        this.isEditMode = false;
         this.data.reset({ CITY_CODE: 0, CITY_NAME: '', COUNTRY_CODE: 0, STATE_CODE: 0, TALUKA_CODE: 0, DISTRICT_CODE: 0 });
         this.selectedCountryCode = null;
         this.selectedStateCode = null;
@@ -433,6 +543,11 @@ export class CitymstComponent {
         this.toastr.error('Failed to delete city');
       }
     });
+  }
+
+  closeForm(): void {
+    this.isCreatingNew = false;
+    this.isEditMode = false;
   }
 
   filteredCountries() {
