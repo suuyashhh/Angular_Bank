@@ -1,0 +1,239 @@
+<main class="w-full px-6 py-8">
+  <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
+    <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
+
+      <!-- Header -->
+      <div class="mb-6 flex items-center justify-between">
+        <nav class="text-sm text-gray-600">
+          <ol class="flex items-center gap-2">
+            <li><a routerLink="/USERMASTER/dashboard" class="hover:underline">Home</a></li>
+            <li>/</li>
+            <li class="font-semibold">Staff Master</li>
+          </ol>
+        </nav>
+        <div>
+          <button class="btn btn-primary" (click)="resetStaffForm()">
+            <i class="ri-add-box-fill"></i> New
+          </button>
+        </div>
+      </div>
+
+      <!-- Inline form (add / edit) -->
+      <div *ngIf="isCreatingNew" class="mb-6">
+        <div class="card p-4 rounded-lg shadow-sm border-0">
+          <div class="d-flex justify-content-between items-center mb-3">
+            <h5 class="mb-0">{{ isEditMode ? 'Edit Staff' : 'New Staff' }}</h5>
+            <button class="btn-close" type="button" aria-label="Close" (click)="closeForm()"></button>
+          </div>
+
+          <!-- Reactive form -->
+          <form [formGroup]="data" (ngSubmit)="submit()" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+            <!-- Staff Code -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input
+                type="number"
+                class="form-control"
+                placeholder="Code"
+                formControlName="STAFF_CODE"
+                #countryNameField
+              />
+              <label>Code</label>
+            </div>
+
+            <!-- Staff Name -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Name"
+                formControlName="STAFF_NAME"
+                id="StaffName"
+              />
+              <label>Name</label>
+            </div>
+
+            <!-- Entry Date -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input
+                type="date"
+                class="form-control"
+                formControlName="DATE"
+                placeholder="Entry Date"
+              />
+              <label>Entry Date</label>
+            </div>
+
+            <!-- Buttons -->
+            <div class="sm:col-span-3 mt-4 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border hover:bg-gray-200"
+                (click)="closeForm()"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="px-5 py-2.5 rounded-xl bg-violet-600 text-white font-medium shadow hover:bg-violet-700"
+                [disabled]="saving || data.invalid"
+              >
+                {{ saving ? 'Saving...' : (isEditMode ? 'Update' : 'Save') }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="mt-6">
+          <hr
+            class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6"
+          />
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="container-xxl flex-grow-1 mt-6">
+        <div class="card">
+
+          <!-- Search -->
+          <div class="p-3 d-flex justify-content-end">
+            <div class="form-floating form-floating-outline">
+              <input
+                class="form-control"
+                type="search"
+                placeholder="Search ..."
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="page = 1"
+                id="html5-search-input"
+                name="searchTerm"
+              />
+              <label for="html5-search-input">
+                <i class="ri-search-2-fill"></i> Search by Name
+              </label>
+            </div>
+          </div>
+
+          <!-- Loading -->
+          <div *ngIf="loading" class="text-center p-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+
+          <!-- Table content -->
+          <div *ngIf="!loading">
+            <div class="table-responsive text-nowrap">
+              <table class="table">
+                <thead class="table-dark" style="--bs-table-bg: #8c57ff !important;">
+                  <tr>
+                    <th>Sr</th>
+                    <th>Actions</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Entry Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let s of filteredCountries() | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index"
+                  >
+                    <td>{{ (page - 1) * pageSize + i + 1 }}</td>
+                    <td>
+                      <div class="btn-group btn-group-sm" role="group" style="gap: 6px;">
+                        <button
+                          class="btn btn-primary text-white"
+                          (click)="openInlineForm(s.CODE, 'E')"
+                          title="Edit"
+                        >
+                          <i class="ri-pencil-line"></i>
+                          <span class="d-none d-sm-inline">Edit</span>
+                        </button>
+                        <button
+                          class="btn btn-danger text-white"
+                          (click)="deleteStaff(s.CODE)"
+                          title="Delete"
+                        >
+                          <i class="ri-delete-bin-6-line"></i>
+                          <span class="d-none d-sm-inline">Delete</span>
+                        </button>
+                      </div>
+                    </td>
+                    <td><strong>{{ s.CODE }}</strong></td>
+                    <td><strong>{{ s.NAME }}</strong></td>
+                    <td><strong>{{ s.DATE }}</strong></td>
+                  </tr>
+
+                  <tr *ngIf="(filteredCountries() || []).length === 0">
+                    <td colspan="5" class="text-center text-muted py-4">No Staff found.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination summary & controls -->
+            <div class="d-flex justify-content-between align-items-center p-3">
+              <div class="text-muted" *ngIf="(filteredCountries() || []).length > 0">
+                Showing
+                {{ (page - 1) * pageSize + 1 }}
+                to
+                {{
+                  page * pageSize > (filteredCountries() || []).length
+                    ? (filteredCountries() || []).length
+                    : page * pageSize
+                }}
+                of {{ (filteredCountries() || []).length }} entries
+              </div>
+
+              <pagination-controls
+                (pageChange)="page = $event"
+                [autoHide]="true"
+              ></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; width: 90%;">
+      <div class="modal-content" style="border-radius: 12px;">
+        <div class="modal-header" style="background-color: #e74c3c; color:#fff;">
+          <h5 class="modal-title">
+            <i class="ri-delete-bin-6-line"></i> Confirm Deletion
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body text-center">
+          <i class="ri-alert-fill" style="font-size:3rem;color:#e74c3c;"></i>
+          <h5>Are you sure?</h5>
+          <p>
+            You are about to delete this staff record.
+            This action cannot be undone.
+          </p>
+        </div>
+
+        <div class="modal-footer" style="justify-content:center;gap:12px;">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+            (click)="closeForm()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="executeDelete()"
+            data-bs-dismiss="modal"
+          >
+            <i class="ri-delete-bin-6-line"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
