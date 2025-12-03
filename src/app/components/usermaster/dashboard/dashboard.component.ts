@@ -25,7 +25,7 @@ export class DashboardComponent {
     { pathName: 'Taluka Master', link: '/USERMASTER/talukamst' },
     { pathName: 'City Master', link: '/USERMASTER/citymst'},
     { pathName: 'Staff Master', link: '/USERMASTER/staffmst'},
-    { pathName: 'Religion Master', link: '/USERMASTER/religionmst'}
+    { pathName: 'Religion Master', link: '/USERMASTER/religionmst'},
     { pathName: 'User Menu Access', link: '/USERMASTER/UserMenuAccess' },
     { pathName: 'Check Menu Id', link: '/USERMASTER/CheckMenuId' },
   ];

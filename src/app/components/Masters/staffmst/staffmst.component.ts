@@ -3,10 +3,10 @@ import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } 
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from '../../../services/api.service';
 import { PickerService } from '../../../services/picker.service';
-import { DropdownService } from '../../../shared/services/dropdown.service.ts.service';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { RouterModule } from '@angular/router';
+import { DropdownService } from '../../../shared/services/dropdown.service';
 
 @Component({
   selector: 'app-staffmst',

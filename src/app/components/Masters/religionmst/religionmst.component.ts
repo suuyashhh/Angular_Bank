@@ -3,10 +3,11 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { PickerService } from '../../../services/picker.service';
-import { DropdownService } from '../../../shared/services/dropdown.service.ts.service';
+
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { DropdownService } from '../../../shared/services/dropdown.service';
 
 @Component({
   selector: 'app-religionmst',

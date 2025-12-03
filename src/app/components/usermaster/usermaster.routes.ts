@@ -95,7 +95,7 @@ export const UserMaster_Routes: Routes = [
     loadComponent:() =>
       import('../Masters/religionmst/religionmst.component').then((m) => m.ReligionmstComponent),
     title: 'Religion Master  | SmartBank ',
-  }
+  },
 
 
   {
