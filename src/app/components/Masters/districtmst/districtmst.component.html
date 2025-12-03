@@ -28,9 +28,9 @@
 
             <!-- Country readonly input (opens picker) -->
             <div class="form-floating form-floating-outline mb-0">
-              <input type="text" id="addr_Country" class="form-control" placeholder="Select Country"
-                     readonly (click)="openCountry()" [value]="selectedCountryName"
-                     style="cursor:pointer" #countryNameField />
+              <input type="text" id="addr_Country" class="form-control" placeholder="Select Country" readonly
+                (click)="btn !== 'E' && openCountry()" [value]="selectedCountryName" style="cursor:pointer" />
+
               <!-- hidden form control stores the selected Country code -->
               <input type="hidden" formControlName="COUNTRY_CODE" />
               <label for="addr_city">Country</label>
@@ -38,8 +38,9 @@
 
             <!-- State readonly input (opens picker) -->
             <div class="form-floating form-floating-outline mb-0">
-              <input type="text" class="form-control" placeholder="Select State"
-                     readonly (click)="openState()" [value]="selectedStateName" style="cursor:pointer" />
+              <input type="text" class="form-control" placeholder="Select State" readonly
+                (click)="btn !== 'E' && openState()" [value]="selectedStateName" style="cursor:pointer" />
+
               <input type="hidden" formControlName="STATE_CODE" />
               <label for="addr_city">State</label>
             </div>
@@ -47,27 +48,28 @@
             <!-- District Name -->
             <div class="form-floating form-floating-outline mb-0">
               <input id="districtName" formControlName="DISTRICT_NAME" type="text"
-                     class="form-control block w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
-                     placeholder="District Name" />
+                class="form-control block w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+                placeholder="District Name" />
               <label for="districtName" class="text-gray-600 ml-1">District Name</label>
             </div>
 
             <!-- District Code (hidden) -->
             <div class="hidden form-floating form-floating-outline mb-0">
               <input id="DistrictCode" formControlName="DISTRICT_CODE" type="text"
-                     class="form-control block w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-md" placeholder="Code" readonly />
+                class="form-control block w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-md"
+                placeholder="Code" readonly />
               <label for="DistrictCode" class="text-gray-600 ml-1">Code</label>
             </div>
 
             <!-- Submit Button Row -->
             <div class="sm:col-span-3 mt-4 flex items-center justify-end gap-3">
               <button type="button"
-                      class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200"
-                      (click)="isCreatingNew=false">Cancel</button>
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200"
+                (click)="isCreatingNew=false">Cancel</button>
 
               <button type="submit"
-                      class="px-5 py-2.5 rounded-xl bg-violet-600 text-white font-medium shadow hover:bg-violet-700"
-                      [disabled]="saving">
+                class="px-5 py-2.5 rounded-xl bg-violet-600 text-white font-medium shadow hover:bg-violet-700"
+                [disabled]="saving">
                 {{ saving ? 'Saving...' : (btn === 'E' ? 'Update' : 'Save') }}
               </button>
             </div>
@@ -86,7 +88,7 @@
           <div class="p-3 d-flex justify-content-end">
             <div class="form-floating form-floating-outline">
               <input class="form-control" type="search" placeholder="Search ..." [(ngModel)]="searchTerm"
-                     (ngModelChange)="page = 1"  id="html5-search-input" />
+                (ngModelChange)="page = 1" id="html5-search-input" />
               <label for="html5-search-input"><i class="ri-search-2-fill"></i> Search by Name</label>
             </div>
           </div>
@@ -108,24 +110,22 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let c of filteredCountries() | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+                  <tr
+                    *ngFor="let c of filteredCountries() | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
                     <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                     <td>
                       <div class="btn-group btn-group-sm" role="group" style="gap: 6px;">
-                        <button class="btn btn-purple text-white" (click)="openInlineForm(c.DISTRICT_CODE, c.STATE_CODE, c.COUNTRY_CODE, 'E')" title="Edit">
-                          <i class="ri-pencil-line"></i> <span class="d-none d-sm-inline">Edit</span>
-                        </button>
-                        <button class="btn btn-danger text-white" (click)="deleteCountry(c.DISTRICT_CODE, c.DISTRICT_NAME, c.STATE_CODE, c.COUNTRY_CODE)" title="Delete">
+
+                        <button class="btn btn-primary text-white"
+                          (click)="openInlineForm(c.DISTRICT_CODE, c.STATE_CODE, c.COUNTRY_CODE, 'E')" title="Edit">
+                          <i class="ri-pencil-line"></i><span class="d-none d-sm-inline">Edit</span> </button>
+
+                        <button class="btn btn-danger text-white"
+                          (click)="deleteCountry(c.DISTRICT_CODE, c.DISTRICT_NAME, c.STATE_CODE, c.COUNTRY_CODE)"
+                          title="Delete">
                           <i class="ri-delete-bin-6-line"></i> <span class="d-none d-sm-inline">Delete</span>
                         </button>
                       </div>
-                      <style>
-                        .btn-purple {
-                          background-color: #6f42c1;
-                          border-color: #6f42c1;
-                        }
-                        .btn-purple:hover { background-color: #5a2d9c; }
-                      </style>
                     </td>
                     <td><strong>{{ c.DISTRICT_NAME }}</strong></td>
                     <td><strong>{{ c.STATE_NAME }}</strong></td>
@@ -158,11 +158,13 @@
       <div class="modal-content" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
 
         <!-- Header -->
-        <div class="modal-header" style="background-color: #e74c3c; color: #fff; border-bottom: none; padding: 12px 16px;">
+        <div class="modal-header"
+          style="background-color: #e74c3c; color: #fff; border-bottom: none; padding: 12px 16px;">
           <h5 class="modal-title" style="font-size: 1rem; margin: 0; display: flex; align-items: center;">
             <i class="ri-delete-bin-6-line" style="margin-right: 8px; font-size: 1.2rem;"></i> Confirm Deletion
           </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
+            style="filter: invert(1);"></button>
         </div>
 
         <!-- Body -->
@@ -177,7 +179,8 @@
         </div>
 
         <!-- Footer -->
-        <div class="modal-footer" style="display: flex; justify-content: center; gap: 12px; border-top: none; padding: 16px;">
+        <div class="modal-footer"
+          style="display: flex; justify-content: center; gap: 12px; border-top: none; padding: 16px;">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
             style="padding: 8px 20px; border-radius: 20px; font-weight: 500;">
             Cancel

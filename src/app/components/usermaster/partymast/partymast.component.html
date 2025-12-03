@@ -1,3 +1,47 @@
+<svg style="display: none;">
+  <!-- USER -->
+  <symbol id="icon-user" viewBox="0 0 24 24">
+    <path d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 
+    2.2-5 5 2.2 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+  </symbol>
+
+  <!-- HOME -->
+  <symbol id="icon-home" viewBox="0 0 24 24">
+    <path d="M12 3l9 8h-3v10h-12v-10h-3z" />
+  </symbol>
+
+  <!-- ID CARD -->
+  <symbol id="icon-id" viewBox="0 0 24 24">
+    <path d="M3 4h18v16h-18v-16zm2 3v2h4v-2h-4zm8 0v2h6v-2h-6zm-8 4v2h4v-2h-4zm8 
+    0v2h6v-2h-6zm-8 4v2h10v-2h-10z" />
+  </symbol>
+
+  <!-- OFFICE -->
+  <symbol id="icon-office" viewBox="0 0 24 24">
+    <path d="M3 3h18v18h-18v-18zm4 4h2v2h-2v-2zm4 0h2v2h-2v-2zm4 
+    0h2v2h-2v-2zm-8 4h2v2h-2v-2zm4 0h2v2h-2v-2zm4 
+    0h2v2h-2v-2zm-8 4h10v2h-10v-2z" />
+  </symbol>
+
+  <!-- CHECK CIRCLE -->
+  <symbol id="icon-check-circle" viewBox="0 0 24 24">
+    <path d="M12 2c5.5 0 10 4.5 10 10s-4.5 10-10 
+    10-10-4.5-10-10 4.5-10 10-10zm-1 14l7-7-1.4-1.4-5.6 
+    5.6-2.6-2.6-1.4 1.4 4 4z" />
+  </symbol>
+
+  <!-- CHECK -->
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="M20 6l-11 11-5-5 1.4-1.4 3.6 3.6 9.6-9.6z" />
+  </symbol>
+
+  <!-- CROSS -->
+  <symbol id="icon-cross" viewBox="0 0 24 24">
+    <path d="M6 6l12 12m0-12l-12 12" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" />
+  </symbol>
+</svg>
+
+
 <!-- Full-bleed Wizard Page (complete) -->
 <main class="w-full px-6 py-8">
   <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
@@ -19,13 +63,23 @@
         <div>
           <button type="button"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50"
-            title="Edit display names">
+            title="Edit display names" (click)="openEdit()" *ngIf="!isEditMode">
             <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
               aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
             </svg>
             Edit Names
+          </button>
+          <button type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50"
+            title="Edit display names" (click)="openEdit()" *ngIf="isEditMode">
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            New Names
           </button>
         </div>
       </div>
@@ -42,26 +96,227 @@
       <div class="wizard-steps my-6 w-full">
         <div
           class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
-          <label for="step-1"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">1</label>
+
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(1)" (click)="tryOpenStep(1)">
+            <ng-container [ngSwitch]="getStepIcon(1)">
+
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 1 }}</span>
+
+            </ng-container>
+          </div>
+
+
+
           <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
-          <label for="step-2"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">2</label>
+
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(2)" (click)="tryOpenStep(2)">
+            <ng-container [ngSwitch]="getStepIcon(2)">
+
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 2 }}</span>
+
+            </ng-container>
+          </div>
+
           <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
-          <label for="step-3"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">3</label>
+
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(3)" (click)="tryOpenStep(3)">
+            <ng-container [ngSwitch]="getStepIcon(3)">
+
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 3 }}</span>
+
+            </ng-container>
+          </div>
+
           <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
-          <label for="step-4"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">4</label>
+
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(4)" (click)="tryOpenStep(4)">
+            <ng-container [ngSwitch]="getStepIcon(4)">
+
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 4 }}</span>
+
+            </ng-container>
+          </div>
+
           <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
-          <label for="step-5"
-            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-200 bg-gray-50 text-gray-500 font-bold cursor-pointer transition-all duration-200">5</label>
+
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(5)" (click)="tryOpenStep(5)">
+            <ng-container [ngSwitch]="getStepIcon(5)">
+
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 5 }}</span>
+
+            </ng-container>
+          </div>
+
         </div>
+      </div>
+
+
+
+
+      <div class="form-floating form-floating-outline mb-4" *ngIf="isEditMode">
+        <div class="form-floating form-floating-outline mb-4">
+          <input class="form-control" [(ngModel)]="searchText" readonly (click)="getCustomers()"
+            placeholder="Customer ID" />
+
+          <label for="demo">Customer ID</label>
+        </div>
+
+        <app-dropdpwn-modal></app-dropdpwn-modal>
       </div>
 
       <!-- Panels -->
       <div class="wizard-panels">
-        <form [formGroup]="form" novalidate (ngSubmit)="submit()">
+        <form [formGroup]="form">
           <!-- STEP 1: Basic Details -->
           <section id="panel-1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step-1">
             <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
@@ -73,7 +328,8 @@
 
               <!-- A/C Type: bound to accountType -->
               <div class="form-floating form-floating-outline mb-4">
-                <select id="basic_accountType" class="form-select" [(ngModel)]="accountType" name="accountType" formControlName="AcType">
+                <select id="basic_accountType" class="form-select" [(ngModel)]="accountType" name="accountType"
+                  formControlName="AcType">
                   <option value="0">Individual</option>
                   <option value="1">Co.Op.Soc.</option>
                   <option value="2">Proprietor Ship</option>
@@ -108,7 +364,8 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="text" class="form-control" placeholder="PAN No" validatedInput="pan" panFormat formControlName="panNo" />
+                  <input type="text" class="form-control" placeholder="PAN No" validatedInput="pan" panFormat
+                    formControlName="panNo" />
 
                   <label>PAN No</label>
 
@@ -180,7 +437,8 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="text" class="form-control" placeholder="GST No" validatedInput="gst" gstFormat formControlName="GSTNo" />
+                  <input type="text" class="form-control" placeholder="GST No" validatedInput="gst" gstFormat
+                    formControlName="GSTNo" />
 
                   <label>GST No</label>
 
@@ -207,18 +465,29 @@
 
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
-                  <input type="text" id="basic_name" class="form-control" restrict="customerName" placeholder="Name" formControlName="name" />
+                  <input type="text" id="basic_name" class="form-control" restrict="customerName" placeholder="Name"
+                    formControlName="name" />
                   <label for="basic_name">Name</label>
                 </div>
               </div>
             </div>
 
             <div class="mt-6 flex items-center justify-between gap-3">
-              <label for="step-1"
-                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Cancel</label>
-              <label for="step-2"
-                class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-            </div>
+
+  <!-- PREVIOUS -->
+  <button type="button" (click)="navigateTo(1)"
+    class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+    Previous
+  </button>
+
+  <!-- NEXT -->
+  <button type="button" (click)="goToStep(2)"
+    class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+    Next
+  </button>
+
+</div>
+
           </section>
 
           <!-- STEP 2: Address Details -->
@@ -339,7 +608,8 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="text" class="form-control" placeholder="Phone No" validatedInput="phone" phoneFormat formControlName="phone" />
+                  <input type="text" class="form-control" placeholder="Phone No" validatedInput="phone" phoneFormat
+                    formControlName="phone" />
 
                   <label>Phone No</label>
 
@@ -386,8 +656,8 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="text" class="form-control" placeholder="Mobile No" validatedInput="mobile"
-                    mobileFormat formControlName="mobile" />
+                  <input type="text" class="form-control" placeholder="Mobile No" validatedInput="mobile" mobileFormat
+                    formControlName="mobile" />
 
                   <label>Mobile No</label>
 
@@ -420,25 +690,25 @@
 
               <h5 class="mb-4 text-md font-semibold">Corresponding Address</h5>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">  
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Corresponding Address lines -->
-              <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_corresponding_line1" class="form-control" name="correspondingAddrLine1"
-                  placeholder="Corresponding Address" formControlName="CorrAddr1" />
-                <label for="addr_corresponding_line1">Corresponding Address</label>
-              </div>
+                <div class="form-floating form-floating-outline mb-4">
+                  <input type="text" id="addr_corresponding_line1" class="form-control" name="correspondingAddrLine1"
+                    placeholder="Corresponding Address" formControlName="CorrAddr1" />
+                  <label for="addr_corresponding_line1">Corresponding Address</label>
+                </div>
 
-              <div class="form-floating form-floating-outline mb-4 always-float">
-                <input type="text" id="addr_corresponding_line2" class="form-control" name="correspondingAddrLine2"
-                  placeholder="Corresponding Address II" formControlName="CorrAddr2" />
-                <label for="addr_corresponding_line2">Corresponding Address II</label>
-              </div>
+                <div class="form-floating form-floating-outline mb-4 always-float">
+                  <input type="text" id="addr_corresponding_line2" class="form-control" name="correspondingAddrLine2"
+                    placeholder="Corresponding Address II" formControlName="CorrAddr2" />
+                  <label for="addr_corresponding_line2">Corresponding Address II</label>
+                </div>
 
-              <div class="form-floating form-floating-outline mb-4 always-float">
-                <input type="text" id="addr_corresponding_line3" class="form-control" name="correspondingAddrLine3"
-                  placeholder="Corresponding Address III" formControlName="CorrAddr3" />
-                <label for="addr_corresponding_line3">Corresponding Address III</label>
-              </div>
+                <div class="form-floating form-floating-outline mb-4 always-float">
+                  <input type="text" id="addr_corresponding_line3" class="form-control" name="correspondingAddrLine3"
+                    placeholder="Corresponding Address III" formControlName="CorrAddr3" />
+                  <label for="addr_corresponding_line3">Corresponding Address III</label>
+                </div>
 
                 <!-- City -->
                 <div class="form-floating form-floating-outline mb-4">
@@ -500,18 +770,25 @@
 
             <!-- Nav buttons -->
             <div class="mt-6 flex items-center justify-between gap-3">
-              <label for="step-1"
+
+              <!-- PREVIOUS -->
+              <button type="button" (click)="navigateTo(1)"
                 class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
                 Previous
-              </label>
-              <label for="step-3" class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+              </button>
+
+              <!-- NEXT -->
+              <button type="button" (click)="goToStep(3)"
+                class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
                 Next
-              </label>
+              </button>
+
             </div>
+
           </section>
 
 
-          
+
           <!-- Shared picker modal -->
           <app-picker-modal></app-picker-modal>
           <app-dropdpwn-modal></app-dropdpwn-modal>
@@ -564,7 +841,8 @@
                 <div class="flex-1">
                   <div class="form-floating form-floating-outline flex-1">
 
-                    <input type="text" class="form-control" placeholder="Passport No." passportFormat  validatedInput="passport" formControlName="passportno" />
+                    <input type="text" class="form-control" placeholder="Passport No." passportFormat
+                      validatedInput="passport" formControlName="passportno" />
 
                     <label>Passport No.</label>
 
@@ -577,13 +855,14 @@
 
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
-                  <input type="date" class="form-control" id="passportExp" placeholder="Passport Exp.Date" formControlName="passexpdate" />
+                  <input type="date" class="form-control" id="passportExp" placeholder="Passport Exp.Date"
+                    formControlName="passexpdate" />
                   <label for="passportExp">Passport Exp. Date</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
-                  <input type="text" class="form-control" id="passportIssueAuth"
-                    placeholder="Passport Issue Authority" formControlName="passauth"/>
+                  <input type="text" class="form-control" id="passportIssueAuth" placeholder="Passport Issue Authority"
+                    formControlName="passauth" />
                   <label for="passportIssueAuth">Passport Issue Authority</label>
                 </div>
 
@@ -594,7 +873,8 @@
                 <div class="flex-1">
                   <div class="form-floating form-floating-outline flex-1">
 
-                    <input type="text" class="form-control" placeholder="Election Card No." voteridFormat validatedInput="voterid" formControlName="voteridno" />
+                    <input type="text" class="form-control" placeholder="Election Card No." voteridFormat
+                      validatedInput="voterid" formControlName="voteridno" />
 
                     <label>Election Card No.</label>
 
@@ -607,7 +887,8 @@
 
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="date" class="form-control" id="birthDate" placeholder="Birth Date" formControlName="birthdate" />
+                  <input type="date" class="form-control" id="birthDate" placeholder="Birth Date"
+                    formControlName="birthdate" />
                   <label for="birthDate">Birth Date</label>
                 </div>
 
@@ -621,7 +902,8 @@
                     <span class="text-sm font-medium mr-2">Gender :</span>
 
                     <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
-                      <input type="radio" formControlName="SEX" value="M" class="w-4 h-4 text-violet-600 border-gray-300" />
+                      <input type="radio" formControlName="SEX" value="M"
+                        class="w-4 h-4 text-violet-600 border-gray-300" />
                       <span>Male</span>
                     </label>
 
@@ -632,7 +914,8 @@
                     </label>
 
                     <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
-                      <input type="radio" formControlName="SEX" value="O" class="w-4 h-4 text-violet-600 border-gray-300" />
+                      <input type="radio" formControlName="SEX" value="O"
+                        class="w-4 h-4 text-violet-600 border-gray-300" />
                       <span>Other</span>
                     </label>
                   </div>
@@ -656,11 +939,9 @@
 
                     <div class="flex-1">
                       <div class="form-floating form-floating-outline flex-1">
-                        <!-- <input type="text" id="otherStaffName" class="form-control" placeholder="Other/Staff Name"
-                          [(ngModel)]="otherStaffName" readonly (click)="openOtherStaffPicker()"
-                          style="cursor: pointer;" [ngModelOptions]="{standalone: true}" /> -->
-                          <input class="form-control" readonly (click)="loadOtherStaffList()" [value]="otherStaffName?.name || ''"
-              placeholder="Select Country" />
+                        <input class="form-control" type="text" [readonly]="true"
+                          [disabled]="otherStaffType === 'O' || isOtherStaffSelected" (click)="loadOtherStaffList()"
+                          [value]="otherStaffName?.name || otherStaffName || ''" placeholder="Select Other/Staff" />
                         <label for="otherStaffName">Other/Staff Name</label>
                       </div>
                     </div>
@@ -676,58 +957,77 @@
               <h4 class="mb-4 text-lg font-semibold">Company/Firm Details</h4>
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="regNo" placeholder="Reg.No." formControlName="COMPREGNO" />
+                  <input type="text" class="form-control" id="regNo" placeholder="Reg.No."
+                    formControlName="COMPREGNO" />
                   <label for="regNo">Reg.No.</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="regDate" placeholder="Reg.Date" formControlName="COMPREGDT" />
+                  <input type="text" class="form-control" id="regDate" placeholder="Reg.Date"
+                    formControlName="COMPREGDT" />
                   <label for="regDate">Reg.Date</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="numBranches" placeholder="No.Of Branches" formControlName="COMPBRANCH"  />
+                  <input type="text" class="form-control" id="numBranches" placeholder="No.Of Branches"
+                    formControlName="COMPBRANCH" />
                   <label for="numBranches">No.Of Branches</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="businessNature" placeholder="Business Nature" formControlName="COMPNATURE"  />
+                  <input type="text" class="form-control" id="businessNature" placeholder="Business Nature"
+                    formControlName="COMPNATURE" />
                   <label for="businessNature">Business Nature</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="paidUpCapital" placeholder="Paid Up Capital" formControlName="COMPPAIDCAPT"  />
+                  <input type="text" class="form-control" id="paidUpCapital" placeholder="Paid Up Capital"
+                    formControlName="COMPPAIDCAPT" />
                   <label for="paidUpCapital">Paid Up Capital</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="lastYearTurnover" placeholder="Last Year TurnOver" formControlName="COMPTURNOVER"  />
+                  <input type="text" class="form-control" id="lastYearTurnover" placeholder="Last Year TurnOver"
+                    formControlName="COMPTURNOVER" />
                   <label for="lastYearTurnover">Last Year TurnOver</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                  <input type="text" class="form-control" id="netWorth" placeholder="Net Worth Rs." formControlName="COMPNETWORTH"  />
+                  <input type="text" class="form-control" id="netWorth" placeholder="Net Worth Rs."
+                    formControlName="COMPNETWORTH" />
                   <label for="netWorth">Net Worth Rs.</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                  <input type="text" class="form-control" id="officerName1" placeholder="Officer Name 1" formControlName="Propritor1"  />
+                  <input type="text" class="form-control" id="officerName1" placeholder="Officer Name 1"
+                    formControlName="Propritor1" />
                   <label for="officerName1">Officer Name 1</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                  <input type="text" class="form-control" id="officerName2" placeholder="Officer Name 2" formControlName="Propritor2"  />
+                  <input type="text" class="form-control" id="officerName2" placeholder="Officer Name 2"
+                    formControlName="Propritor2" />
                   <label for="officerName2">Officer Name 2</label>
                 </div>
               </div>
             </div>
 
             <div class="mt-6 flex items-center justify-between gap-3">
-              <label for="step-2"
-                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-              <label for="step-4"
-                class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-            </div>
+
+  <!-- PREVIOUS -->
+  <button type="button" (click)="navigateTo(2)"
+    class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+    Previous
+  </button>
+
+  <!-- NEXT -->
+  <button type="button" (click)="goToStep(4)"
+    class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+    Next
+  </button>
+
+</div>
+
           </section>
 
           <!-- STEP 4: Other Details (omitted lengthy bits for brevity) -->
@@ -735,39 +1035,46 @@
             <h4 class="mb-4 text-lg font-semibold">Other Details</h4>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officeName" placeholder="Office Name" formControlName="officename" />
+                <input type="text" class="form-control" id="officeName" placeholder="Office Name"
+                  formControlName="officename" />
                 <label for="officeName">Office Name</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officePin" placeholder="PinCode" formControlName="OFFICEPIN" />
+                <input type="text" class="form-control" id="officePin" placeholder="PinCode"
+                  formControlName="OFFICEPIN" />
                 <label for="officePin">PinCode</label>
               </div>
 
               <div class="hidden lg:block"></div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officeAddr1" placeholder="Office Address I" formControlName="OFFICEADDR1" />
+                <input type="text" class="form-control" id="officeAddr1" placeholder="Office Address I"
+                  formControlName="OFFICEADDR1" />
                 <label for="officeAddr1">Office Address</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officeAddr2" placeholder="Office Address II" formControlName="OFFICEADDR2" />
+                <input type="text" class="form-control" id="officeAddr2" placeholder="Office Address II"
+                  formControlName="OFFICEADDR2" />
                 <label for="officeAddr2">Office Address II</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officeAddr3" placeholder="Office Address III" formControlName="OFFICEADDR3" />
+                <input type="text" class="form-control" id="officeAddr3" placeholder="Office Address III"
+                  formControlName="OFFICEADDR3" />
                 <label for="officeAddr3">Office Address III</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officePhone" placeholder="Office Phone No" formControlName="OFFICEPHONE" />
+                <input type="text" class="form-control" id="officePhone" placeholder="Office Phone No"
+                  formControlName="OFFICEPHONE" />
                 <label for="officePhone">Office Phone No</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="faxNo" placeholder="Fax No" formControlName="OFFICEPHONE1" />
+                <input type="text" class="form-control" id="faxNo" placeholder="Fax No"
+                  formControlName="OFFICEPHONE1" />
                 <label for="faxNo">Fax No.</label>
               </div>
 
@@ -790,7 +1097,8 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="email" class="form-control" placeholder="Email" validatedInput="email" formControlName="EMAIL_ID" />
+                  <input type="email" class="form-control" placeholder="Email" validatedInput="email"
+                    formControlName="EMAIL_ID" />
 
                   <label>Email</label>
 
@@ -808,11 +1116,20 @@
             </div>
 
             <div class="mt-6 flex items-center justify-between gap-3">
-              <label for="step-3"
-                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-              <label for="step-5"
-                class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-5 py-2.5 text-white font-medium shadow hover:bg-violet-700 cursor-pointer">Next</label>
-            </div>
+
+  <!-- PREVIOUS -->
+  <button type="button" (click)="navigateTo(3)"
+    class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+    Previous
+  </button>
+
+  <!-- NEXT -->
+  <button type="button" (click)="goToStep(5)"
+    class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+    Next
+  </button>
+
+</div>
           </section>
 
           <!-- STEP 5: KYC Details -->
@@ -824,7 +1141,7 @@
               <!-- I.D. Proof -->
               <div class="flex items-center gap-3">
                 <input type="checkbox" id="chk_idProof" name="idProofCheck"
-                  class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" formControlName="KycIdProof"/>
+                  class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" formControlName="KycIdProof" />
                 <div class="form-floating form-floating-outline flex-1">
                   <!-- <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
                   [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" /> -->
@@ -847,7 +1164,7 @@
                   <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
                     [value]="addrproofName" readonly (click)="picker.openPicker('addrproof','primary')"
                     style="cursor:pointer" />
-                  <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofName"
+                  <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofCode"
                     [ngModelOptions]="{standalone: true}" />
                   <label for="AddressProof">Address Proof</label>
                 </div>
@@ -997,8 +1314,8 @@
             <div class="mt-6 flex items-center justify-between gap-3">
               <label for="step-4"
                 class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
-              <button type="submit"
-                class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700" >Save</button>
+              <button type="submit" class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700"
+                (click)="submit()">Save</button>
             </div>
           </section>
         </form>

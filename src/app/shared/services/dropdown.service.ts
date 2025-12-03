@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export interface DropdownOption {
   name: string;
@@ -20,6 +20,8 @@ export class DropdownService {
   pickerSelectedTemp$ = new BehaviorSubject<DropdownOption | null>(null);
 
   searchText$ = new BehaviorSubject<string>('');
+  searchChanged$ = new Subject<string>();
+
 
   private resolveFn: ((value: DropdownOption | null) => void) | null = null;
 

@@ -8,7 +8,7 @@ import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { PickerService } from '../../../services/picker.service';
 import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
-import { DropdownService } from '../../../shared/services/dropdown.service.ts.service';
+import { DropdownService } from '../../../shared/services/dropdown.service';
 
 @Component({
   selector: 'app-districtmst',
@@ -26,7 +26,6 @@ import { DropdownService } from '../../../shared/services/dropdown.service.ts.se
   styleUrl: './districtmst.component.css'
 })
 export class DistrictmstComponent implements OnInit {
-  @ViewChild('countryNameField') countryNameField!: ElementRef;
 
   isCreatingNew = false;
   btn: string = '';
@@ -56,7 +55,7 @@ export class DistrictmstComponent implements OnInit {
     private toastr: ToastrService,
     public picker: PickerService,
     private dropdown: DropdownService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.data = new FormGroup({
@@ -152,7 +151,11 @@ export class DistrictmstComponent implements OnInit {
   }
 
   openState() {
-    this.api.get('StateMaster/GetAll').subscribe({
+    if (!this.selectedCountryCode || Number(this.selectedCountryCode) <= 0) {
+      this.toastr.error('Please select country first..!');
+      return;
+    }
+    this.api.get('StateMaster/GetState', { countryCode: this.selectedCountryCode }).subscribe({
       next: (res: any) => {
         const raw = Array.isArray(res) ? res : (res?.data && Array.isArray(res.data) ? res.data : (res ? [res] : []));
         const list = raw.map((x: any) => ({
@@ -180,7 +183,6 @@ export class DistrictmstComponent implements OnInit {
     this.selectedCountryName = '';
     this.selectedStateName = '';
     this.data.reset({ DISTRICT_CODE: 0, DISTRICT_NAME: '', COUNTRY_CODE: 0, STATE_CODE: 0 });
-    setTimeout(() => this.countryNameField?.nativeElement?.focus?.(), 50);
   }
 
   // Open form for edit: pass districtCode, stateCode, countryCode
@@ -221,7 +223,6 @@ export class DistrictmstComponent implements OnInit {
           STATE_CODE: this.selectedStateCode || 0
         });
 
-        setTimeout(() => this.countryNameField?.nativeElement?.focus?.(), 50);
       },
       error: (err) => {
         console.error('Error loading district', err);
@@ -232,9 +233,23 @@ export class DistrictmstComponent implements OnInit {
 
   // Save or Update
   submit(): void {
-    if (this.data.invalid) {
-      this.toastr.warning('Please enter district name', 'Validation');
-      this.countryNameField?.nativeElement?.focus?.();
+
+    const countryVal = this.data.get('COUNTRY_CODE')?.value;
+    const stateVal = this.data.get('STATE_CODE')?.value;
+    const districtVal = (this.data.get('DISTRICT_NAME')?.value || '').toString().trim();
+
+    if (!countryVal) {
+      this.toastr.warning('Please select Country', 'Validation');
+      return;
+    }
+    if (!stateVal) {
+      this.toastr.warning('Please select State', 'Validation');
+      return;
+    }
+    if (!districtVal) {
+      this.toastr.warning('Please enter District name', 'Validation');
+      const el = document.getElementById('districtName') as HTMLInputElement | null;
+      el?.focus();
       return;
     }
 
@@ -271,6 +286,7 @@ export class DistrictmstComponent implements OnInit {
       }
     });
   }
+
 
   // Trigger delete modal and store codes to send
   deleteCountry(distCode: number, name: string, stateCode: number, countryCode: number): void {

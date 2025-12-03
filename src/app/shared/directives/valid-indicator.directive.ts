@@ -3,13 +3,16 @@ import {
   ElementRef,
   HostListener,
   Input,
-  Renderer2
+  Optional,
+  Renderer2,
+  Self
 } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { ValidationService } from '../services/validation.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { NgControl } from '@angular/forms';
 
 @Directive({
   selector: '[validatedInput]',
@@ -33,7 +36,27 @@ export class ValidatedInputDirective {
     private http: HttpClient,
     private auth: AuthService,
     private toastr: ToastrService,
+    @Optional() @Self() private ngControl: NgControl
   ) { }
+
+  private setControlError(key: 'validatedInput' | 'exists' | null) {
+  if (!this.ngControl?.control) return;
+
+  const ctrl = this.ngControl.control;
+  const errors = { ...(ctrl.errors || {}) };
+
+  // remove our own error keys
+  delete errors['validatedInput'];
+  delete errors['exists'];
+
+  if (key) {
+    errors[key] = true;
+  }
+
+  const hasAny = Object.keys(errors).length > 0;
+  ctrl.setErrors(hasAny ? errors : null);
+}
+
 
   private getParent(): HTMLElement {
     return this.el.nativeElement.parentElement as HTMLElement;
@@ -184,6 +207,7 @@ export class ValidatedInputDirective {
     this.setBorder(input, '#06d6a0');
     this.setLabelColor(parent, '#06d6a0');
     this.setIcon(parent, '✔', '#06d6a0');
+    this.setControlError(null);
   }
 
   private invalidUI(input: HTMLElement, parent: HTMLElement) {
@@ -191,6 +215,7 @@ export class ValidatedInputDirective {
     this.setBorder(input, '#e63946');
     this.setLabelColor(parent, '#e63946');
     this.setIcon(parent, '✖', '#e63946');
+    this.setControlError('validatedInput');
   }
 
   private invalidExistsUI(input: HTMLElement, parent: HTMLElement) {
@@ -198,6 +223,7 @@ export class ValidatedInputDirective {
     this.setBorder(input, '#e63946');
     this.setLabelColor(parent, '#e63946');
     this.setIcon(parent, '⚠', '#e63946');
+    this.setControlError('exists');
   }
 
   private resetUI(input: HTMLElement, parent: HTMLElement) {
@@ -206,6 +232,7 @@ export class ValidatedInputDirective {
     this.renderer.removeStyle(input, 'box-shadow');
     this.setLabelColor(parent, null);
     this.removeIcon(parent);
+    this.setControlError(null);
   }
 
   // -------------------------- HELPERS (DOM) ---------------------------------

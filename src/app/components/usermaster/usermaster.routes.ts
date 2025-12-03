@@ -98,4 +98,18 @@ export const UserMaster_Routes: Routes = [
   }
 
 
+  {
+    path: 'UserMenuAccess',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Tools/usermenuaccess/usermenuaccess.component').then((m) => m.UsermenuaccessComponent),
+    title: 'User Menu Access | SmartBank',
+  },
+  {
+    path: 'CheckMenuId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Tools/checkmenuid/checkmenuid.component').then((m) => m.CheckmenuidComponent),
+    title: 'Check MenuId | SmartBank',
+  }
 ];
