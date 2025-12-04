@@ -1,5 +1,5 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withRouterConfig } from '@angular/router';
 import { routes } from './app.routes';
 
 import {
@@ -15,20 +15,22 @@ import { authInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // ✅ Router setup
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withRouterConfig({
+        onSameUrlNavigation: 'reload',
+        urlUpdateStrategy: 'eager',
+        canceledNavigationResolution: 'replace'
+      })
+    ),
 
-    // ✅ Enables hydration if you ever use SSR (safe even for CSR)
     provideClientHydration(),
 
-    // ✅ HttpClient + interceptor setup
     provideHttpClient(
-      // You can comment out `withFetch()` if not using SSR (Node runtime)
       withFetch(),
       withInterceptors([authInterceptor])
     ),
 
-    // ✅ Enable animations + Toastr
     provideAnimations(),
     provideToastr({
       timeOut: 3000,

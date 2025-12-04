@@ -17,13 +17,20 @@ export class AppComponent implements OnInit {
   sessionRestored = false;
   private devToolsCheckInterval: any;
   private touchTimeout: any;
-
+  
   constructor(
     public auth: AuthService,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
     private ngZone: NgZone
-  ) {}
+  ) {
+     if (isPlatformBrowser(this.platformId)) {
+      history.pushState(null, '', location.href);
+      window.onpopstate = () => {
+        history.pushState(null, '', location.href);
+      };
+    }
+  }
 
   ngOnInit() {
     // 1️⃣ Wait for session restoration

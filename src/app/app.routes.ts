@@ -4,9 +4,13 @@ import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   // 🔹 Public route
-  { path: '', component: LoginComponent, title: 'Login | SmartBank' },
+  { 
+    path: '', 
+    component: LoginComponent, 
+    title: 'Login | SmartBank' 
+  },
 
-  // 🔹 Protected route (User Master Section)
+  // 🔹 Protected lazy module for USERMASTER
   {
     path: 'USERMASTER',
     canActivate: [authGuard],
@@ -21,6 +25,6 @@ export const routes: Routes = [
     title: 'User Master | SmartBank',
   },
 
-  // 🔹 Wildcard route (404 or redirect)
+  // 🔹 Wildcard route
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
