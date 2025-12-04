@@ -78,4 +78,16 @@
   100% { transform: translateX(0); }
 }
 
+.step {
+  transition: all 0.25s ease;
+}
+
+.step-svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+
+
 

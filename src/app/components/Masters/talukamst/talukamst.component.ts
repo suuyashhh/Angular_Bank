@@ -8,7 +8,7 @@ import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { PickerService } from '../../../services/picker.service';
 import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
-import { DropdownService } from '../../../shared/services/dropdown.service.ts.service';
+import { DropdownService } from '../../../shared/services/dropdown.service';
 
 @Component({
   selector: 'app-talukamst',

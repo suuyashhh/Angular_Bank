@@ -28,109 +28,71 @@
           <!-- reactive form -->
           <form [formGroup]="data" (ngSubmit)="submit()" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
+
             <!-- Country readonly input (opens picker) -->
             <div class="form-floating form-floating-outline mb-0">
-              <input
-                type="text"
-                id="addr_Country"
-                class="form-control"
-                placeholder="Select Country"
-                readonly
-                (click)="openCountry()"
-                [value]="selectedCountryName"
-                style="cursor:pointer"
-                #countryNameField
-              />
-              <!-- hidden form control stores the selected Country code -->
+              <input type="text" id="addr_Country" class="form-control" placeholder="Select Country"
+                (click)="openCountry()" [disabled]="isEditMode" [readonly]="isEditMode" [value]="selectedCountryName"
+                style="cursor:pointer" #countryNameField />
               <input type="hidden" formControlName="COUNTRY_CODE" />
               <label for="addr_Country">Country</label>
+
             </div>
 
             <!-- State readonly input (opens picker) -->
             <div class="form-floating form-floating-outline mb-0">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Select State"
-                readonly
-                (click)="openState()"
-                [value]="selectedStateName"
-                style="cursor:pointer"
-              />
+              <input type="text" class="form-control" placeholder="Select State" (click)="openState()"
+                [disabled]="isEditMode" [readonly]="isEditMode" [value]="selectedStateName" style="cursor:pointer" />
               <input type="hidden" formControlName="STATE_CODE" />
               <label for="addr_state">State</label>
+
             </div>
 
             <!-- District readonly input (opens picker) -->
             <div class="form-floating form-floating-outline mb-0">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Select District"
-                readonly
-                (click)="openDistrict()"
-                [value]="SelectedDistrictName"
-                style="cursor:pointer"
-              />
+              <input type="text" class="form-control" placeholder="Select District" (click)="openDistrict()"
+                [disabled]="isEditMode" [readonly]="isEditMode" [value]="SelectedDistrictName" style="cursor:pointer" />
               <input type="hidden" formControlName="DISTRICT_CODE" />
               <label for="addr_district">District</label>
+
             </div>
 
             <!-- Taluka readonly input (opens picker) -->
             <div class="form-floating form-floating-outline mb-0">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Select Taluka"
-                readonly
-                (click)="openTaluka()"
-                [value]="SelectedTalukaName"
-                style="cursor:pointer"
-              />
+              <input type="text" class="form-control" placeholder="Select Taluka" (click)="openTaluka()"
+                [disabled]="isEditMode" [readonly]="isEditMode" [value]="SelectedTalukaName" style="cursor:pointer" />
               <input type="hidden" formControlName="TALUKA_CODE" />
               <label for="Taluka">Taluka</label>
+
             </div>
 
             <!-- City Name -->
             <div class="form-floating form-floating-outline mb-0">
-              <input
-                id="cityName"
-                formControlName="CITY_NAME"
-                type="text"
+              <input id="cityName" formControlName="CITY_NAME" type="text"
                 class="form-control block w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
-                placeholder="City Name"
-              />
+                placeholder="City Name" />
               <label for="cityName" class="text-gray-600 ml-1">City Name</label>
             </div>
 
             <!-- City Code (hidden, if needed) -->
             <div class="hidden form-floating form-floating-outline mb-0">
-              <input
-                id="CityCode"
-                formControlName="CITY_CODE"
-                type="text"
+              <input id="CityCode" formControlName="CITY_CODE" type="text"
                 class="form-control block w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-md"
-                placeholder="Code"
-                readonly
-              />
+                placeholder="Code" readonly />
               <label for="CityCode" class="text-gray-600 ml-1">Code</label>
             </div>
 
             <!-- Submit Button Row -->
             <div class="sm:col-span-3 mt-4 flex items-center justify-end gap-3">
-              <button
-                type="button"
+              <button type="button"
                 class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200"
-                (click)="isCreatingNew=false"
-              >
+                (click)="isCreatingNew=false">
                 Cancel
               </button>
 
-              <button
-                type="submit"
+              <button type="submit"
                 class="px-5 py-2.5 rounded-xl bg-violet-600 text-white font-medium shadow hover:bg-violet-700"
-                [disabled]="saving"
-              >
+                [disabled]="saving">
                 {{ saving ? 'Saving...' : (btn === 'E' ? 'Update' : 'Save') }}
               </button>
             </div>
@@ -139,8 +101,7 @@
 
         <div class="mt-6">
           <hr
-            class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6"
-          />
+            class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
         </div>
       </div>
 
@@ -149,14 +110,8 @@
         <div class="card">
           <div class="p-3 d-flex justify-content-end">
             <div class="form-floating form-floating-outline">
-              <input
-                class="form-control"
-                type="search"
-                placeholder="Search ..."
-                [(ngModel)]="searchTerm"
-                (ngModelChange)="page = 1"
-                id="html5-search-input"
-              />
+              <input class="form-control" type="search" placeholder="Search ..." [(ngModel)]="searchTerm"
+                (ngModelChange)="page = 1" id="html5-search-input" />
               <label for="html5-search-input">
                 <i class="ri-search-2-fill"></i> Search by Name
               </label>
@@ -185,24 +140,19 @@
                 </thead>
                 <tbody>
                   <tr
-                    *ngFor="let c of filteredCountries() | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index"
-                  >
+                    *ngFor="let c of filteredCountries() | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
                     <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                     <td>
                       <div class="btn-group btn-group-sm" role="group" style="gap: 6px;">
-                        <button
-                          class="btn btn-purple text-white"
+                        <button class="btn btn-purple text-white"
                           (click)="openInlineForm(c.CITY_CODE, c.STATE_CODE, c.COUNTRY_CODE, c.DISTRICT_CODE, c.TALUKA_CODE, 'E')"
-                          title="Edit"
-                        >
+                          title="Edit">
                           <i class="ri-pencil-line"></i>
                           <span class="d-none d-sm-inline">Edit</span>
                         </button>
-                        <button
-                          class="btn btn-danger text-white"
+                        <button class="btn btn-danger text-white"
                           (click)="deleteCity(c.CITY_CODE, c.CITY_NAME, c.STATE_CODE, c.COUNTRY_CODE, c.TALUKA_CODE, c.DISTRICT_CODE)"
-                          title="Delete"
-                        >
+                          title="Delete">
                           <i class="ri-delete-bin-6-line"></i>
                           <span class="d-none d-sm-inline">Delete</span>
                         </button>
@@ -212,6 +162,7 @@
                           background-color: #6f42c1;
                           border-color: #6f42c1;
                         }
+
                         .btn-purple:hover {
                           background-color: #5a2d9c;
                         }
@@ -237,9 +188,9 @@
                 {{ (page - 1) * pageSize + 1 }}
                 to
                 {{
-                  page * pageSize > (filteredCountries() || []).length
-                    ? (filteredCountries() || []).length
-                    : page * pageSize
+                page * pageSize > (filteredCountries() || []).length
+                ? (filteredCountries() || []).length
+                : page * pageSize
                 }}
                 of {{ (filteredCountries() || []).length }} entries
               </div>
@@ -254,29 +205,16 @@
   <!-- Delete Confirmation Modal -->
   <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; width: 90%;">
-      <div
-        class="modal-content"
-        style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2);"
-      >
+      <div class="modal-content" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
         <!-- Header -->
-        <div
-          class="modal-header"
-          style="background-color: #e74c3c; color: #fff; border-bottom: none; padding: 12px 16px;"
-        >
-          <h5
-            class="modal-title"
-            style="font-size: 1rem; margin: 0; display: flex; align-items: center;"
-          >
+        <div class="modal-header"
+          style="background-color: #e74c3c; color: #fff; border-bottom: none; padding: 12px 16px;">
+          <h5 class="modal-title" style="font-size: 1rem; margin: 0; display: flex; align-items: center;">
             <i class="ri-delete-bin-6-line" style="margin-right: 8px; font-size: 1.2rem;"></i>
             Confirm Deletion
           </h5>
-          <button
-            type="button"
-            class="btn-close btn-close-white"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-            style="filter: invert(1);"
-          ></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
+            style="filter: invert(1);"></button>
         </div>
 
         <!-- Body -->
@@ -291,25 +229,14 @@
         </div>
 
         <!-- Footer -->
-        <div
-          class="modal-footer"
-          style="display: flex; justify-content: center; gap: 12px; border-top: none; padding: 16px;"
-        >
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-            style="padding: 8px 20px; border-radius: 20px; font-weight: 500;"
-          >
+        <div class="modal-footer"
+          style="display: flex; justify-content: center; gap: 12px; border-top: none; padding: 16px;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+            style="padding: 8px 20px; border-radius: 20px; font-weight: 500;" (click)="closeForm()">
             Cancel
           </button>
-          <button
-            type="button"
-            class="btn btn-danger"
-            (click)="executeDelete()"
-            data-bs-dismiss="modal"
-            style="padding: 8px 20px; border-radius: 20px; font-weight: 500; display: flex; align-items: center;"
-          >
+          <button type="button" class="btn btn-danger" (click)="executeDelete()" data-bs-dismiss="modal"
+            style="padding: 8px 20px; border-radius: 20px; font-weight: 500; display: flex; align-items: center;">
             <i class="ri-delete-bin-6-line" style="margin-right: 6px;"></i> Delete
           </button>
         </div>

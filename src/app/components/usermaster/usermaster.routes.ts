@@ -72,6 +72,32 @@ export const UserMaster_Routes: Routes = [
       import('../Masters/talukamst/talukamst.component').then((m) => m.TalukamstComponent),
     title: 'Taluka Master | SmartBank',
   },
+
+  {
+    path: 'citymst',
+    canActivate:[authGuard],
+    loadComponent:() =>
+      import('../Masters/citymst/citymst.component').then((m) => m.CitymstComponent),
+    title: 'City Master | SmartBank',
+  },
+
+  {
+    path: 'staffmst',
+    canActivate:[authGuard],
+    loadComponent:() =>
+      import('../Masters/staffmst/staffmst.component').then((m) => m.StaffmstComponent),
+    title: 'Staff Master | SmartBank',
+  },
+
+  {
+    path: 'religionmst',
+    canActivate:[authGuard],
+    loadComponent:() =>
+      import('../Masters/religionmst/religionmst.component').then((m) => m.ReligionmstComponent),
+    title: 'Religion Master  | SmartBank ',
+  },
+
+
   {
     path: 'UserMenuAccess',
     canActivate: [authGuard],
