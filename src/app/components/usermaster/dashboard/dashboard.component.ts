@@ -28,6 +28,7 @@ export class DashboardComponent {
     { pathName: 'Religion Master', link: '/USERMASTER/religionmst'},
     { pathName: 'User Menu Access', link: '/USERMASTER/UserMenuAccess' },
     { pathName: 'Check Menu Id', link: '/USERMASTER/CheckMenuId' },
+    { pathName: 'Comman Master', link: '/USERMASTER/Commanmst-f2' }
   ];
   filtered: Array<{ pathName: string; link: string }> = []; // empty initially → "No records found"
 

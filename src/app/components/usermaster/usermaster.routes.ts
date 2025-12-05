@@ -112,6 +112,13 @@ export const UserMaster_Routes: Routes = [
           ),
         title: 'Check Menu ID | SmartBank',
       },
+
+      {
+        path: 'Commanmst-f2',
+        loadComponent: () =>
+          import('../Masters/commanmst-f2/commanmst-f2.component').then((m) => m.CommanmstF2Component),
+        title: 'Comman Master | SmartBank',
+      },
     ],
   },
 ];
