@@ -529,6 +529,15 @@
                         <label for="religionCode">Interest Scheme </label>
                       </div>
 
+                      <div class="flex-1">
+                        <div class="form-floating form-floating-outline flex-1">
+
+                          <input type="text" class="form-control" placeholder="Interest Paid Type" passportFormat
+                           formControlName="Interest Paid Type" />
+                          <label>Interest Paid Type </label>
+                        </div>
+                      </div>
+
                       <!-- Cast -->
                       <div class="form-floating form-floating-outline mb-0">
                         <input type="date" id="castCode" class="form-control" placeholder="A/c Opening Date"  />
@@ -541,34 +550,6 @@
                         <label for="occupation"> Int.Rate</label>
                       </div>
 
-
-                      <div class="flex-1">
-                        <div class="form-floating form-floating-outline flex-1">
-
-                          <input type="text" class="form-control" placeholder="Passport No." passportFormat
-                            validatedInput="passport" formControlName="passportno" />
-
-                          <label>Passport No.</label>
-
-                          <small class="text-danger mt-1 block" *ngIf="passport?.invalid?.()">
-                            Invalid Passport No (e.g., A1234567)
-                          </small>
-
-                        </div>
-                      </div>
-
-
-                      <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
-                        <input type="date" class="form-control" id="passportExp" placeholder="Passport Exp.Date"
-                          formControlName="passexpdate" />
-                        <label for="passportExp">Passport Exp. Date</label>
-                      </div>
-
-                      <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
-                        <input type="text" class="form-control" id="passportIssueAuth"
-                          placeholder="Passport Issue Authority" formControlName="passauth" />
-                        <label for="passportIssueAuth">Passport Issue Authority</label>
-                      </div>
                       
                       <div class="flex-1">
                         <div class="form-floating form-floating-outline flex-1">
@@ -576,7 +557,7 @@
                           <input type="text" class="form-control" placeholder="Election Card No." voteridFormat
                             validatedInput="voterid" formControlName="voteridno" />
 
-                          <label>Election Card No.</label>
+                          <label> Maturity Date </label>
 
                           <small class="text-danger mt-1 block" *ngIf="voterid?.invalid?.()">
                             Invalid Voter ID (e.g., ABC1234567)
@@ -587,132 +568,16 @@
 
 
                       <div class="form-floating form-floating-outline mb-0">
-                        <input type="date" class="form-control" id="birthDate" placeholder="Birth Date"
-                          formControlName="birthdate" />
-                        <label for="birthDate">Birth Date</label>
+                        <input type="date" class="form-control" placeholder="Last Int.Date "
+                          formControlName="LastInt.Date " />
+                        <label for="LastInt.Date ">Last Int.Date </label>
                       </div>
-
-                      <div class="form-floating form-floating-outline mb-0">
-                        <input type="number" class="form-control" id="age" placeholder="Age" min="0"
-                          formControlName="AGE" />
-                        <label for="age">Age</label>
-                      </div>
-
-                      <div class="sm:col-span-3">
-                        <div class="flex items-center gap-4 py-2">
-                          <span class="text-sm font-medium mr-2">Gender :</span>
-
-                          <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
-                            <input type="radio" formControlName="SEX" value="M"
-                              class="w-4 h-4 text-violet-600 border-gray-300" />
-                            <span>Male</span>
-                          </label>
-
-                          <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
-                            <input type="radio" formControlName="SEX" value="F"
-                              class="w-4 h-4 text-violet-600 border-gray-300" />
-                            <span>Female</span>
-                          </label>
-
-                          <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
-                            <input type="radio" formControlName="SEX" value="O"
-                              class="w-4 h-4 text-violet-600 border-gray-300" />
-                            <span>Other</span>
-                          </label>
-                        </div>
-                      </div>
-
-
-
-                      <!-- Other / Staff (fixed small width) -->
-                      <div class="sm:col-span-3">
-                        <div class="flex items-start gap-4">
-                          <div class="w-36 min-w-[9rem]">
-                            <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
-                              <select id="otherStaffType" class="form-select" [(ngModel)]="otherStaffType"
-                                (change)="onOtherStaffTypeChange()" [ngModelOptions]="{standalone: true}">
-                                <option value="O">Other</option>
-                                <option value="S">Staff</option>
-                              </select>
-                              <label for="otherStaffType">Other/Staff</label>
-                            </div>
-                          </div>
-
-                          <div class="flex-1">
-                            <div class="form-floating form-floating-outline flex-1">
-                              <input class="form-control" type="text" [readonly]="true"
-                                [disabled]="otherStaffType === 'O' || isOtherStaffSelected"
-                                (click)="loadOtherStaffList()" [value]="otherStaffName?.name || otherStaffName || ''"
-                                placeholder="Select Other/Staff" />
-                              <label for="otherStaffName">Other/Staff Name</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                  
 
 
                     </div>
                   </div>
 
-                  <!-- COMPANY/FIRM DETAILS: shown only for non-Individual -->
-                  <div *ngIf="accountType !== '0'">
-                    <h4 class="mb-4 text-lg font-semibold">Company/Firm Details</h4>
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <div class="form-floating form-floating-outline mb-0">
-                        <input type="text" class="form-control" id="regNo" placeholder="Reg.No."
-                          formControlName="COMPREGNO" />
-                        <label for="regNo">Reg.No.</label>
-                      </div>
-
-                      <div class="form-floating form-floating-outline mb-0">
-                        <input type="text" class="form-control" id="regDate" placeholder="Reg.Date"
-                          formControlName="COMPREGDT" />
-                        <label for="regDate">Reg.Date</label>
-                      </div>
-
-                      <div class="form-floating form-floating-outline mb-0">
-                        <input type="text" class="form-control" id="numBranches" placeholder="No.Of Branches"
-                          formControlName="COMPBRANCH" />
-                        <label for="numBranches">No.Of Branches</label>
-                      </div>
-
-                      <div class="form-floating form-floating-outline mb-0">
-                        <input type="text" class="form-control" id="businessNature" placeholder="Business Nature"
-                          formControlName="COMPNATURE" />
-                        <label for="businessNature">Business Nature</label>
-                      </div>
-
-                      <div class="form-floating form-floating-outline mb-0">
-                        <input type="text" class="form-control" id="paidUpCapital" placeholder="Paid Up Capital"
-                          formControlName="COMPPAIDCAPT" />
-                        <label for="paidUpCapital">Paid Up Capital</label>
-                      </div>
-
-                      <div class="form-floating form-floating-outline mb-0">
-                        <input type="text" class="form-control" id="lastYearTurnover" placeholder="Last Year TurnOver"
-                          formControlName="COMPTURNOVER" />
-                        <label for="lastYearTurnover">Last Year TurnOver</label>
-                      </div>
-
-                      <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                        <input type="text" class="form-control" id="netWorth" placeholder="Net Worth Rs."
-                          formControlName="COMPNETWORTH" />
-                        <label for="netWorth">Net Worth Rs.</label>
-                      </div>
-
-                      <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                        <input type="text" class="form-control" id="officerName1" placeholder="Officer Name 1"
-                          formControlName="Propritor1" />
-                        <label for="officerName1">Officer Name 1</label>
-                      </div>
-
-                      <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                        <input type="text" class="form-control" id="officerName2" placeholder="Officer Name 2"
-                          formControlName="Propritor2" />
-                        <label for="officerName2">Officer Name 2</label>
-                      </div>
-                    </div>
-                  </div>
 
                   <div class="mt-6 flex items-center justify-between gap-3">
 
@@ -732,74 +597,47 @@
 
                 </section>
 
-                <!-- STEP 4: Other Details (omitted lengthy bits for brevity) -->
+                <!-- STEP 4: Installment Info (omitted lengthy bits for brevity) -->
                 <section id="panel-4" class="panel" data-step="4" role="tabpanel" aria-labelledby="step-4">
-                  <h4 class="mb-4 text-lg font-semibold">Other Details</h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="form-floating form-floating-outline mb-0">
-                      <input type="text" class="form-control" id="officeName" placeholder="Office Name"
-                        formControlName="officename" />
-                      <label for="officeName">Office Name</label>
-                    </div>
-
-                    <div class="form-floating form-floating-outline mb-0">
-                      <input type="text" class="form-control" id="officePin" placeholder="PinCode"
-                        formControlName="OFFICEPIN" />
-                      <label for="officePin">PinCode</label>
-                    </div>
-
-                    <div class="hidden lg:block"></div>
-
-                    <div class="form-floating form-floating-outline mb-0">
-                      <input type="text" class="form-control" id="officeAddr1" placeholder="Office Address I"
-                        formControlName="OFFICEADDR1" />
-                      <label for="officeAddr1">Office Address</label>
-                    </div>
-
-                    <div class="form-floating form-floating-outline mb-0">
-                      <input type="text" class="form-control" id="officeAddr2" placeholder="Office Address II"
-                        formControlName="OFFICEADDR2" />
-                      <label for="officeAddr2">Office Address II</label>
-                    </div>
-
-                    <div class="form-floating form-floating-outline mb-0">
-                      <input type="text" class="form-control" id="officeAddr3" placeholder="Office Address III"
-                        formControlName="OFFICEADDR3" />
-                      <label for="officeAddr3">Office Address III</label>
-                    </div>
-
-                    <div class="form-floating form-floating-outline mb-0">
-                      <input type="text" class="form-control" id="officePhone" placeholder="Office Phone No"
-                        formControlName="OFFICEPHONE" />
-                      <label for="officePhone">Office Phone No</label>
-                    </div>
-
-                    <div class="form-floating form-floating-outline mb-0">
-                      <input type="text" class="form-control" id="faxNo" placeholder="Fax No"
-                        formControlName="OFFICEPHONE1" />
-                      <label for="faxNo">Fax No.</label>
-                    </div>
-
-                    <div class="flex-1">
-                      <div class="form-floating form-floating-outline flex-1">
-
-                        <input type="email" class="form-control" placeholder="Email" validatedInput="email"
-                          formControlName="EMAIL_ID" />
-
-                        <label>Email</label>
-
-                        <small class="text-danger mt-1 block" *ngIf="email.invalid()">
-                          Enter a valid email address
-                        </small>
-
+                  <h4 class="mb-4 text-lg font-semibold">Installment Info</h4>
+                   <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Inst.Type	" placeholder="Inst.Type	"
+                          formControlName="Inst.Type	" />
+                        <label for="Inst.Type	">Inst.Type	</label>
                       </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Installment Amount	" placeholder="Installment Amount	"
+                          formControlName="Installment Amount	" />
+                        <label for="Installment Amount	">Installment Amount	</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" placeholder="No.Of Installment (In Months)	"
+                          formControlName="No.Of Installment (In Months)	" />
+                        <label for="No.Of Installment (In Months)	">No.Of Installment (In Months)	</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Payable Amount" placeholder="Payable Amount"
+                          formControlName="Payable Amount" />
+                        <label for="Payable Amount">Payable Amount</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Int.Rate" placeholder="Int.Rate"
+                          formControlName="Int.Rate" />
+                        <label for="Int.Rate">Int.Rate</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Maturity Date" placeholder="Maturity Date"
+                          formControlName="Maturity Date" />
+                        <label for="Maturity Date">Maturity Date</label>
+                      </div>
+
                     </div>
-
-
-
-
-
-                  </div>
 
                   <div class="mt-6 flex items-center justify-between gap-3">
 
@@ -818,185 +656,30 @@
                   </div>
                 </section>
 
-                <!-- STEP 5: KYC Details -->
+                <!-- STEP 5: Printing -->
                 <section id="panel-5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step-5">
-                  <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
-
-
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- I.D. Proof -->
-                    <div class="flex items-center gap-3">
-                      <input type="checkbox" id="chk_idProof" name="idProofCheck"
-                        class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" formControlName="KycIdProof" />
-                      <div class="form-floating form-floating-outline flex-1">
-                        <!-- <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
-                  [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" /> -->
-                        <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof"
-                          [value]="idproofName" readonly (click)="picker.openPicker('idproof','primary')"
-                          style="cursor:pointer" />
-                        <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode"
-                          [ngModelOptions]="{standalone: true}" />
-                        <label for="IDProof">I.D.Proof</label>
+                  <h4 class="mb-4 text-lg font-semibold">Printing</h4>
+ 
+                  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="date" class="form-control" id="Last Trn.Date" placeholder="Last Trn.Date "
+                          formControlName="Last Trn.Date 	" />
+                        <label for="Last Trn.Date">Last Trn.Date 	</label>
                       </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="date" class="form-control" id="PassBook Fill Date" placeholder="PassBook Fill Date"
+                          formControlName="PassBook Fill Date" />
+                        <label for="PassBook Fill Date	">PassBook Fill Date</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="date" class="form-control" placeholder="A/c Close Date"
+                          formControlName="A/c Close Date" />
+                        <label for="A/c Close Date">A/c Close Date</label>
+                      </div>
+
                     </div>
-
-                    <!-- Address Proof -->
-                    <div class="flex items-center gap-3">
-                      <input type="checkbox" id="chk_addressProof" name="addressProofCheck"
-                        class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" formControlName="KycAddrProof" />
-                      <div class="form-floating form-floating-outline flex-1">
-          
-                        <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
-                          [value]="addrproofName" readonly (click)="picker.openPicker('addrproof','primary')"
-                          style="cursor:pointer" />
-                        <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofCode"
-                          [ngModelOptions]="{standalone: true}" />
-                        <label for="AddressProof">Address Proof</label>
-                      </div>
-                    </div>
-
-                    <!-- Empty third column -->
-                    <div class="flex items-center gap-3">
-                      <!-- Empty space -->
-                    </div>
-                  </div>
-
-                  <div class="mt-6">
-                    <hr
-                      class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
-                  </div>
-
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Photo -->
-                    <div class="rounded-xl border border-gray-200 p-4">
-                      <div class="text-sm font-semibold text-gray-800">Photo</div>
-                      <div class="mt-3">
-                        <input type="file" accept="image/*" aria-label="Upload Photo"
-                          (change)="onFileChange($event, 'photo')"
-                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                          #photoInput data-key="photo">
-                      </div>
-                      <div class="mt-3">
-                        <div
-                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                          (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
-                          (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
-                          aria-label="Preview Photo">
-                          <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
-                            alt="Photo preview" class="w-full h-full object-contain" />
-                          <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Sign -->
-                    <div class="rounded-xl border border-gray-200 p-4">
-                      <div class="text-sm font-semibold text-gray-800">Sign</div>
-                      <div class="mt-3">
-                        <input type="file" accept="image/*" aria-label="Upload Signature"
-                          (change)="onFileChange($event, 'sign')"
-                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                          #signInput data-key="sign">
-                      </div>
-                      <div class="mt-3">
-                        <div
-                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                          (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
-                          (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
-                          aria-label="Preview Signature">
-                          <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
-                            alt="Signature preview" class="w-full h-full object-contain" />
-                          <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- PAN -->
-                    <div class="rounded-xl border border-gray-200 p-4">
-                      <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
-                      <div class="mt-3">
-                        <input type="file" accept="image/*,.pdf" aria-label="Upload PAN"
-                          (change)="onFileChange($event, 'pan')"
-                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                          #panInput data-key="pan">
-                      </div>
-                      <div class="mt-3">
-                        <div
-                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                          (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
-                          (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button"
-                          aria-label="Preview PAN">
-                          <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)"
-                            alt="PAN preview" class="w-full h-full object-contain" />
-                          <div class="flex flex-col items-center gap-1 text-gray-500"
-                            *ngIf="previews.pan && !isImage(previews.pan)">
-                            <i class="fa-solid fa-file-pdf text-3xl"></i>
-                            <span class="text-sm">PDF Document</span>
-                          </div>
-                          <span class="text-sm font-medium text-gray-400" *ngIf="!previews.pan">Preview</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                    <!-- Aadhaar Front -->
-                    <div class="rounded-xl border border-gray-200 p-4">
-                      <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
-                      <div class="mt-3">
-                        <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
-                          (change)="onFileChange($event, 'aadhaarFront')"
-                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                          #aadhaarFrontInput data-key="aadhaarFront">
-                      </div>
-                      <div class="mt-3">
-                        <div
-                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                          (click)="openPreview('aadhaarFront')" tabindex="0"
-                          (keydown.enter)="openPreview('aadhaarFront')"
-                          (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
-                          aria-label="Preview Aadhaar front">
-                          <img [src]="previews.aadhaarFront || ''"
-                            *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
-                            class="w-full h-full object-contain" />
-                          <div class="flex flex-col items-center gap-1 text-gray-500"
-                            *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
-                            <i class="fa-solid fa-file-pdf text-3xl"></i>
-                            <span class="text-sm">PDF Document</span>
-                          </div>
-                          <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarFront">Preview</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Aadhaar Back -->
-                    <div class="rounded-xl border border-gray-200 p-4">
-                      <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
-                      <div class="mt-3">
-                        <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
-                          (change)="onFileChange($event, 'aadhaarBack')"
-                          class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                          #aadhaarBackInput data-key="aadhaarBack">
-                      </div>
-                      <div class="mt-3">
-                        <div
-                          class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                          (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
-                          (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
-                          aria-label="Preview Aadhaar back">
-                          <img [src]="previews.aadhaarBack || ''"
-                            *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" alt="Aadhaar back preview"
-                            class="w-full h-full object-contain" />
-                          <div class="flex flex-col items-center gap-1 text-gray-500"
-                            *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
-                            <i class="fa-solid fa-file-pdf text-3xl"></i>
-                            <span class="text-sm">PDF Document</span>
-                          </div>
-                          <span class="text-sm font-medium text-gray-400" *ngIf="!previews.aadhaarBack">Preview</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
                   <div class="mt-6 flex items-center justify-between gap-3">
                     <label for="step-4"
