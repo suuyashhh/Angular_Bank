@@ -66,62 +66,109 @@ export class ApiService {
   }
 
   // GET (decrypt response)
-  get<T = any>(endpoint: string, params: any = {}) {
-    const ep = this.normalizeEndpoint(endpoint);
+//   get<T = any>(endpoint: string, params: any = {}) {
+//     const ep = this.normalizeEndpoint(endpoint);
 
+//     let httpParams = new HttpParams();
+//     Object.keys(params).forEach(k => {
+//       if (params[k] != null) httpParams = httpParams.set(k, params[k]);
+//     });
+
+//     return this.http.get<any>(`${this.baseUrl}${ep}`, {
+//       headers: this.getHeaders(),
+//       params: httpParams
+//     })
+//     .pipe(map(res => this.decryptResponse(res)));
+//   }
+
+//   // POST (encrypt request, decrypt response)
+//   post<T = any>(endpoint: string, body: any, extraHeaders: Record<string, string> = {}) {
+//     const ep = this.normalizeEndpoint(endpoint);
+
+//     const encryptedBody = {
+//       data: this.encryptObject(body)
+//     };
+
+//     return this.http.post<any>(`${this.baseUrl}${ep}`, encryptedBody, {
+//       headers: this.getHeaders(extraHeaders)
+//     })
+//     .pipe(map(res => this.decryptResponse(res)));
+//   }
+
+//   // PUT (encrypt + decrypt)
+//   put<T = any>(endpoint: string, body: any, extraHeaders: Record<string, string> = {}) {
+//     const ep = this.normalizeEndpoint(endpoint);
+
+//     const encryptedBody = {
+//       data: this.encryptObject(body)
+//     };
+
+//     return this.http.put<any>(`${this.baseUrl}${ep}`, encryptedBody, {
+//       headers: this.getHeaders(extraHeaders)
+//     })
+//     .pipe(map(res => this.decryptResponse(res)));
+//   }
+
+//   // DELETE (decrypt response only)
+//   delete<T = any>(endpoint: string, params: any = {}, extraHeaders: Record<string, string> = {}) {
+//     const ep = this.normalizeEndpoint(endpoint);
+
+//     let httpParams = new HttpParams();
+//     Object.keys(params).forEach(k => {
+//       if (params[k] != null) httpParams = httpParams.set(k, params[k]);
+//     });
+
+//     return this.http.delete<any>(`${this.baseUrl}${ep}`, {
+//       headers: this.getHeaders(extraHeaders),
+//       params: httpParams
+//     })
+//     .pipe(map(res => this.decryptResponse(res)));
+//   }
+// }
+get<T = any>(endpoint: string, params: any = {}) {
     let httpParams = new HttpParams();
-    Object.keys(params).forEach(k => {
-      if (params[k] != null) httpParams = httpParams.set(k, params[k]);
+    Object.keys(params).forEach(key => {
+      if (params[key] !== null && params[key] !== undefined) {
+        httpParams = httpParams.set(key, params[key]);
+      }
     });
 
-    return this.http.get<any>(`${this.baseUrl}${ep}`, {
+    return this.http.get<T>(`${this.baseUrl}${endpoint}`, { 
       headers: this.getHeaders(),
-      params: httpParams
-    })
-    .pipe(map(res => this.decryptResponse(res)));
+      params: httpParams,
+      observe: 'body'
+    });
   }
 
-  // POST (encrypt request, decrypt response)
-  post<T = any>(endpoint: string, body: any, extraHeaders: Record<string, string> = {}) {
-    const ep = this.normalizeEndpoint(endpoint);
+  post<T = any>(endpoint: string, body: any, additionalHeaders: Record<string, string> = {}) {
+    const user = this.auth.getUser();
+    body.CRT_BY = user?.NAME ?? user?.ini ?? ''; // secure audit field
 
-    const encryptedBody = {
-      data: this.encryptObject(body)
-    };
-
-    return this.http.post<any>(`${this.baseUrl}${ep}`, encryptedBody, {
-      headers: this.getHeaders(extraHeaders)
-    })
-    .pipe(map(res => this.decryptResponse(res)));
+    return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, {
+      headers: this.getHeaders(additionalHeaders),
+      observe: 'body'
+    });
   }
 
-  // PUT (encrypt + decrypt)
-  put<T = any>(endpoint: string, body: any, extraHeaders: Record<string, string> = {}) {
-    const ep = this.normalizeEndpoint(endpoint);
-
-    const encryptedBody = {
-      data: this.encryptObject(body)
-    };
-
-    return this.http.put<any>(`${this.baseUrl}${ep}`, encryptedBody, {
-      headers: this.getHeaders(extraHeaders)
-    })
-    .pipe(map(res => this.decryptResponse(res)));
+  put<T = any>(endpoint: string, body: any, additionalHeaders: Record<string, string> = {}) {
+    return this.http.put<T>(`${this.baseUrl}${endpoint}`, body, {
+      headers: this.getHeaders(additionalHeaders),
+      observe: 'body'
+    });
   }
 
-  // DELETE (decrypt response only)
-  delete<T = any>(endpoint: string, params: any = {}, extraHeaders: Record<string, string> = {}) {
-    const ep = this.normalizeEndpoint(endpoint);
-
+  delete<T = any>(endpoint: string, params: any = {}, additionalHeaders: Record<string, string> = {}) {
     let httpParams = new HttpParams();
-    Object.keys(params).forEach(k => {
-      if (params[k] != null) httpParams = httpParams.set(k, params[k]);
+    Object.keys(params).forEach(key => {
+      if (params[key] !== null && params[key] !== undefined) {
+        httpParams = httpParams.set(key, params[key]);
+      }
     });
 
-    return this.http.delete<any>(`${this.baseUrl}${ep}`, {
-      headers: this.getHeaders(extraHeaders),
-      params: httpParams
-    })
-    .pipe(map(res => this.decryptResponse(res)));
+    return this.http.delete<T>(`${this.baseUrl}${endpoint}`, {
+      headers: this.getHeaders(additionalHeaders),
+      params: httpParams,
+      observe: 'body'
+    });
   }
 }

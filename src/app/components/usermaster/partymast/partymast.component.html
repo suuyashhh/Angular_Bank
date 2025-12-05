@@ -329,7 +329,7 @@
               <!-- A/C Type: bound to accountType -->
               <div class="form-floating form-floating-outline mb-4">
                 <select id="basic_accountType" class="form-select" [(ngModel)]="accountType" name="accountType"
-                  formControlName="AcType">
+                  formControlName="AcType" autoTabIndex [tabIndexOrder]="1">
                   <option value="0">Individual</option>
                   <option value="1">Co.Op.Soc.</option>
                   <option value="2">Proprietor Ship</option>
@@ -365,7 +365,7 @@
                 <div class="form-floating form-floating-outline flex-1">
 
                   <input type="text" class="form-control" placeholder="PAN No" validatedInput="pan" panFormat
-                    formControlName="panNo" />
+                    formControlName="panNo" autoTabIndex [tabIndexOrder]="2" />
 
                   <label>PAN No</label>
 
@@ -395,11 +395,12 @@
                   Aadhaar must be 12 digits
                 </small>
               </div> -->
-              <div class="flex-1">
+              <div class="flex-1" [hidden]="accountType !== '0'">
                 <div class="form-floating form-floating-outline flex-1">
 
                   <input type="text" class="form-control" placeholder="Aadhaar No" validatedInput="aadhaar"
-                    aadhaarFormat formControlName="AdharNo" />
+                    aadhaarFormat formControlName="AdharNo" autoTabIndex [tabIndexOrder]="3"
+                    [hidden]="accountType !== '0'" />
 
                   <label>Aadhaar No</label>
 
@@ -438,7 +439,7 @@
                 <div class="form-floating form-floating-outline flex-1">
 
                   <input type="text" class="form-control" placeholder="GST No" validatedInput="gst" gstFormat
-                    formControlName="GSTNo" />
+                    formControlName="GSTNo" autoTabIndex [tabIndexOrder]="4" />
 
                   <label>GST No</label>
 
@@ -455,7 +456,8 @@
 
             <div class="mt-4 flex items-center gap-3">
               <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
-                <select id="basic_title" class="form-select" formControlName="nmprefix">
+                <select id="basic_title" class="form-select" formControlName="nmprefix" autoTabIndex
+                  [tabIndexOrder]="5">
                   <option value="">Option</option>
                   <option value="Mr">Mr</option>
                   <option value="Mrs">Mrs</option>
@@ -466,7 +468,7 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
                   <input type="text" id="basic_name" class="form-control" restrict="customerName" placeholder="Name"
-                    formControlName="name" />
+                    formControlName="name" autoTabIndex [tabIndexOrder]="6" />
                   <label for="basic_name">Name</label>
                 </div>
               </div>
@@ -474,19 +476,20 @@
 
             <div class="mt-6 flex items-center justify-between gap-3">
 
-  <!-- PREVIOUS -->
-  <button type="button" (click)="navigateTo(1)"
-    class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
-    Previous
-  </button>
+              <!-- PREVIOUS -->
+              <button type="button" (click)="navigateTo(1)"
+                class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+                Previous
+              </button>
 
-  <!-- NEXT -->
-  <button type="button" (click)="goToStep(2)"
-    class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
-    Next
-  </button>
+              <!-- NEXT -->
+              <button type="button" (click)="goToStep(2)"
+                class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white" autoTabIndex
+                [tabIndexOrder]="7">
+                Next
+              </button>
 
-</div>
+            </div>
 
           </section>
 
@@ -500,26 +503,27 @@
               <!-- Permanent Address lines -->
               <div class="form-floating form-floating-outline mb-4">
                 <input type="text" id="addr_permanent_line1" class="form-control" name="permanentAddrLine1"
-                  placeholder="Permanent Address" formControlName="ADDR1" />
+                  placeholder="Permanent Address" formControlName="ADDR1" autoTabIndex [tabIndexOrder]="8" />
                 <label for="addr_permanent_line1">Permanent Address</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-4 always-float">
                 <input type="text" id="addr_permanent_line2" class="form-control" name="permanentAddrLine2"
-                  placeholder="Permanent Address II" formControlName="ADDR2" />
+                  placeholder="Permanent Address II" formControlName="ADDR2" autoTabIndex [tabIndexOrder]="9" />
                 <label for="addr_permanent_line2">Permanent Address II</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-4 always-float">
                 <input type="text" id="addr_permanent_line3" class="form-control" name="permanentAddrLine3"
-                  placeholder="Permanent Address III" formControlName="ADDR3" />
+                  placeholder="Permanent Address III" formControlName="ADDR3" autoTabIndex [tabIndexOrder]="10" />
                 <label for="addr_permanent_line3">Permanent Address III</label>
               </div>
 
               <!-- 🔵 PRIMARY CITY -->
               <div class="form-floating form-floating-outline mb-4">
                 <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
-                  readonly (click)="picker.openPicker('city','primary')" style="cursor:pointer" />
+                  readonly (click)="picker.openPicker('city','primary')" style="cursor:pointer" autoTabIndex
+                  [tabIndexOrder]="11" />
 
                 <input type="hidden" name="cityCode" [(ngModel)]="selectedCityCode"
                   [ngModelOptions]="{standalone: true}" />
@@ -567,7 +571,8 @@
               <!-- 🔵 PRIMARY AREA -->
               <div class="form-floating form-floating-outline mb-4">
                 <input type="text" id="addr_area" class="form-control" readonly placeholder="Area"
-                  [value]="selectedAreaName" (click)="picker.openPicker('area','primary')" style="cursor:pointer" />
+                  [value]="selectedAreaName" (click)="picker.openPicker('area','primary')" style="cursor:pointer"
+                  autoTabIndex [tabIndexOrder]="12" />
                 <input type="hidden" name="areaCode" [(ngModel)]="selectedAreaCode"
                   [ngModelOptions]="{standalone: true}" />
                 <label for="addr_area">Area</label>
@@ -609,7 +614,7 @@
                 <div class="form-floating form-floating-outline flex-1">
 
                   <input type="text" class="form-control" placeholder="Phone No" validatedInput="phone" phoneFormat
-                    formControlName="phone" />
+                    formControlName="phone" autoTabIndex />
 
                   <label>Phone No</label>
 
@@ -1014,19 +1019,19 @@
 
             <div class="mt-6 flex items-center justify-between gap-3">
 
-  <!-- PREVIOUS -->
-  <button type="button" (click)="navigateTo(2)"
-    class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
-    Previous
-  </button>
+              <!-- PREVIOUS -->
+              <button type="button" (click)="navigateTo(2)"
+                class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+                Previous
+              </button>
 
-  <!-- NEXT -->
-  <button type="button" (click)="goToStep(4)"
-    class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
-    Next
-  </button>
+              <!-- NEXT -->
+              <button type="button" (click)="goToStep(4)"
+                class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+                Next
+              </button>
 
-</div>
+            </div>
 
           </section>
 
@@ -1117,19 +1122,19 @@
 
             <div class="mt-6 flex items-center justify-between gap-3">
 
-  <!-- PREVIOUS -->
-  <button type="button" (click)="navigateTo(3)"
-    class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
-    Previous
-  </button>
+              <!-- PREVIOUS -->
+              <button type="button" (click)="navigateTo(3)"
+                class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+                Previous
+              </button>
 
-  <!-- NEXT -->
-  <button type="button" (click)="goToStep(5)"
-    class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
-    Next
-  </button>
+              <!-- NEXT -->
+              <button type="button" (click)="goToStep(5)"
+                class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+                Next
+              </button>
 
-</div>
+            </div>
           </section>
 
           <!-- STEP 5: KYC Details -->
