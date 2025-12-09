@@ -59,8 +59,8 @@
             <li class="font-semibold text-gray-800">Party Master</li>
           </ol>
         </nav>
-
-        <div>
+        <div *ngIf="currentStep != 1" class="inline-flex items-center gap-3 px-5 py-5 "></div>
+        <div *ngIf="currentStep == 1">
           <button type="button"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50"
             title="Edit display names" (click)="openEdit()" *ngIf="!isEditMode">
@@ -84,6 +84,11 @@
         </div>
       </div>
       <!-- /HEADER -->
+      <div *ngIf="loading" class="loader-overlay">
+        <div class="loader"></div>
+      </div>
+
+
 
       <!-- STEP radios (hidden) -->
       <input class="wizard-state" type="radio" name="wizard" id="step-1" checked />
@@ -305,7 +310,7 @@
 
       <div class="form-floating form-floating-outline mb-4" *ngIf="isEditMode">
         <div class="form-floating form-floating-outline mb-4">
-          <input class="form-control" [(ngModel)]="searchText" readonly (click)="getCustomers()"
+          <input class="form-control invalid-check" [(ngModel)]="searchText" readonly (click)="getCustomers()"
             placeholder="Customer ID" />
 
           <label for="demo">Customer ID</label>
@@ -322,7 +327,7 @@
             <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <!-- <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="basic_customerId" class="form-control" placeholder="Customer Id" />
+              <input type="text" id="basic_customerId" class="form-control invalid-check" placeholder="Customer Id" />
               <label for="basic_customerId">Customer Id</label>
             </div> -->
 
@@ -330,25 +335,19 @@
               <div class="form-floating form-floating-outline mb-4">
                 <select id="basic_accountType" class="form-select" [(ngModel)]="accountType" name="accountType"
                   formControlName="AcType" autoTabIndex [tabIndexOrder]="1">
-                  <option value="0">Individual</option>
-                  <option value="1">Co.Op.Soc.</option>
-                  <option value="2">Proprietor Ship</option>
-                  <option value="3">Partnership Firm</option>
-                  <option value="4">Private Limited</option>
-                  <option value="5">Public Limited</option>
-                  <option value="6">H.U.F.</option>
-                  <option value="7">Trust</option>
-                  <option value="8">Other Legal Entity</option>
+                  <option *ngFor="let res of accountTypes" [value]="res.code">
+                    {{ res.name }}
+                  </option>
                 </select>
                 <label for="basic_accountType">A/C Type</label>
               </div>
 
               <!-- <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="basic_panNo" class="form-control" placeholder="Pan Card No" />
+              <input type="text" id="basic_panNo" class="form-control invalid-check" placeholder="Pan Card No" />
               <label for="basic_panNo">Pan Card No</label>
             </div> -->
               <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
-                <input type="text" class="form-control" formControlName="pan" panFormat placeholder="Pan No"
+                <input type="text" class="form-control invalid-check" formControlName="pan" panFormat placeholder="Pan No"
                   [validIndicator]="form.controls['pan']" />
 
                 <label>PAN No</label>
@@ -364,8 +363,8 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="text" class="form-control" placeholder="PAN No" validatedInput="pan" panFormat
-                    formControlName="panNo" autoTabIndex [tabIndexOrder]="2" />
+                  <input type="text" class="form-control invalid-check" placeholder="PAN No" validatedInput="pan"
+                    panFormat formControlName="panNo" autoTabIndex [tabIndexOrder]="2" />
 
                   <label>PAN No</label>
 
@@ -380,12 +379,12 @@
 
               <!-- Aadhaar shown only for Individual -->
               <!-- <div *ngIf="accountType === '0'" class="form-floating form-floating-outline mb-4">
-              <input type="text" id="basic_aadhaarNo" class="form-control" placeholder="Aadhaar Card No" />
+              <input type="text" id="basic_aadhaarNo" class="form-control invalid-check" placeholder="Aadhaar Card No" />
               <label for="basic_aadhaarNo">Aadhaar Card No</label>
             </div> -->
               <!-- <div *ngIf="accountType === '0'" class="form-floating form-floating-outline mb-4 position-relative">
 
-                <input type="text" class="form-control" formControlName="aadhaar" aadhaarFormat
+                <input type="text" class="form-control invalid-check" formControlName="aadhaar" aadhaarFormat
                   placeholder="Aadhaar Card No" [validIndicator]="form.controls['aadhaar']" />
 
                 <label>Aadhaar Card No</label>
@@ -398,8 +397,8 @@
               <div class="flex-1" [hidden]="accountType !== '0'">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="text" class="form-control" placeholder="Aadhaar No" validatedInput="aadhaar"
-                    aadhaarFormat formControlName="AdharNo" autoTabIndex [tabIndexOrder]="3"
+                  <input type="text" class="form-control invalid-check" placeholder="Aadhaar No"
+                    validatedInput="aadhaar" aadhaarFormat formControlName="AdharNo" autoTabIndex [tabIndexOrder]="3"
                     [hidden]="accountType !== '0'" />
 
                   <label>Aadhaar No</label>
@@ -419,13 +418,13 @@
 
 
               <!-- <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="basic_gstNo" class="form-control" placeholder="GST No" />
+                <input type="text" id="basic_gstNo" class="form-control invalid-check" placeholder="GST No" />
                 <label for="basic_gstNo">GST No</label>
               </div> -->
               <!-- GST -->
               <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
 
-                <input type="text" class="form-control" placeholder="GST No" formControlName="gst" gstFormat
+                <input type="text" class="form-control invalid-check" placeholder="GST No" formControlName="gst" gstFormat
                   [validIndicator]="form.controls['gst']" />
 
                 <label>GST No</label>
@@ -438,8 +437,8 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="text" class="form-control" placeholder="GST No" validatedInput="gst" gstFormat
-                    formControlName="GSTNo" autoTabIndex [tabIndexOrder]="4" />
+                  <input type="text" class="form-control invalid-check" placeholder="GST No" validatedInput="gst"
+                    gstFormat formControlName="GSTNo" autoTabIndex [tabIndexOrder]="4" />
 
                   <label>GST No</label>
 
@@ -456,7 +455,7 @@
 
             <div class="mt-4 flex items-center gap-3">
               <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
-                <select id="basic_title" class="form-select" formControlName="nmprefix" autoTabIndex
+                <select id="basic_title" class="form-select invalid-check" formControlName="nmprefix" autoTabIndex
                   [tabIndexOrder]="5">
                   <option value="">Option</option>
                   <option value="Mr">Mr</option>
@@ -467,8 +466,8 @@
 
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
-                  <input type="text" id="basic_name" class="form-control" restrict="customerName" placeholder="Name"
-                    formControlName="name" autoTabIndex [tabIndexOrder]="6" />
+                  <input type="text" id="basic_name" appInputValidator="name" class="form-control invalid-check"
+                    placeholder="Name" formControlName="name" autoTabIndex [tabIndexOrder]="6" />
                   <label for="basic_name">Name</label>
                 </div>
               </div>
@@ -502,28 +501,31 @@
 
               <!-- Permanent Address lines -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_permanent_line1" class="form-control" name="permanentAddrLine1"
-                  placeholder="Permanent Address" formControlName="ADDR1" autoTabIndex [tabIndexOrder]="8" />
+                <input type="text" id="addr_permanent_line1" class="form-control invalid-check"
+                  name="permanentAddrLine1" appInputValidator="address" placeholder="Permanent Address"
+                  formControlName="ADDR1" autoTabIndex [tabIndexOrder]="8" />
                 <label for="addr_permanent_line1">Permanent Address</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-4 always-float">
-                <input type="text" id="addr_permanent_line2" class="form-control" name="permanentAddrLine2"
-                  placeholder="Permanent Address II" formControlName="ADDR2" autoTabIndex [tabIndexOrder]="9" />
+                <input type="text" id="addr_permanent_line2" class="form-control invalid-check"
+                  name="permanentAddrLine2" appInputValidator="address" placeholder="Permanent Address II"
+                  formControlName="ADDR2" autoTabIndex [tabIndexOrder]="9" />
                 <label for="addr_permanent_line2">Permanent Address II</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-4 always-float">
-                <input type="text" id="addr_permanent_line3" class="form-control" name="permanentAddrLine3"
-                  placeholder="Permanent Address III" formControlName="ADDR3" autoTabIndex [tabIndexOrder]="10" />
+                <input type="text" id="addr_permanent_line3" class="form-control invalid-check"
+                  name="permanentAddrLine3" appInputValidator="address" placeholder="Permanent Address III"
+                  formControlName="ADDR3" autoTabIndex [tabIndexOrder]="10" />
                 <label for="addr_permanent_line3">Permanent Address III</label>
               </div>
 
               <!-- 🔵 PRIMARY CITY -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_city" class="form-control" placeholder="City" [value]="selectedCityName"
-                  readonly (click)="picker.openPicker('city','primary')" style="cursor:pointer" autoTabIndex
-                  [tabIndexOrder]="11" />
+                <input type="text" id="addr_city" class="form-control invalid-check" placeholder="City"
+                  [value]="selectedCityName" readonly (click)="picker.openPicker('city','primary')"
+                  style="cursor:pointer" autoTabIndex [tabIndexOrder]="11" />
 
                 <input type="hidden" name="cityCode" [(ngModel)]="selectedCityCode"
                   [ngModelOptions]="{standalone: true}" />
@@ -534,7 +536,7 @@
 
               <!-- Primary Country -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_country" class="form-control" readonly placeholder="Country"
+                <input type="text" id="addr_country" class="form-control invalid-check" readonly placeholder="Country"
                   [value]="selectedCountryName" />
                 <input type="hidden" name="countryCode" [(ngModel)]="selectedCountryCode"
                   [ngModelOptions]="{standalone: true}" />
@@ -543,7 +545,7 @@
 
               <!-- Primary State -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_state" class="form-control" readonly placeholder="State"
+                <input type="text" id="addr_state" class="form-control invalid-check" readonly placeholder="State"
                   [value]="selectedStateName" />
                 <input type="hidden" name="stateCode" [(ngModel)]="selectedStateCode"
                   [ngModelOptions]="{standalone: true}" />
@@ -552,7 +554,7 @@
 
               <!-- Primary District -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_district" class="form-control" readonly placeholder="District"
+                <input type="text" id="addr_district" class="form-control invalid-check" readonly placeholder="District"
                   [value]="selectedDistrictName" />
                 <input type="hidden" name="districtCode" [(ngModel)]="selectedDistrictCode"
                   [ngModelOptions]="{standalone: true}" />
@@ -561,7 +563,7 @@
 
               <!-- Primary Taluka -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_taluka" class="form-control" readonly placeholder="Taluka"
+                <input type="text" id="addr_taluka" class="form-control invalid-check" readonly placeholder="Taluka"
                   [value]="selectedTalukaName" />
                 <input type="hidden" name="talukaCode" [(ngModel)]="selectedTalukaCode"
                   [ngModelOptions]="{standalone: true}" />
@@ -570,7 +572,7 @@
 
               <!-- 🔵 PRIMARY AREA -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_area" class="form-control" readonly placeholder="Area"
+                <input type="text" id="addr_area" class="form-control invalid-check" readonly placeholder="Area"
                   [value]="selectedAreaName" (click)="picker.openPicker('area','primary')" style="cursor:pointer"
                   autoTabIndex [tabIndexOrder]="12" />
                 <input type="hidden" name="areaCode" [(ngModel)]="selectedAreaCode"
@@ -580,27 +582,27 @@
 
               <!-- Primary Pincode -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_pincode" class="form-control" readonly placeholder="PinCode"
-                  [value]="selectedPincode" />
+                <input type="text" id="addr_pincode" class="form-control invalid-check" readonly placeholder="PinCode"
+                  appInputValidator="pincode" [value]="selectedPincode" />
                 <input type="hidden" name="pin" [(ngModel)]="selectedPincode" [ngModelOptions]="{standalone: true}" />
                 <label for="addr_pincode">PinCode</label>
               </div>
 
               <!-- Phone / Mobile -->
               <!-- <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_phone" class="form-control" placeholder="Phone no" />
+              <input type="text" id="addr_phone" class="form-control invalid-check" placeholder="Phone no" />
               <label for="addr_phone">Phone no</label>
             </div>
 
             <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_mobile" class="form-control" placeholder="Mobile no" />
+              <input type="text" id="addr_mobile" class="form-control invalid-check" placeholder="Mobile no" />
               <label for="addr_mobile">Mobile no</label>
             </div> -->
               <!-- PHONE (Optional) -->
               <!-- 
               <div class="form-floating form-floating-outline mb-4 position-relative">
 
-                <input type="text" class="form-control" placeholder="Phone no" formControlName="phone" phoneFormat
+                <input type="text" class="form-control invalid-check" placeholder="Phone no" formControlName="phone" phoneFormat
                   [validIndicator]="form.controls['phone']" />
 
                 <label>Phone no</label>
@@ -613,8 +615,8 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="text" class="form-control" placeholder="Phone No" validatedInput="phone" phoneFormat
-                    formControlName="phone" autoTabIndex />
+                  <input type="text" class="form-control invalid-check" placeholder="Phone No" validatedInput="phone"
+                    phoneFormat formControlName="phone" autoTabIndex [tabIndexOrder]="13" />
 
                   <label>Phone No</label>
 
@@ -629,7 +631,7 @@
 
 
               <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
-                <input type="text" class="form-control" placeholder="Mobile no" formControlName="mobile" mobileFormat
+                <input type="text" class="form-control invalid-check" placeholder="Mobile no" formControlName="mobile" mobileFormat
                   [validIndicator]="form.controls['mobile']" />
                 <label>Mobile no</label>
 
@@ -643,7 +645,7 @@
               <!-- MOBILE (Required) -->
               <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
 
-                <input type="text" id="addr_mobile" class="form-control" placeholder="Mobile no"
+                <input type="text" id="addr_mobile" class="form-control invalid-check" placeholder="Mobile no"
                   formControlName="mobile" mobileFormat [validIndicator]="form.controls['mobile']" />
 
                 <label for="addr_mobile">Mobile no</label>
@@ -661,8 +663,8 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="text" class="form-control" placeholder="Mobile No" validatedInput="mobile" mobileFormat
-                    formControlName="mobile" />
+                  <input type="text" class="form-control invalid-check" placeholder="Mobile No" validatedInput="mobile"
+                    mobileFormat formControlName="mobile" autoTabIndex [tabIndexOrder]="14" />
 
                   <label>Mobile No</label>
 
@@ -682,7 +684,7 @@
               <label class="inline-flex items-center gap-3">
                 <input type="checkbox" id="chk_correspondingAddr" [(ngModel)]="useDifferentCorresponding"
                   name="useDifferentCorresponding" class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm"
-                  [ngModelOptions]="{standalone: true}" />
+                  [ngModelOptions]="{standalone: true}" autoTabIndex [tabIndexOrder]="15" />
                 <span class="text-sm text-gray-700">
                   Do You Want Fill Different Corresponding Address ?
                 </span>
@@ -698,34 +700,38 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Corresponding Address lines -->
                 <div class="form-floating form-floating-outline mb-4">
-                  <input type="text" id="addr_corresponding_line1" class="form-control" name="correspondingAddrLine1"
-                    placeholder="Corresponding Address" formControlName="CorrAddr1" />
+                  <input type="text" id="addr_corresponding_line1" class="form-control invalid-check"
+                    name="correspondingAddrLine1" appInputValidator="address" placeholder="Corresponding Address"
+                    formControlName="CorrAddr1" autoTabIndex [tabIndexOrder]="16" />
                   <label for="addr_corresponding_line1">Corresponding Address</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-4 always-float">
-                  <input type="text" id="addr_corresponding_line2" class="form-control" name="correspondingAddrLine2"
-                    placeholder="Corresponding Address II" formControlName="CorrAddr2" />
+                  <input type="text" id="addr_corresponding_line2" class="form-control invalid-check"
+                    name="correspondingAddrLine2" appInputValidator="address" placeholder="Corresponding Address II"
+                    formControlName="CorrAddr2" autoTabIndex [tabIndexOrder]="17" />
                   <label for="addr_corresponding_line2">Corresponding Address II</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-4 always-float">
-                  <input type="text" id="addr_corresponding_line3" class="form-control" name="correspondingAddrLine3"
-                    placeholder="Corresponding Address III" formControlName="CorrAddr3" />
+                  <input type="text" id="addr_corresponding_line3" class="form-control invalid-check"
+                    name="correspondingAddrLine3" appInputValidator="address" placeholder="Corresponding Address III"
+                    formControlName="CorrAddr3" autoTabIndex [tabIndexOrder]="18" />
                   <label for="addr_corresponding_line3">Corresponding Address III</label>
                 </div>
 
                 <!-- City -->
                 <div class="form-floating form-floating-outline mb-4">
-                  <input type="text" id="corr_city" class="form-control" readonly placeholder="City"
-                    [value]="corrCityName" (click)="picker.openPicker('city','corr')" style="cursor:pointer" />
+                  <input type="text" id="corr_city" class="form-control invalid-check" readonly placeholder="City"
+                    [value]="corrCityName" (click)="picker.openPicker('city','corr')" style="cursor:pointer"
+                    autoTabIndex [tabIndexOrder]="19" />
                   <input type="hidden" [(ngModel)]="corrSelectedCityCode" name="corrCityCode"
                     [ngModelOptions]="{standalone: true}" />
                   <label for="corr_city">City</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-4">
-                  <input type="text" id="corr_country" class="form-control" readonly placeholder="Country"
+                  <input type="text" id="corr_country" class="form-control invalid-check" readonly placeholder="Country"
                     [value]="corrCountryName" />
                   <input type="hidden" [(ngModel)]="corrSelectedCountryCode" name="corrCountryCode"
                     [ngModelOptions]="{standalone: true}" />
@@ -733,7 +739,7 @@
                 </div>
 
                 <div class="form-floating form-floating-outline mb-4">
-                  <input type="text" id="corr_state" class="form-control" readonly placeholder="State"
+                  <input type="text" id="corr_state" class="form-control invalid-check" readonly placeholder="State"
                     [value]="corrStateName" />
                   <input type="hidden" [(ngModel)]="corrSelectedStateCode" name="corrStateCode"
                     [ngModelOptions]="{standalone: true}" />
@@ -741,15 +747,15 @@
                 </div>
 
                 <div class="form-floating form-floating-outline mb-4">
-                  <input type="text" id="corr_district" class="form-control" readonly placeholder="District"
-                    [value]="corrDistrictName" />
+                  <input type="text" id="corr_district" class="form-control invalid-check" readonly
+                    placeholder="District" [value]="corrDistrictName" />
                   <input type="hidden" [(ngModel)]="corrSelectedDistrictCode" name="corrDistrictCode"
                     [ngModelOptions]="{standalone: true}" />
                   <label for="corr_district">District</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-4">
-                  <input type="text" id="corr_taluka" class="form-control" readonly placeholder="Taluka"
+                  <input type="text" id="corr_taluka" class="form-control invalid-check" readonly placeholder="Taluka"
                     [value]="corrTalukaName" />
                   <input type="hidden" [(ngModel)]="corrSelectedTalukaCode" name="corrTalukaCode"
                     [ngModelOptions]="{standalone: true}" />
@@ -757,16 +763,17 @@
                 </div>
 
                 <div class="form-floating form-floating-outline mb-4">
-                  <input type="text" id="corr_area" class="form-control" readonly placeholder="Area"
-                    [value]="corrAreaName" (click)="picker.openPicker('area','corr')" style="cursor:pointer" />
+                  <input type="text" id="corr_area" class="form-control invalid-check" readonly placeholder="Area"
+                    [value]="corrAreaName" (click)="picker.openPicker('area','corr')" style="cursor:pointer"
+                    autoTabIndex [tabIndexOrder]="20" />
                   <input type="hidden" [(ngModel)]="corrSelectedAreaCode" name="corrAreaCode"
                     [ngModelOptions]="{standalone: true}" />
                   <label for="corr_area">Area</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-4">
-                  <input type="text" id="corr_pincode" class="form-control" readonly placeholder="Pincode"
-                    [value]="corrPincode" />
+                  <input type="text" id="corr_pincode" class="form-control invalid-check" readonly placeholder="Pincode"
+                    appInputValidator="pincode" [value]="corrPincode" />
                   <label for="corr_pincode">Pincode</label>
                 </div>
 
@@ -783,7 +790,7 @@
               </button>
 
               <!-- NEXT -->
-              <button type="button" (click)="goToStep(3)"
+              <button type="button" (click)="goToStep(3)" autoTabIndex [tabIndexOrder]="21"
                 class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
                 Next
               </button>
@@ -805,9 +812,9 @@
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <!-- Religion -->
                 <div class="form-floating form-floating-outline mb-0">
-                  <!-- <input type="text" class="form-control" id="religionCode" placeholder="Religion Code"
+                  <!-- <input type="text" class="form-control invalid-check" id="religionCode" placeholder="Religion Code"
                   [value]="religionName" readonly (click)="openPicker('religion')" style="cursor:pointer" /> -->
-                  <input type="text" id="religionCode" class="form-control" placeholder="Religion Code"
+                  <input type="text" id="religionCode" class="form-control invalid-check" placeholder="Religion Code"
                     [value]="religionName" readonly (click)="picker.openPicker('religion','primary')"
                     style="cursor:pointer" />
                   <input type="hidden" name="religionCode" [(ngModel)]="religionCode"
@@ -817,19 +824,19 @@
 
                 <!-- Cast -->
                 <div class="form-floating form-floating-outline mb-0">
-                  <!-- <input type="text" class="form-control" id="castCode" placeholder="Cast Code" [value]="castName"
+                  <!-- <input type="text" class="form-control invalid-check" id="castCode" placeholder="Cast Code" [value]="castName"
                   readonly (click)="openPicker('cast')" style="cursor:pointer" /> -->
-                  <input type="text" id="castCode" class="form-control" placeholder="Cast Code" [value]="castName"
-                    readonly (click)="picker.openPicker('cast','primary')" style="cursor:pointer" />
+                  <input type="text" id="castCode" class="form-control invalid-check" placeholder="Cast Code"
+                    [value]="castName" readonly (click)="picker.openPicker('cast','primary')" style="cursor:pointer" />
                   <input type="hidden" name="castCode" [(ngModel)]="castCode" [ngModelOptions]="{standalone: true}" />
                   <label for="castCode">Caste</label>
                 </div>
 
                 <!-- Occupation -->
                 <div class="form-floating form-floating-outline mb-0">
-                  <!-- <input type="text" class="form-control" id="occupation" placeholder="Occupation"
+                  <!-- <input type="text" class="form-control invalid-check" id="occupation" placeholder="Occupation"
                   [value]="occupationName" readonly (click)="openPicker('occupation')" style="cursor:pointer" /> -->
-                  <input type="text" id="occupation" class="form-control" placeholder="Occupation"
+                  <input type="text" id="occupation" class="form-control invalid-check" placeholder="Occupation"
                     [value]="occupationName" readonly (click)="picker.openPicker('occupation','primary')"
                     style="cursor:pointer" />
                   <input type="hidden" name="occupationCode" [(ngModel)]="occupationCode"
@@ -839,14 +846,14 @@
 
 
                 <!-- <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                  <input type="text" class="form-control" id="passportNo" placeholder="Passport No." />
+                  <input type="text" class="form-control invalid-check" id="passportNo" placeholder="Passport No." />
                   <label for="passportNo">Passport No.</label>
                 </div> -->
 
                 <div class="flex-1">
                   <div class="form-floating form-floating-outline flex-1">
 
-                    <input type="text" class="form-control" placeholder="Passport No." passportFormat
+                    <input type="text" class="form-control invalid-check" placeholder="Passport No." passportFormat
                       validatedInput="passport" formControlName="passportno" />
 
                     <label>Passport No.</label>
@@ -860,25 +867,25 @@
 
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
-                  <input type="date" class="form-control" id="passportExp" placeholder="Passport Exp.Date"
+                  <input type="date" class="form-control invalid-check" id="passportExp" placeholder="Passport Exp.Date"
                     formControlName="passexpdate" />
                   <label for="passportExp">Passport Exp. Date</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
-                  <input type="text" class="form-control" id="passportIssueAuth" placeholder="Passport Issue Authority"
-                    formControlName="passauth" />
+                  <input type="text" class="form-control invalid-check" id="passportIssueAuth"
+                    placeholder="Passport Issue Authority" formControlName="passauth" />
                   <label for="passportIssueAuth">Passport Issue Authority</label>
                 </div>
 
                 <!-- <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="electionCardNo" placeholder="Election Card No." />
+                  <input type="text" class="form-control invalid-check" id="electionCardNo" placeholder="Election Card No." />
                   <label for="electionCardNo">Election Card No.</label>
                 </div> -->
                 <div class="flex-1">
                   <div class="form-floating form-floating-outline flex-1">
 
-                    <input type="text" class="form-control" placeholder="Election Card No." voteridFormat
+                    <input type="text" class="form-control invalid-check" placeholder="Election Card No." voteridFormat
                       validatedInput="voterid" formControlName="voteridno" />
 
                     <label>Election Card No.</label>
@@ -892,13 +899,14 @@
 
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="date" class="form-control" id="birthDate" placeholder="Birth Date"
+                  <input type="date" class="form-control invalid-check" id="birthDate" placeholder="Birth Date"
                     formControlName="birthdate" />
                   <label for="birthDate">Birth Date</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="number" class="form-control" id="age" placeholder="Age" min="0" formControlName="AGE" />
+                  <input type="number" class="form-control invalid-check" id="age" placeholder="Age" min="0"
+                    formControlName="AGE" />
                   <label for="age">Age</label>
                 </div>
 
@@ -916,6 +924,12 @@
                       <input type="radio" formControlName="SEX" value="F"
                         class="w-4 h-4 text-violet-600 border-gray-300" />
                       <span>Female</span>
+                    </label>
+
+                    <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
+                      <input type="radio" formControlName="SEX" value="T"
+                        class="w-4 h-4 text-violet-600 border-gray-300" />
+                      <span>Transgender</span>
                     </label>
 
                     <label class="inline-flex items-center gap-2 text-sm cursor-pointer">
@@ -944,7 +958,7 @@
 
                     <div class="flex-1">
                       <div class="form-floating form-floating-outline flex-1">
-                        <input class="form-control" type="text" [readonly]="true"
+                        <input class="form-control invalid-check" type="text" [readonly]="true"
                           [disabled]="otherStaffType === 'O' || isOtherStaffSelected" (click)="loadOtherStaffList()"
                           [value]="otherStaffName?.name || otherStaffName || ''" placeholder="Select Other/Staff" />
                         <label for="otherStaffName">Other/Staff Name</label>
@@ -962,56 +976,56 @@
               <h4 class="mb-4 text-lg font-semibold">Company/Firm Details</h4>
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="regNo" placeholder="Reg.No."
+                  <input type="text" class="form-control invalid-check" id="regNo" placeholder="Reg.No."
                     formControlName="COMPREGNO" />
                   <label for="regNo">Reg.No.</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="regDate" placeholder="Reg.Date"
+                  <input type="text" class="form-control invalid-check" id="regDate" placeholder="Reg.Date"
                     formControlName="COMPREGDT" />
                   <label for="regDate">Reg.Date</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="numBranches" placeholder="No.Of Branches"
-                    formControlName="COMPBRANCH" />
+                  <input type="text" class="form-control invalid-check" id="numBranches" placeholder="No.Of Branches"
+                    appInputValidator="number" formControlName="COMPBRANCH" />
                   <label for="numBranches">No.Of Branches</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="businessNature" placeholder="Business Nature"
-                    formControlName="COMPNATURE" />
+                  <input type="text" class="form-control invalid-check" id="businessNature"
+                    placeholder="Business Nature" formControlName="COMPNATURE" />
                   <label for="businessNature">Business Nature</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="paidUpCapital" placeholder="Paid Up Capital"
+                  <input type="text" class="form-control invalid-check" id="paidUpCapital" placeholder="Paid Up Capital"
                     formControlName="COMPPAIDCAPT" />
                   <label for="paidUpCapital">Paid Up Capital</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control" id="lastYearTurnover" placeholder="Last Year TurnOver"
-                    formControlName="COMPTURNOVER" />
+                  <input type="text" class="form-control invalid-check" id="lastYearTurnover"
+                    placeholder="Last Year TurnOver" appInputValidator="number" formControlName="COMPTURNOVER" />
                   <label for="lastYearTurnover">Last Year TurnOver</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                  <input type="text" class="form-control" id="netWorth" placeholder="Net Worth Rs."
-                    formControlName="COMPNETWORTH" />
+                  <input type="text" class="form-control invalid-check" id="netWorth" placeholder="Net Worth Rs."
+                    appInputValidator="number" formControlName="COMPNETWORTH" />
                   <label for="netWorth">Net Worth Rs.</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                  <input type="text" class="form-control" id="officerName1" placeholder="Officer Name 1"
-                    formControlName="Propritor1" />
+                  <input type="text" class="form-control invalid-check" id="officerName1" placeholder="Officer Name 1"
+                    appInputValidator="Company" formControlName="Propritor1" />
                   <label for="officerName1">Officer Name 1</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                  <input type="text" class="form-control" id="officerName2" placeholder="Officer Name 2"
-                    formControlName="Propritor2" />
+                  <input type="text" class="form-control invalid-check" id="officerName2" placeholder="Officer Name 2"
+                    appInputValidator="company" formControlName="Propritor2" />
                   <label for="officerName2">Officer Name 2</label>
                 </div>
               </div>
@@ -1040,56 +1054,56 @@
             <h4 class="mb-4 text-lg font-semibold">Other Details</h4>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officeName" placeholder="Office Name"
-                  formControlName="officename" />
+                <input type="text" class="form-control invalid-check" id="officeName" placeholder="Office Name"
+                  appInputValidator="company" formControlName="officename" />
                 <label for="officeName">Office Name</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officePin" placeholder="PinCode"
-                  formControlName="OFFICEPIN" />
+                <input type="text" class="form-control invalid-check" id="officePin" placeholder="PinCode"
+                  appInputValidator="pincode" formControlName="OFFICEPIN" />
                 <label for="officePin">PinCode</label>
               </div>
 
               <div class="hidden lg:block"></div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officeAddr1" placeholder="Office Address I"
-                  formControlName="OFFICEADDR1" />
+                <input type="text" class="form-control invalid-check" id="officeAddr1" placeholder="Office Address I"
+                  appInputValidator="address" formControlName="OFFICEADDR1" />
                 <label for="officeAddr1">Office Address</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officeAddr2" placeholder="Office Address II"
-                  formControlName="OFFICEADDR2" />
+                <input type="text" class="form-control invalid-check" id="officeAddr2" placeholder="Office Address II"
+                  appInputValidator="address" formControlName="OFFICEADDR2" />
                 <label for="officeAddr2">Office Address II</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officeAddr3" placeholder="Office Address III"
-                  formControlName="OFFICEADDR3" />
+                <input type="text" class="form-control invalid-check" id="officeAddr3" placeholder="Office Address III"
+                  appInputValidator="address" formControlName="OFFICEADDR3" />
                 <label for="officeAddr3">Office Address III</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="officePhone" placeholder="Office Phone No"
-                  formControlName="OFFICEPHONE" />
+                <input type="text" class="form-control invalid-check" id="officePhone" placeholder="Office Phone No"
+                  appInputValidator="number" formControlName="OFFICEPHONE" />
                 <label for="officePhone">Office Phone No</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control" id="faxNo" placeholder="Fax No"
+                <input type="text" class="form-control invalid-check" id="faxNo" placeholder="Fax No"
                   formControlName="OFFICEPHONE1" />
                 <label for="faxNo">Fax No.</label>
               </div>
 
               <!-- <div class="form-floating form-floating-outline mb-0">
-                <input type="email" class="form-control" id="emailId" placeholder="E-Mail ID" />
+                <input type="email" class="form-control invalid-check" id="emailId" placeholder="E-Mail ID" />
                 <label for="emailId">E-Mail ID</label>
               </div> -->
               <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
 
-                <input type="email" class="form-control" placeholder="Email" formControlName="email"
+                <input type="email" class="form-control invalid-check" placeholder="Email" formControlName="email"
                   [validIndicator]="form.controls['email']" />
 
                 <label>E-Mail ID</label>
@@ -1102,7 +1116,7 @@
               <div class="flex-1">
                 <div class="form-floating form-floating-outline flex-1">
 
-                  <input type="email" class="form-control" placeholder="Email" validatedInput="email"
+                  <input type="email" class="form-control invalid-check" placeholder="Email" validatedInput="email"
                     formControlName="EMAIL_ID" />
 
                   <label>Email</label>
@@ -1148,10 +1162,11 @@
                 <input type="checkbox" id="chk_idProof" name="idProofCheck"
                   class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" formControlName="KycIdProof" />
                 <div class="form-floating form-floating-outline flex-1">
-                  <!-- <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" name="IDProof"
+                  <!-- <input type="text" id="IDProof" class="form-control invalid-check" placeholder="I.D.Proof" name="IDProof"
                   [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" /> -->
-                  <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof" [value]="idproofName"
-                    readonly (click)="picker.openPicker('idproof','primary')" style="cursor:pointer" />
+                  <input [disabled]="!form.get('KycIdProof')?.value" type="text" id="IDProof"
+                    class="form-control invalid-check" placeholder="I.D.Proof" [value]="idproofName" readonly
+                    (click)="picker.openPicker('idproof','primary')" style="cursor:pointer" />
                   <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode"
                     [ngModelOptions]="{standalone: true}" />
                   <label for="IDProof">I.D.Proof</label>
@@ -1163,12 +1178,12 @@
                 <input type="checkbox" id="chk_addressProof" name="addressProofCheck"
                   class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" formControlName="KycAddrProof" />
                 <div class="form-floating form-floating-outline flex-1">
-                  <!-- <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
+                  <!-- <input type="text" id="AddressProof" class="form-control invalid-check" placeholder="Address Proof"
                   [value]="addrproofName" readonly (click)="openPicker('addrproof')" style="cursor:pointer"
                   name="Address Proof" /> -->
-                  <input type="text" id="AddressProof" class="form-control" placeholder="Address Proof"
-                    [value]="addrproofName" readonly (click)="picker.openPicker('addrproof','primary')"
-                    style="cursor:pointer" />
+                  <input [disabled]="!form.get('KycAddrProof')?.value" type="text" id="AddressProof"
+                    class="form-control invalid-check" placeholder="Address Proof" [value]="addrproofName" readonly
+                    (click)="picker.openPicker('addrproof','primary')" style="cursor:pointer" />
                   <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofCode"
                     [ngModelOptions]="{standalone: true}" />
                   <label for="AddressProof">Address Proof</label>
