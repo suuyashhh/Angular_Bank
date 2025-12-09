@@ -57,16 +57,31 @@ export class AuthService {
   }
 
   // DEVICE ID
-  private getOrCreateDeviceId(): string {
-    let id = this.safeGetStorage(this.DEVICE_ID_KEY);
+private getOrCreateDeviceId(): string {
+  let id = this.safeGetStorage(this.DEVICE_ID_KEY);
 
-    if (!id) {
-      id = crypto.randomUUID();
-      this.safeSetStorage(this.DEVICE_ID_KEY, id);
-    }
-
-    return id;
+  if (!id) {
+    id = this.secureUUID();
+    this.safeSetStorage(this.DEVICE_ID_KEY, id);
   }
+
+  return id;
+}
+
+  private secureUUID(): string {
+  // Use native crypto if available
+  if (window.crypto && 'randomUUID' in crypto) {
+    return crypto.randomUUID();
+  }
+
+  // ✅ Fallback: RFC4122-compliant UUID v4
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 15) >> 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 
   getDeviceId(): string {
     return this.getOrCreateDeviceId();
@@ -75,17 +90,17 @@ export class AuthService {
   // Safe Storage
   private safeSetStorage(key: string, value: string): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    try { localStorage.setItem(key, value); } catch { }
+    try { sessionStorage.setItem(key, value); } catch { }
   }
 
   private safeGetStorage(key: string): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
-    try { return localStorage.getItem(key); } catch { return null; }
+    try { return sessionStorage.getItem(key); } catch { return null; }
   }
 
   private safeRemoveStorage(key: string): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    try { localStorage.removeItem(key); } catch { }
+    try { sessionStorage.removeItem(key); } catch { }
   }
 
   private encrypt(data: any): string {
@@ -114,10 +129,11 @@ login(credentials: any) {
 
   const body = { data: encryptedPayload };
 
+  const hmac_key = environment.HMAC_KEY
   const ts = Date.now().toString();
   const device = this.getDeviceId();
   const raw = encryptedPayload + "|" + ts + "|" + device;
-  const signature = CryptoJS.HmacSHA256(raw, environment.HMAC_KEY).toString();
+  const signature = CryptoJS.HmacSHA256(raw, hmac_key).toString();
 
   return this.http.post(`${this.baseUrl}Login/Login`, body, {
     headers: new HttpHeaders({
