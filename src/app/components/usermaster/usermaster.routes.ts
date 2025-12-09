@@ -121,4 +121,18 @@ export const UserMaster_Routes: Routes = [
       },
     ],
   },
+  {
+    path: 'CheckMenuId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Tools/checkmenuid/checkmenuid.component').then((m) => m.CheckmenuidComponent),
+    title: 'Check MenuId | SmartBank',
+  },
+  {
+    path: 'DepositAccount',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../Accounts/depositaccount-opening/depositaccount-opening.component').then((m) => m.DepositaccountOpeningComponent),
+    title: 'Check MenuId | SmartBank',
+  }
 ];
