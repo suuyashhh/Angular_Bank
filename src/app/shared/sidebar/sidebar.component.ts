@@ -20,6 +20,7 @@ import { MenuCommServiceService } from '../services/menu-comm-service.service';
 interface DTOMenuMasterItem {
   menuId: number;
   menuName: string;
+  ViewId:number;
   programeId: number;
   mainMenuId: number;
   seqNo1: number;
@@ -33,6 +34,7 @@ interface DTOMenuMasterItem {
 interface MenuNode {
   id: number;
   name: string;
+  ViewId : number;
   pageName?: string | null;
   routerLink?: string | any[];
   children: MenuNode[];
@@ -78,7 +80,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
   onMenuClick(node: MenuNode) {
     this.menuComm.sendMenu({
       menuId: node.id,
-      menuName: node.name
+      menuName: node.name,
+      ViewId:node.ViewId
     });
   }
 
@@ -162,6 +165,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
     return {
       menuId: Number(raw.menuId ?? raw.Menu_ID ?? raw.MenuId ?? 0),
       menuName: String(raw.menuName ?? raw.Menu_Name ?? raw.MenuName ?? ''),
+      ViewId: Number(raw.viewId ?? 0),
       programeId: Number(raw.programeId ?? raw.Programe_ID ?? raw.ProgrameId ?? 0),
       mainMenuId: Number(raw.mainMenuId ?? raw.Main_Menu_ID ?? raw.MainMenuId ?? 0),
       seqNo1: Number(raw.seqNo1 ?? raw.Seq_No1 ?? raw.SeqNo1 ?? 0),
@@ -185,6 +189,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
       const rootNode: MenuNode = {
         id: rootItem.menuId,
         name: rootItem.menuName,
+        ViewId:rootItem.ViewId,
         pageName: rootItem.pageName ?? null,
         routerLink: this.normalizePageNameToRouterLink(rootItem.pageName),
         children: [],
@@ -273,6 +278,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
     const node: MenuNode = {
       id: item.menuId,
       name: item.menuName,
+      ViewId:item.ViewId,
       pageName: item.pageName ?? null,
       routerLink: this.normalizePageNameToRouterLink(item.pageName),
       children: [],

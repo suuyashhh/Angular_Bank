@@ -12,16 +12,6 @@
           </ol>
         </nav>
         <div class="flex items-center gap-3">
-          <!-- Table selector (optional – you can hide if sidebar handles this) -->
-          <select
-            class="form-select text-sm border-gray-300 rounded-md"
-            [ngModel]="currentKey"
-            (ngModelChange)="onMasterChange($event)">
-            <option *ngFor="let key of masterKeys" [ngValue]="key">
-              {{ masterConfig[key].title }}
-            </option>
-          </select>
-
           <button class="btn btn-primary" (click)="resetForm()">
             <i class="ri-add-box-fill"></i> New
           </button>
@@ -33,36 +23,32 @@
         <div class="card p-4 rounded-lg shadow-sm border-0">
           <div class="d-flex justify-content-between items-center mb-3">
             <h5 class="mb-0">
-              {{ isEditMode ? ('Edit ' + (currentConfig?.shortTitle || 'Record')) : ('New ' + (currentConfig?.shortTitle || 'Record')) }}
+              {{ isEditMode ? ('Edit ' + (menuName || 'Record')) : ('New ' + (menuName || 'Record')) }}
             </h5>
             <button class="btn-close" type="button" (click)="closeForm()" aria-label="Close"></button>
           </div>
 
           <!-- reactive form -->
-          <form [formGroup]="form" (ngSubmit)="submit()" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <form
+            [formGroup]="form"
+            (ngSubmit)="submit()"
+            class="grid grid-cols-1 gap-4 sm:grid-cols-3"
+            novalidate>
 
-            <!-- Code (readonly for edit, hidden for new or just readonly always) -->
-            <div class="form-floating form-floating-outline mb-0" *ngIf="isEditMode">
-              <input
-                id="code"
-                formControlName="CODE"
-                type="text"
-                class="form-control bg-gray-100"
-                placeholder="Code"
-                readonly />
-              <label for="code" class="text-gray-600 ml-1">Code</label>
-            </div>
+            <!-- Hidden Code (for edit mode) -->
+            <input formControlName="CODE" type="hidden" />
 
             <!-- Name -->
             <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
               <input
+                #nameInput
                 id="name"
                 formControlName="NAME"
                 type="text"
                 class="form-control block w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                 placeholder="Name" />
               <label for="name" class="text-gray-600 ml-1">
-                {{ currentConfig?.nameLabel || 'Name' }}
+                {{ (menuName || 'Master') + ' Name' }}
               </label>
             </div>
 
@@ -94,7 +80,7 @@
       <!-- Table -->
       <div class="container-xxl flex-grow-1 mt-6">
         <div class="card">
-          <div class="p-3 d-flex justify-content-between items-center">
+          <div class="p-3 d-flex justify-content-end">
             <div class="form-floating form-floating-outline">
               <input
                 class="form-control"
@@ -104,12 +90,8 @@
                 (ngModelChange)="page = 1"
                 id="html5-search-input" />
               <label for="html5-search-input">
-                <i class="ri-search-2-fill"></i> Search by Name / Code
+                <i class="ri-search-2-fill"></i> Search by Name
               </label>
-            </div>
-
-            <div class="text-sm text-gray-500" *ngIf="currentConfig">
-              Table: <span class="font-semibold">{{ currentConfig.tblName }}</span>
             </div>
           </div>
 
@@ -127,7 +109,7 @@
                     <th>Sr</th>
                     <th>Actions</th>
                     <th>Code</th>
-                    <th>{{ currentConfig?.nameLabel || 'Name' }}</th>
+                    <th>{{ menuName || 'Name' }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -194,34 +176,58 @@
     </div>
   </div>
 
-  <!-- Simple delete confirmation (no bootstrap modal for now) -->
-  <div
-    *ngIf="pendingDelete"
-    class="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-    <div class="bg-white rounded-xl p-5 shadow-xl w-[90%] max-w-sm">
-      <h5 class="font-semibold mb-2 flex items-center gap-2">
-        <i class="ri-alert-fill text-red-500 text-xl"></i>
-        Confirm Deletion
-      </h5>
-      <!-- <p class="text-sm text-gray-600 mb-4">
-        You are about to delete
-        <strong>{{ pendingDelete?.NAME }}</strong>
-        (Code: {{ pendingDelete?.CODE }}). This action cannot be undone.
-      </p> -->
-      <div class="flex justify-end gap-3">
-        <button
-          type="button"
-          class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800"
-          (click)="pendingDelete = null">
+<!-- Delete Confirmation Modal -->
+<!-- Delete Confirmation Modal -->
+<div
+  *ngIf="pendingDelete"
+  class="modal fade show d-block"
+  id="deleteConfirmModal"
+  style="background-color: rgba(0,0,0,0.4);"
+  tabindex="-1"
+  aria-hidden="false">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; width: 90%;">
+    <div class="modal-content" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+      <div class="modal-header"
+        style="background-color: #e74c3c; color: #fff; border-bottom: none; padding: 12px 16px;">
+        <h5 class="modal-title" style="font-size: 1rem; margin: 0; display: flex; align-items: center;">
+          <i class="ri-delete-bin-6-line" style="margin-right: 8px; font-size: 1.2rem;"></i> Confirm Deletion
+        </h5>
+        <button 
+          type="button" 
+          class="btn-close btn-close-white" 
+          (click)="pendingDelete = null" 
+          aria-label="Close"
+          style="filter: invert(1);"></button>
+      </div>
+
+      <div class="modal-body" style="text-align: center; padding: 24px 16px;">
+        <i class="ri-alert-fill" style="font-size: 3rem; color: #e74c3c;"></i>
+        <h5 style="margin-top: 12px; font-size: 1.25rem; font-weight: 600;">Are you sure?</h5>
+        <p style="margin-top: 8px; color: #6c757d; font-size: 0.9rem;">
+          You are about to delete
+          <strong style="color: #e74c3c;">{{ pendingDelete.NAME }}</strong>
+          (Code: {{ pendingDelete.CODE }}). This action cannot be undone.
+        </p>
+      </div>
+
+      <div class="modal-footer"
+        style="display: flex; justify-content: center; gap: 12px; border-top: none; padding: 16px;">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="pendingDelete = null"
+          style="padding: 8px 20px; border-radius: 20px; font-weight: 500;">
           Cancel
         </button>
-        <button
-          type="button"
-          class="px-4 py-2 rounded-lg bg-red-600 text-white"
-          (click)="deleteRow()">
-          Delete
+        <button 
+          type="button" 
+          class="btn btn-danger" 
+          (click)="deleteRow()"
+          style="padding: 8px 20px; border-radius: 20px; font-weight: 500; display: flex; align-items: center;">
+          <i class="ri-delete-bin-6-line" style="margin-right: 6px;"></i> Delete
         </button>
       </div>
     </div>
   </div>
+</div>
 </main>

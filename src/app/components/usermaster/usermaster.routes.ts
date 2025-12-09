@@ -77,8 +77,8 @@ export const UserMaster_Routes: Routes = [
       {
         path: 'statemst',
         loadComponent: () =>
-          import('../Masters/commanmst-f2/commanmst-f2.component').then(
-            (m) => m.CommanmstF2Component
+          import('../Masters/statemst/statemst.component').then(
+            (m) => m.StatemstComponent
           ),
         title: 'State Master | SmartBank',
       },
