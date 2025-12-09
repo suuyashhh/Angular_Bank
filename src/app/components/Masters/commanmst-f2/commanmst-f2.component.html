@@ -177,6 +177,7 @@
   </div>
 
 <!-- Delete Confirmation Modal -->
+<!-- Delete Confirmation Modal -->
 <div
   *ngIf="pendingDelete"
   class="modal fade show d-block"
@@ -204,8 +205,8 @@
         <h5 style="margin-top: 12px; font-size: 1.25rem; font-weight: 600;">Are you sure?</h5>
         <p style="margin-top: 8px; color: #6c757d; font-size: 0.9rem;">
           You are about to delete
-          <strong style="color: #e74c3c;">{{ pendingDelete?.NAME }}</strong>
-          (Code: {{ pendingDelete?.CODE }}). This action cannot be undone.
+          <strong style="color: #e74c3c;">{{ pendingDelete.NAME }}</strong>
+          (Code: {{ pendingDelete.CODE }}). This action cannot be undone.
         </p>
       </div>
 

@@ -85,7 +85,7 @@ export class CommanmstF2Component implements OnInit {
   currentTblName = '';
 
   // delete
-  pendingDelete: RowDTO | null = null;
+pendingDelete: RowDTO | null = null;
 
   constructor(
     private menuComm: MenuCommServiceService,
