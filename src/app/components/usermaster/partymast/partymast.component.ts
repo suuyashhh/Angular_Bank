@@ -25,7 +25,7 @@ import { PassportFormatDirective } from '../../../shared/directives/passport-for
 import { InputRestrictionDirective } from '../../../shared/directives/input-restriction.directive';
 import { DropdownOption, DropdownService } from '../../../shared/services/dropdown.service';
 import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
-
+import { AutoTabIndexDirective } from '../../../shared/directives/auto-tab-index.directive';
 type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idproof' | 'addrproof' | 'otherstaff';
 type PickerTarget = 'primary' | 'corr';
 type PreviewKey = 'photo' | 'sign' | 'pan' | 'aadhaarFront' | 'aadhaarBack';
@@ -72,7 +72,8 @@ type Option = {
     ShowErrorsDirective,
     VoterIdFormatDirective,
     PassportFormatDirective,
-    InputRestrictionDirective
+    InputRestrictionDirective,
+    AutoTabIndexDirective
   ],
 
   templateUrl: './partymast.component.html',
@@ -708,6 +709,11 @@ export class PartymastComponent implements OnInit {
       }
     });
   }
+
+  isControlEnabled(controlName: string): boolean {
+  const control = this.form.get(controlName);
+  return control && control.enabled;
+}
 
 
 

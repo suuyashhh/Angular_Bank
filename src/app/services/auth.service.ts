@@ -2,50 +2,47 @@ import { Injectable, inject, PLATFORM_ID, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, filter, take } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../environments/environment';
 
-interface StorageLike {
-  length: number;
-  clear(): void;
-  getItem(key: string): string | null;
-  key(index: number): string | null;
-  removeItem(key: string): void;
-  setItem(key: string, value: string): void;
-}
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+
   private platformId = inject(PLATFORM_ID);
   private ngZone = inject(NgZone);
   private router = inject(Router);
   private http = inject(HttpClient);
   private toastr = inject(ToastrService, { optional: true });
 
-  private STORAGE_KEY = 'authData';
-  private LAST_ROUTE_KEY = 'last_route';
+  private STORAGE_KEY = "authData";
+  private LAST_ROUTE_KEY = "last_route";
+
   private inMemoryToken: string | null = null;
   private inMemoryUser: any = null;
 
   private secretKey = environment.ENCRYPT_KEY;
   private persist = environment.PERSIST_SESSION;
-  private baseUrl = environment.BASE_URL;
+  private baseUrl = environment.BASE_URL.replace(/\/+$/, "") + "/";
 
   private inactivityTimer: any = null;
-  private readonly INACTIVITY_LIMIT = 20 * 60 * 1000; // 20 min
-  private currentTabId = '';
+  private readonly INACTIVITY_LIMIT = 20 * 60 * 1000;
+
+  private currentTabId = "";
   public isLoggingOut = false;
+
   public isRestoringSession$ = new BehaviorSubject<boolean>(true);
   private restorePromise: Promise<void>;
 
   private authorizeInterval: any = null;
 
+  private DEVICE_ID_KEY = "device_id";
+
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       this.currentTabId = this.generateTabId();
-      this.safeSetStorage('active_tab_id', this.currentTabId);
+      this.safeSetStorage("active_tab_id", this.currentTabId);
 
       this.attachUnloadListener();
 
@@ -59,20 +56,36 @@ export class AuthService {
     }
   }
 
-  // ===== Safe Storage Operations =====
+  // DEVICE ID
+  private getOrCreateDeviceId(): string {
+    let id = this.safeGetStorage(this.DEVICE_ID_KEY);
+
+    if (!id) {
+      id = crypto.randomUUID();
+      this.safeSetStorage(this.DEVICE_ID_KEY, id);
+    }
+
+    return id;
+  }
+
+  getDeviceId(): string {
+    return this.getOrCreateDeviceId();
+  }
+
+  // Safe Storage
   private safeSetStorage(key: string, value: string): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    try { localStorage.setItem(key, value); } catch (e) { console.warn(e); }
+    try { localStorage.setItem(key, value); } catch { }
   }
 
   private safeGetStorage(key: string): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
-    try { return localStorage.getItem(key); } catch (e) { console.warn(e); return null; }
+    try { return localStorage.getItem(key); } catch { return null; }
   }
 
   private safeRemoveStorage(key: string): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    try { localStorage.removeItem(key); } catch (e) { console.warn(e); }
+    try { localStorage.removeItem(key); } catch { }
   }
 
   private encrypt(data: any): string {
@@ -85,6 +98,41 @@ export class AuthService {
     const decrypted = bytes.toString(CryptoJS.enc.Utf8);
     return decrypted ? JSON.parse(decrypted) : null;
   }
+
+  // --------------------------------------------------------------------
+  // ⭐ LOGIN — AES ENCRYPT + APP-KEY (HMAC added by interceptor)
+  // --------------------------------------------------------------------
+login(credentials: any) {
+  const key = CryptoJS.enc.Utf8.parse(this.secretKey);
+  const iv = CryptoJS.enc.Utf8.parse("0000000000000000");
+
+  const encryptedPayload = CryptoJS.AES.encrypt(
+    JSON.stringify(credentials),
+    key,
+    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+  ).toString();
+
+  const body = { data: encryptedPayload };
+
+  const ts = Date.now().toString();
+  const device = this.getDeviceId();
+  const raw = encryptedPayload + "|" + ts + "|" + device;
+  const signature = CryptoJS.HmacSHA256(raw, environment.HMAC_KEY).toString();
+
+  return this.http.post(`${this.baseUrl}Login/Login`, body, {
+    headers: new HttpHeaders({
+      "Content-Type": "application/json",
+      "X-APP-KEY": environment.APP_KEY,
+      "X-DEVICE-ID": device,
+      "X-TIMESTAMP": ts,
+      "X-SIGNATURE": signature
+    })
+  });
+}
+
+
+
+  // --------------------------------------------------------------------
 
   private attachUnloadListener() {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -128,29 +176,59 @@ export class AuthService {
     await this.restorePromise;
   }
 
-  setToken(res: any): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+  // Store session
+setToken(res: any): void {
+  try {
+    if (!res || !res.token) {
+      console.error("❌ setToken(): Missing token:", res);
+      return;
+    }
+
+    // store in memory
+    this.inMemoryToken = res.token;
+    this.inMemoryUser = res.userDetails;
+
+    // store encrypted in localStorage
+    const sessionObj = {
+      token: res.token,
+      userDetails: res.userDetails
+    };
+
+    const encrypted = this.encrypt(sessionObj);
+    this.safeSetStorage(this.STORAGE_KEY, encrypted);
+
+    console.log("✅ Token saved successfully");
 
     this.startAuthorizeHeartbeat();
-
-    this.inMemoryToken = res?.token ?? null;
-    this.inMemoryUser = res?.userDetails ?? null;
-
-    const data = { token: this.inMemoryToken, userDetails: this.inMemoryUser };
-    this.safeSetStorage(this.STORAGE_KEY, this.encrypt(data));
     this.resetInactivityTimer();
+  } catch (err) {
+    console.error("❌ setToken() failed:", err);
   }
+}
+
 
   getToken(): string | null {
-    if (!this.inMemoryToken) {
-      const stored = this.safeGetStorage(this.STORAGE_KEY);
-      if (stored) {
-        const decrypted = this.decrypt(stored);
-        this.inMemoryToken = decrypted?.token ?? null;
-      }
-    }
-    return this.inMemoryToken;
+  if (this.inMemoryToken) return this.inMemoryToken;
+
+  const stored = this.safeGetStorage(this.STORAGE_KEY);
+  if (!stored) return null;
+
+  let decrypted: any = null;
+  try {
+    decrypted = this.decrypt(stored);
+  } catch (e) {
+    console.error("❌ Failed to decrypt stored session:", e);
+    return null;
   }
+
+  if (!decrypted || !decrypted.token) return null;
+
+  this.inMemoryToken = decrypted.token;
+  this.inMemoryUser = decrypted.userDetails;
+
+  return decrypted.token;
+}
+
 
   getUser(): any {
     if (!this.inMemoryUser) {
@@ -163,17 +241,21 @@ export class AuthService {
     return this.inMemoryUser;
   }
 
-  isLoggedIn(): boolean {
-    return !!this.getToken();
-  }
+isLoggedIn(): boolean {
+  try {
+    const token = this.getToken();
+    if (!token) return false;
+    if (token.length < 20) return false;
 
-  login(credentials: any) {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(`${this.baseUrl}Login/Login`, credentials, { headers });
+    return true;
+  } catch {
+    return false;
   }
+}
 
-  logout(trigger: string = 'manual'): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+
+
+  logout(trigger: string = "manual"): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
 
@@ -183,13 +265,6 @@ export class AuthService {
     this.inMemoryUser = null;
     this.clearInactivityTimer();
 
-    // optional API logout call
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: this.getToken() ? `Bearer ${this.getToken()}` : ''
-    });
-    this.http.post(`${this.baseUrl}Login/Logout`, {}, { headers }).subscribe({ next: () => { }, error: () => { } });
-
     this.ngZone.run(() => {
       this.router.navigate(['/'], { replaceUrl: true }).then(() => {
         this.isLoggingOut = false;
@@ -197,124 +272,127 @@ export class AuthService {
     });
   }
 
+  // Heartbeat token validation
   startAuthorizeHeartbeat() {
     if (!isPlatformBrowser(this.platformId)) return;
     if (this.authorizeInterval) return;
 
     this.authorizeInterval = setInterval(() => {
-      if (this.isLoggedIn()) {
-        const headers = new HttpHeaders({
-          Authorization: `Bearer ${this.getToken()}`
+      if (!this.isLoggedIn()) return;
+
+      const token = this.getToken();
+      if (!token) return;
+
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+        "X-APP-KEY": environment.APP_KEY,
+        "X-DEVICE-ID": this.getDeviceId()
+      });
+
+      this.http.get(`${this.baseUrl}Login/CheckAuthorize`, { headers })
+        .subscribe({
+          next: () => { },
+          error: () => this.logout("unauthorized")
         });
 
-        this.http.get(`${this.baseUrl}Login/CheckAuthorize`, { headers })
-          .subscribe({
-            next: () => {
-              // authorized
-            },
-            error: () => {
-              // unauthorized → auto logout
-              this.logout('unauthorized');
-            }
-          });
-      }
-    }, 3000); // 30 seconds
+    }, 30000);
   }
 
-  setSelectedBranch(code: number, name: string): void {
-    const user = this.getUser() ?? {};
-    const updated = { ...user, selectedBranchCode: code, selectedBranchName: name };
-    this.inMemoryUser = updated;
-    const data = { token: this.inMemoryToken, userDetails: updated };
-    this.safeSetStorage(this.STORAGE_KEY, this.encrypt(data));
+  // Branch selection
+setSelectedBranch(code: number, name: string): void {
+  // recover token if missing
+  if (!this.inMemoryToken) {
+    this.inMemoryToken = this.getToken();
   }
 
-  // ===== Inactivity Tracking =====
+  const existingUser = this.getUser() ?? {};
+
+  const updatedUser = {
+    ...existingUser,
+    selectedBranchCode: code,
+    selectedBranchName: name
+  };
+
+  this.inMemoryUser = updatedUser;
+
+  const session = {
+    token: this.inMemoryToken,
+    userDetails: updatedUser
+  };
+
+  const encrypted = this.encrypt(session);
+  this.safeSetStorage(this.STORAGE_KEY, encrypted);
+
+  console.log("✔ Branch stored without breaking session:", session);
+}
+
+
+  // Inactivity
   private setupInactivityTracking(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
+
+    const events = ["mousemove", "mousedown", "keydown", "scroll", "click", "touchstart"];
     const handler = () => this.resetInactivityTimer();
+
     events.forEach(ev => window.addEventListener(ev, handler, { passive: true }));
+
     this.resetInactivityTimer();
   }
 
   private resetInactivityTimer(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
     this.clearInactivityTimer();
 
     this.ngZone.runOutsideAngular(() => {
       this.inactivityTimer = setTimeout(() => {
-        this.ngZone.run(() => {
-          if (this.isLoggedIn()) this.logout('inactivity timeout');
-        });
+        this.ngZone.run(() => this.logout("idle"));
       }, this.INACTIVITY_LIMIT);
     });
   }
 
   private clearInactivityTimer(): void {
-    if (this.inactivityTimer) {
-      clearTimeout(this.inactivityTimer);
-      this.inactivityTimer = null;
-    }
+    if (this.inactivityTimer) clearTimeout(this.inactivityTimer);
   }
 
-  // ===== Session Synchronization Across Tabs =====
+  // Sync across tabs
   private setupSessionSync(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    window.addEventListener('storage', (event) => {
+    window.addEventListener("storage", event => {
       if (event.key === this.STORAGE_KEY && !event.newValue) {
-        if (this.isLoggedIn()) this.logout('another tab logout');
-      }
-      if (event.key === 'force_logout') {
-        if (this.isLoggedIn()) this.logout('force logout');
+        this.logout("another-tab");
       }
     });
 
-    document.addEventListener('visibilitychange', () => {
+    document.addEventListener("visibilitychange", () => {
       if (!document.hidden) this.resetInactivityTimer();
     });
   }
 
+  // Single tab enforcement
   private setupSingleTabEnforcement(): void {
-  if (!isPlatformBrowser(this.platformId)) return;
+    if (!isPlatformBrowser(this.platformId)) return;
 
-  // Write this tab ID ONLY if no other tab exists
-  const existing = this.safeGetStorage('active_tab_id');
-  if (!existing) {
-    this.safeSetStorage('active_tab_id', this.currentTabId);
-  }
+    const existing = this.safeGetStorage("active_tab_id");
 
-  // Watch for changes
-  window.addEventListener('storage', (event) => {
-    if (event.key === 'active_tab_id') {
-      const newTabId = event.newValue;
-
-      // If another tab becomes active, log out this tab
-      if (newTabId && newTabId !== this.currentTabId && this.isLoggedIn()) {
-        this.toastr?.warning(
-          'Your session is active in another browser tab. Logging out.',
-          'Session Ended'
-        );
-        this.logout('another tab login');
-      }
+    if (existing && existing !== this.currentTabId && this.isLoggedIn()) {
+      this.toastr?.warning("Your session is active in another tab");
+      this.logout("other-tab");
     }
-  });
 
-  // On load: if another tab is already active, logout
-  if (existing && existing !== this.currentTabId && this.isLoggedIn()) {
-    this.toastr?.warning(
-      'Your session is active in another browser tab. Logging out.',
-      'Session Ended'
-    );
-    this.logout('another tab login');
+    window.addEventListener("storage", event => {
+      if (event.key === "active_tab_id") {
+        const newId = event.newValue;
+        if (newId && newId !== this.currentTabId && this.isLoggedIn()) {
+          this.logout("other-tab");
+        }
+      }
+    });
   }
-}
-
 
   private generateTabId(): string {
-    return Math.random().toString(36).substring(2) + Date.now().toString(36);
+    return Math.random().toString(36).slice(2) + Date.now().toString(36);
   }
+
   setLastRoute(url: string) {
     this.safeSetStorage(this.LAST_ROUTE_KEY, url);
   }
