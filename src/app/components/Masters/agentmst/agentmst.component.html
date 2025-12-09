@@ -1,0 +1,226 @@
+<main class="w-full px-6 py-8">
+  <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
+    <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
+
+      <!-- Header -->
+      <div class="mb-6 flex items-center justify-between">
+        <nav class="text-sm text-gray-600">
+          <ol class="flex items-center gap-2">
+            <li><a routerLink="/USERMASTER/dashboard" class="hover:underline">Home</a></li>
+            <li>/</li>
+            <li class="font-semibold">Pigmy Agent Master</li>
+          </ol>
+        </nav>
+        <div>
+          <button class="btn btn-primary" (click)="resetAgentForm()">
+            <i class="ri-add-box-fill"></i> New
+          </button>
+        </div>
+      </div>
+
+      <!-- Inline form (add / edit) -->
+      <div *ngIf="isCreatingNew" class="mb-6">
+        <div class="card p-4 rounded-lg shadow-sm border-0">
+          <div class="d-flex justify-content-between items-center mb-3">
+            <h5 class="mb-0">
+              {{ btn === 'E' ? 'Edit Agent' : 'New Agent' }}
+            </h5>
+            <button class="btn-close" type="button" (click)="isCreatingNew=false" aria-label="Close"></button>
+          </div>
+
+          <!-- reactive form -->
+          <form [formGroup]="data" (ngSubmit)="submit()" class="grid grid-cols-1 gap-4 sm:grid-cols-3" #agentFormStart>
+
+            <!-- Branch Code (select via modal) -->
+            <div class="form-floating form-floating-outline mb-0" tabindex="0" #editFocusStart>
+              <input id="branchCodeDisplay" type="text" class="form-control" placeholder="Select Branch" readonly
+                (click)="openBranch()" [value]="selectedBranchName" style="cursor:pointer" />
+              <!-- actual code stored in hidden control -->
+              <input type="hidden" formControlName="BRNC_CODE" />
+              <label for="branchCodeDisplay">Branch Code</label>
+            </div>
+
+            <!-- Agent Code (select via modal) -->
+            <!-- Agent Code (read-only if generated on server / new mode) -->
+            <div class="form-floating form-floating-outline mb-0 " [hidden]="btn !== 'E'">
+              <input id="agentCode" type="text" class="form-control" formControlName="AGENT_CODE"
+                placeholder="Agent Code" [readonly]="btn !== 'E'"  />
+              <label for="agentCode">Agent Code</label>
+            </div>
+
+
+            <!-- Customer Code (select via modal) -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input id="customerCodeDisplay" type="text" class="form-control" placeholder="Select Customer" readonly
+                (click)="openCustomer()" [value]="selectedCustomerCode" style="cursor:pointer" />
+              <input type="hidden" formControlName="PARTY_CODE" />
+              <label for="customerCodeDisplay">Customer Code</label>
+            </div>
+
+            <!-- Mobile No. -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input id="mobileNo" type="text" class="form-control" formControlName="MobileNo"
+                placeholder="Mobile No." />
+              <label for="mobileNo">Mobile No.</label>
+            </div>
+
+            <!-- Join Date -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input id="joinDate" type="date" class="form-control" formControlName="Join_date"
+                placeholder="Join Date" />
+              <label for="joinDate">Join Date</label>
+            </div>
+
+            <!-- Resign Date -->
+            <div class="form-floating form-floating-outline mb-0">
+              <input id="resignDate" type="date" class="form-control" formControlName="Resign_Date"
+                placeholder="Resign Date" />
+              <label for="resignDate">Resign Date</label>
+            </div>
+
+            <!-- Name (full width) -->
+            <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
+              <input id="agentName" type="text" class="form-control" formControlName="NAME" placeholder="Name" readonly />
+              <label for="agentName">Name</label>
+            </div>
+
+            <!-- Collection Machine (full width) -->
+            <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
+              <select class="form-select" id="collectionMachine" formControlName="Machine_type">
+                <option value="1">Manually</option>
+                <option value="2">Mobile</option>
+                <option value="3">Sai Balaji</option>
+                <option value="4">Balaji</option>
+              </select>
+              <label for="collectionMachine">Collection Machine</label>
+            </div>
+
+
+            <!-- Active Yes/No -->
+            <div class="mb-0 sm:col-span-3 flex items-center gap-4">
+              <span class="text-sm text-gray-700">Active :</span>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="activeYes" value="Y" formControlName="Active_YN" />
+                <label class="form-check-label" for="activeYes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="activeNo" value="N" formControlName="Active_YN" />
+                <label class="form-check-label" for="activeNo">No</label>
+              </div>
+            </div>
+
+            <!-- Hidden ID -->
+            <input type="hidden" formControlName="ID" />
+
+            <!-- Submit Button Row -->
+            <div class="sm:col-span-3 mt-4 flex items-center justify-end gap-3">
+              <button type="button"
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200"
+                (click)="isCreatingNew=false">
+                Cancel
+              </button>
+
+              <button type="submit"
+                class="px-5 py-2.5 rounded-xl bg-violet-600 text-white font-medium shadow hover:bg-violet-700"
+                [disabled]="saving || data.invalid">
+                {{ saving ? 'Saving...' : (btn === 'E' ? 'Update' : 'Save') }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="mt-6">
+          <hr
+            class="border-0 h-1 rounded bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400 shadow-[0_6px_18px_rgba(140,87,255,0.12)] mb-6" />
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="container-xxl flex-grow-1 mt-6">
+        <div class="card">
+          <div class="p-3 d-flex justify-content-end">
+            <div class="form-floating form-floating-outline">
+              <input class="form-control" type="search" placeholder="Search ..." [(ngModel)]="searchTerm"
+                (ngModelChange)="page = 1" id="html5-search-input" />
+              <label for="html5-search-input">
+                <i class="ri-search-2-fill"></i> Search by Name / Code
+              </label>
+            </div>
+          </div>
+
+          <div *ngIf="loading" class="text-center p-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+
+          <div *ngIf="!loading">
+            <div class="table-responsive text-nowrap">
+              <table class="table">
+                <thead class="table-dark" style="--bs-table-bg: #8c57ff !important;">
+                  <tr>
+                    <th>Sr</th>
+                    <th>Actions</th>
+                    <th>Agent Name</th>
+                    <th>Agent Code</th>
+                    <!-- <th>Mobile</th> -->
+                    <th>Branch</th>
+                    <th>Active</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let a of filteredAgents() | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+                    <td>{{ (page - 1) * pageSize + i + 1 }}</td>
+                    <td>
+                      <div class="btn-group btn-group-sm" role="group" style="gap: 6px;">
+                        <button class="btn btn-primary text-white" (click)="openInlineForm(a)" title="Edit">
+                          <i class="ri-pencil-line"></i>
+                          <span class="d-none d-sm-inline">Edit</span>
+                        </button>
+                        <button class="btn btn-danger text-white" (click)="deleteAgent(a)" title="Delete">
+                          <i class="ri-delete-bin-6-line"></i>
+                          <span class="d-none d-sm-inline">Delete</span>
+                        </button>
+                      </div>
+                    </td>
+                    <td><strong>{{ a.NAME }}</strong></td>
+                    <td><strong>{{ a.AGENT_CODE || a.code }}</strong></td>
+                    <!-- <td><strong>{{ a.MobileNo }}</strong></td> -->
+                    <td><strong>{{ a.BRNC_CODE }}</strong></td>
+                    <td><strong>{{ a.Active_YN === 'Y' ? 'Yes' : 'No' }}</strong></td>
+                  </tr>
+
+                  <tr *ngIf="(filteredAgents() || []).length === 0">
+                    <td colspan="7" class="text-center text-muted py-4">
+                      No agents found.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center p-3">
+              <div class="text-muted" *ngIf="(filteredAgents() || []).length > 0">
+                Showing
+                {{ (page - 1) * pageSize + 1 }}
+                to
+                {{
+                page * pageSize > (filteredAgents() || []).length
+                ? (filteredAgents() || []).length
+                : page * pageSize
+                }}
+                of {{ (filteredAgents() || []).length }} entries
+              </div>
+              <pagination-controls (pageChange)="page = $event" [autoHide]="true"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Your dropdown/picker modal component, if you use one globally -->
+  <app-dropdpwn-modal></app-dropdpwn-modal>
+</main>

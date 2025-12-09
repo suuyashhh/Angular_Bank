@@ -29,6 +29,7 @@ export class DashboardComponent {
     { pathName: 'User Menu Access', link: '/USERMASTER/UserMenuAccess' },
     { pathName: 'Check Menu Id', link: '/USERMASTER/CheckMenuId' },
     { pathName: 'Comman Master', link: '/USERMASTER/Commanmst-f2' },
+    { pathName: 'Agent Master', link: '/USERMASTER/agentmst' },
     { pathName: 'chekr', link: '/USERMASTER/checkr' },
     { pathName: 'Deposite Account Opening', link: '/USERMASTER/DepositAccount' },
     { pathName: 'Comman Master', link: '/USERMASTER/Commanmst-f2' }
