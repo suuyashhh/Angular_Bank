@@ -30,6 +30,9 @@ export class DashboardComponent {
     { pathName: 'Check Menu Id', link: '/USERMASTER/CheckMenuId' },
     { pathName: 'Comman Master', link: '/USERMASTER/Commanmst-f2' },
     { pathName: 'Agent Master', link: '/USERMASTER/agentmst' },
+    { pathName: 'chekr', link: '/USERMASTER/checkr' },
+    { pathName: 'Deposite Account Opening', link: '/USERMASTER/DepositAccount' },
+    { pathName: 'Comman Master', link: '/USERMASTER/Commanmst-f2' }
   ];
   filtered: Array<{ pathName: string; link: string }> = []; // empty initially → "No records found"
 

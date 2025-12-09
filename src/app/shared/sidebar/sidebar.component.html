@@ -3,10 +3,8 @@
     <div class="layout-container">
 
       <!-- Menu -->
-      <aside #layoutMenu
-             id="layout-menu-aside"
-             style="position: fixed;"
-             class="layout-menu menu-vertical menu shadow-xs bg-white rounded m-3">
+      <aside #layoutMenu id="layout-menu-aside" style="position: fixed;"
+        class="layout-menu menu-vertical menu shadow-xs bg-white rounded m-3">
 
         <div class="app-brand demo">
           <a routerLink="/" class="app-brand-link">
@@ -26,12 +24,8 @@
         <ul class="menu-inner py-1">
 
           <!-- Hardcoded Home -->
-          <li class="menu-item"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }">
-            <a routerLink="/USERMASTER/dashboard" 
-               class="menu-link"
-               title="Home">   <!-- tooltip added -->
+          <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <a routerLink="/USERMASTER/dashboard" class="menu-link" title="Home"> <!-- tooltip added -->
               <i class="menu-icon tf-icons ri-home-smile-line"></i>
               <div>Home</div>
             </a>
@@ -53,17 +47,13 @@
 <!-- Reusable node template -->
 <ng-template #menuNodeTpl let-node>
   <ng-container *ngIf="node.visible">
-    <li class="menu-item"
-        [class.close]="!node.expanded"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: false }">
+    <li class="menu-item" [class.close]="!node.expanded" routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: false }">
 
       <!-- Parent node -->
       <ng-container *ngIf="hasVisibleChildren(node); else leafTemplate">
-        <a href="javascript:void(0);"
-           class="menu-link menu-toggle"
-           (click)="toggleExpand(node)"
-           [title]="node.name">  <!-- tooltip added -->
+        <a href="javascript:void(0);" class="menu-link menu-toggle" (click)="toggleExpand(node)" [title]="node.name">
+          <!-- tooltip added -->
           <i class="menu-icon ri-folder-2-fill"></i>
           <div>{{ node.name }}</div>
         </a>
@@ -79,20 +69,17 @@
 
       <!-- Leaf node -->
       <ng-template #leafTemplate>
-        <a *ngIf="node.routerLink"
-           [routerLink]="node.routerLink"
-           class="menu-link"
-           [title]="node.name">  <!-- tooltip added -->
+        <a *ngIf="node.routerLink" [routerLink]="node.routerLink" class="menu-link" [title]="node.name"
+          (click)="onMenuClick(node)">
           <i class="menu-icon ri-file-text-line"></i>
           <div>{{ node.name }}</div>
         </a>
 
-        <a *ngIf="!node.routerLink"
-           class="menu-link"
-           [title]="node.name">  <!-- tooltip added -->
+        <a *ngIf="!node.routerLink" class="menu-link" [title]="node.name" (click)="onMenuClick(node)">
           <i class="menu-icon ri-file-text-line"></i>
           <div>{{ node.name }}</div>
         </a>
+
       </ng-template>
 
     </li>

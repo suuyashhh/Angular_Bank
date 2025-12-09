@@ -15,10 +15,12 @@ import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
+import { MenuCommServiceService } from '../services/menu-comm-service.service';
 
 interface DTOMenuMasterItem {
   menuId: number;
   menuName: string;
+  ViewId:number;
   programeId: number;
   mainMenuId: number;
   seqNo1: number;
@@ -26,17 +28,18 @@ interface DTOMenuMasterItem {
   seqNo3: number;
   seqNo4: number;
   seqNo5: number;
-  pageName?: string | null; 
+  pageName?: string | null;
 }
 
 interface MenuNode {
   id: number;
   name: string;
+  ViewId : number;
   pageName?: string | null;
   routerLink?: string | any[];
   children: MenuNode[];
   parent?: MenuNode | null;
-  visible: boolean; 
+  visible: boolean;
   expanded: boolean;
 }
 
@@ -51,7 +54,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
   user: any = null;
 
   private flatMenus: DTOMenuMasterItem[] = [];
-  private selectedMenuSet: Set<number> = new Set(); 
+  private selectedMenuSet: Set<number> = new Set();
 
   menuTree: MenuNode[] = [];
 
@@ -65,13 +68,21 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   private routerSub?: Subscription;
 
-  constructor(private auth: AuthService, private api: ApiService, private router: Router) { }
+  constructor(private menuComm: MenuCommServiceService, private auth: AuthService, private api: ApiService, private router: Router) { }
 
   ngOnInit(): void {
     const fullUser = this.auth.getUser();
     this.user = fullUser ? { ini: fullUser.INI, workinG_BRANCH: fullUser.WORKING_BRANCH } : null;
 
     this.loadMenuMasterAndAccess();
+  }
+
+  onMenuClick(node: MenuNode) {
+    this.menuComm.sendMenu({
+      menuId: node.id,
+      menuName: node.name,
+      ViewId:node.ViewId
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -91,9 +102,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private loadMenuMasterAndAccess(programId: number = 1): void {
-     
+
     this.api.get('UserMenuAccess/MenuMaster', { programeId: programId }).subscribe({
       next: (res: any) => {
+        console.log(res);
+        
         let list: any[] = [];
         if (Array.isArray(res)) list = res;
         else if (res?.data && Array.isArray(res.data)) list = res.data;
@@ -116,7 +129,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     if (!userLevel) {
       this.selectedMenuSet = new Set();
-      this.menuTree = this.buildTreeFromMenus(this.flatMenus); 
+      this.menuTree = this.buildTreeFromMenus(this.flatMenus);
       this.computeVisibility();
 
       if (!this.routerSub) this.setupActiveWatcher();
@@ -152,6 +165,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
     return {
       menuId: Number(raw.menuId ?? raw.Menu_ID ?? raw.MenuId ?? 0),
       menuName: String(raw.menuName ?? raw.Menu_Name ?? raw.MenuName ?? ''),
+      ViewId: Number(raw.viewId ?? 0),
       programeId: Number(raw.programeId ?? raw.Programe_ID ?? raw.ProgrameId ?? 0),
       mainMenuId: Number(raw.mainMenuId ?? raw.Main_Menu_ID ?? raw.MainMenuId ?? 0),
       seqNo1: Number(raw.seqNo1 ?? raw.Seq_No1 ?? raw.SeqNo1 ?? 0),
@@ -175,6 +189,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
       const rootNode: MenuNode = {
         id: rootItem.menuId,
         name: rootItem.menuName,
+        ViewId:rootItem.ViewId,
         pageName: rootItem.pageName ?? null,
         routerLink: this.normalizePageNameToRouterLink(rootItem.pageName),
         children: [],
@@ -263,6 +278,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
     const node: MenuNode = {
       id: item.menuId,
       name: item.menuName,
+      ViewId:item.ViewId,
       pageName: item.pageName ?? null,
       routerLink: this.normalizePageNameToRouterLink(item.pageName),
       children: [],
