@@ -85,8 +85,10 @@ type Option = {
 export class PartymastComponent implements OnInit {
 
   // ---------- general ----------
-  accountType = '0';
+  accountType: number = 0;
   accountTypes: any[] = [];
+
+  PrefixType: any[] = [];
 
   // Other/Staff fields
   otherStaffType = 'O'; // Default to 'Other'
@@ -390,64 +392,74 @@ export class PartymastComponent implements OnInit {
 
     });
 
-  this.load();
+    this.load();
 
   }
 
-  load(){
+  load() {
 
     this.api.get(`AccountTypeMaster/GetAllAccountType`).subscribe({
       next: (res: any) => {
         console.log("Account Types:", res);
         this.accountTypes = res;
+        this.applyAccountTypeRules(this.accountType);
       },
       error: (err: any) => {
         console.error("Error fetching Account Types:", err);
       }
     });
+    this.api.get(`PrefixMaster/GetAllPrefix`).subscribe({
+      next: (res: any) => {
+        console.log("Prefix:", res);
+        this.PrefixType = res;
+      },
+      error: (err: any) => {
+        console.error("Error fetching Prefix Types:", err);
+      }
+    });
 
-        // Auto-calculate age when birthdate changes
-  this.form.get('birthdate')?.valueChanges.subscribe((date:any) => {
-    if (!date) return;
-    this.updateAgeFromBirthdate(date);
-  });
+    // Auto-calculate age when birthdate changes
+    this.form.get('birthdate')?.valueChanges.subscribe((date: any) => {
+      if (!date) return;
+      this.updateAgeFromBirthdate(date);
+    });
 
-  // Auto-calculate birthdate when age changes
-  this.form.get('AGE')?.valueChanges.subscribe((age:any) => {
-    if (!age) return;
-    this.updateBirthdateFromAge(age);
-  });
+    // Auto-calculate birthdate when age changes
+    this.form.get('AGE')?.valueChanges.subscribe((age: any) => {
+      if (!age) return;
+      this.updateBirthdateFromAge(age);
+    });
   }
 
   updateAgeFromBirthdate(date: string) {
-  const birth = new Date(date);
-  const today = new Date();
+    const birth = new Date(date);
+    const today = new Date();
 
-  let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
 
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-    age--;
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+
+    // Prevent infinite loop by checking existing value
+    if (this.form.get('AGE')?.value !== age) {
+      this.form.patchValue({ AGE: age }, { emitEvent: false });
+    }
   }
+  updateBirthdateFromAge(age: number) {
+    if (!age || age <= 0) return;
 
-  // Prevent infinite loop by checking existing value
-  if (this.form.get('AGE')?.value !== age) {
-    this.form.patchValue({ AGE: age }, { emitEvent: false });
+    const today = new Date();
+    const birth = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
+
+    const formatted = birth.toISOString().split("T")[0];
+
+    // Prevent infinite loop
+    if (this.form.get('birthdate')?.value !== formatted) {
+      this.form.patchValue({ birthdate: formatted }, { emitEvent: false });
+    }
   }
-}
-updateBirthdateFromAge(age: number) {
-  if (!age || age <= 0) return;
-
-  const today = new Date();
-  const birth = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
-
-  const formatted = birth.toISOString().split("T")[0];
-
-  // Prevent infinite loop
-  if (this.form.get('birthdate')?.value !== formatted) {
-    this.form.patchValue({ birthdate: formatted }, { emitEvent: false });
-  }
-}
 
 
 
@@ -1450,16 +1462,16 @@ updateBirthdateFromAge(age: number) {
       this.form.reset();
     }
 
-      this.form.patchValue({
-    AcType: '0',
-    nmprefix: '',
-    Religon: null,
-    Cast: null,
-    OCCU: null,
-    SEX: '',
-    KycIdProof: false,
-    KycAddrProof: false
-  });
+    this.form.patchValue({
+      AcType: '0',
+      nmprefix: '',
+      Religon: null,
+      Cast: null,
+      OCCU: null,
+      SEX: '',
+      KycIdProof: false,
+      KycAddrProof: false
+    });
     this.searchText = '';
 
     // 2️⃣ Reset picker selections
@@ -1577,12 +1589,13 @@ updateBirthdateFromAge(age: number) {
   patchPartyMaster(data: any) {
 
     if (!data) return;
-
+    const acStr = data.acType ?? '0';   // ✅ keep backend as string
+    const acNum = Number(acStr);
     // --------------------------
     // 1️⃣  PATCH FORM FIELDS
     // --------------------------
     this.form.patchValue({
-      AcType: data.acType,
+      AcType: acStr,
       panNo: data.pan_no,
       AdharNo: data.adharNo,
       GSTNo: data.gstNo,
@@ -1723,6 +1736,8 @@ updateBirthdateFromAge(age: number) {
         }
       });
     }
+    this.accountType = acNum; 
+    this.applyAccountTypeRules(acNum);
 
     console.log("✔ PATCHED SUCCESSFULLY");
   }
@@ -1761,94 +1776,86 @@ updateBirthdateFromAge(age: number) {
   //   const radio = document.getElementById(`step-${step}`) as HTMLInputElement;
   //   if (radio) radio.checked = true;
   // }
-showFields:any = {
-  adharNo: true,
-  panNo: true,
-  GSTNo: true
-};
+
+  fieldConfigMap: any = {
+    adharCard: 'AdharNo',
+    panCard: 'panNo',
+    gst: 'GSTNo'
+  };
+  applyAccountTypeRules(typeCode: number) {
+    console.log(`Applying rules for account type: ${typeCode}`);
+
+    const selectedType = this.accountTypes.find((x: any) => x.code === Number(typeCode));
+    if (!selectedType) return;
+
+    Object.keys(this.fieldConfigMap).forEach((key) => {
+      const controlName = this.fieldConfigMap[key];
+      const control = this.form.get(controlName);
+
+      const rule = selectedType[key] ?? 'N'; // ✅ DEFAULT NULL → 'N'
+
+      if (!control) return;
+
+      control.enable({ emitEvent: false });
+      control.clearValidators();
+
+      if (rule === 'Y') {
+        control.setValidators([Validators.required]);
+      }
+
+      if (rule === 'D') {
+        control.disable({ emitEvent: false });
+        control.setValue(null, { emitEvent: false });
+      }
+
+      control.updateValueAndValidity({ emitEvent: false });
+    });
+  }
+
+  isHidden(fieldKey: string): boolean {
+    const selectedType = this.accountTypes.find((x: any) => x.code == this.accountType);
+    return selectedType?.[fieldKey] === 'D';
+  }
 
   onAccountTypeChange() {
-  const selected = this.accountTypes.find(x => x.code == this.accountType);
+    const typeStr = this.form.get('AcType')?.value;   // ✅ string from form
+    const num = Number(typeStr);                      // ✅ convert to number
 
-  if (!selected) return;
+    this.accountType = num;
 
-  this.applyFieldRules("adharCard", selected.adharCard, "adharNo");
-  this.applyFieldRules("panCard",  selected.panCard,  "panNo");
-  this.applyFieldRules("gst",      selected.gst,      "GSTNo");
-}
-applyFieldRules(flagName: string, flagValue: string, formControlName: string) {
-  const ctrl = this.form.get(formControlName);
+    this.applyAccountTypeRules(num);
 
-  if (!ctrl) return;
-
-  // Y = show + required
-  if (flagValue === "Y") {
-    ctrl.setValidators([Validators.required]);
-    ctrl.enable();
-    this.showFields[formControlName] = true;
+    console.log('Account type (string):', typeStr);
+    console.log('Account type (number):', num);
   }
 
-  // N = show + not required
-  else if (flagValue === "N") {
-    ctrl.clearValidators();
-    ctrl.enable();
-    this.showFields[formControlName] = true;
-  }
 
-  // D = hide + not required
-  else if (flagValue === "D") {
-    ctrl.clearValidators();
-    ctrl.setValue(null);
-    ctrl.disable();
-    this.showFields[formControlName] = false;
-  }
-
-  ctrl.updateValueAndValidity();
-}
 
 
   validateStep1(): boolean {
+    const selectedType = this.accountTypes.find(x => x.code == this.accountType);
+
     const controls = [
       'AcType',
-      'panNo',
-      'GSTNo',
+      selectedType?.panCard === 'Y' ? 'panNo' : null,
+      selectedType?.adharCard === 'Y' ? 'AdharNo' : null,
+      selectedType?.gst === 'Y' ? 'GSTNo' : null,
       'nmprefix',
       'name'
-    ];
-
-    let valid = true;
+    ].filter(Boolean) as string[];
 
     for (let c of controls) {
       const ctrl = this.form.get(c);
+
       if (ctrl && !ctrl.disabled && ctrl.invalid) {
-
-        // ❗ Detect exists error
-        if (ctrl.errors?.['exists']) {
-          this.toastr.error("Fill correct data — your data already exists");
-
-          // shake step
-          const stepEl = document.querySelector(
-            `label[for="step-${this.currentStep}"]`
-          ) as HTMLElement;
-          if (stepEl) {
-            stepEl.classList.add('step-shake');
-            setTimeout(() => stepEl.classList.remove('step-shake'), 350);
-          }
-
-          this.scrollToFirstInvalid();
-        }
-        else {
-          this.toastr.error("Please fill required fields");
-          this.scrollToFirstInvalid();
-        }
-
-
+        this.toastr.error("Please fill required fields");
         ctrl.markAsTouched();
-        valid = false;
+        this.scrollToFirstInvalid();
+        return false;
       }
     }
 
-    return valid;
+    return true;
   }
 
 
@@ -1905,58 +1912,67 @@ applyFieldRules(flagName: string, flagValue: string, formControlName: string) {
   validateStep3(): boolean {
     let valid = true;
 
-    if(this.accountType == '0'){
-    const controls = [
-      'passportno',
-      'passexpdate',
-      'voteridno',
-      'birthdate',
-      'AGE',
-      'SEX'
-    ];
+    const showError = (exists = false) => {
+      if (exists) {
+        this.toastr.error("Fill correct data — your data already exists");
+      } else {
+        this.toastr.error("Please fill required fields");
+      }
 
-    for (let c of controls) {
-      const ctrl = this.form.get(c);
-      if (ctrl && !ctrl.disabled && ctrl.invalid) {
+      const stepEl = document.querySelector(
+        `label[for="step-${this.currentStep}"]`
+      ) as HTMLElement;
 
-        if (ctrl.errors?.['exists']) {
-          this.toastr.error("Fill correct data — your data already exists");
+      if (stepEl) {
+        stepEl.classList.add('step-shake');
+        setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+      }
 
-          // shake step
-          const stepEl = document.querySelector(
-            `label[for="step-${this.currentStep}"]`
-          ) as HTMLElement;
-          if (stepEl) {
-            stepEl.classList.add('step-shake');
-            setTimeout(() => stepEl.classList.remove('step-shake'), 350);
-          }
+      this.scrollToFirstInvalid();
+    };
 
-          this.scrollToFirstInvalid();
+    if (this.accountType == 0) {
+      const controls = [
+        'passportno',
+        'passexpdate',
+        'voteridno',
+        'birthdate',
+        'AGE',
+        'SEX'
+      ];
+
+      for (let c of controls) {
+        const ctrl = this.form.get(c);
+
+        if (ctrl && !ctrl.disabled && ctrl.invalid) {
+          showError(!!ctrl.errors?.['exists']);
+          ctrl.markAsTouched();
+          return false; // ✅ EXIT IMMEDIATELY
         }
-        else {
+      }
+
+      // ✅ Passport dependency check
+      if (this.form.get('passportno')?.value) {
+        if (!this.form.get('passexpdate')?.value || !this.form.get('passauth')?.value) {
           this.toastr.error("Please fill required fields");
-          this.scrollToFirstInvalid();
+          return false;
         }
+      }
 
+      // ✅ Other staff dependency
+      if (this.otherStaffType == 'S' && !this.otherStaffName) {
+        this.toastr.error("Please fill required fields");
+        return false;
+      }
 
-        ctrl.markAsTouched();
-        valid = false;
+      // ✅ Religious / caste / occupation dependency
+      if (!this.religionCode || !this.castCode || !this.occupationCode) {
+        this.toastr.error("Please fill required fields");
+        return false;
       }
-    }
-    if(this.form.get('passportno')?.value){
-      if(!this.form.get('passexpdate')?.value || !this.form.get('passauth')?.value){
-        valid = false;
-      }
-    }
-    if(this.otherStaffType == 'S' ){
-      if(!this.otherStaffName){
-        valid = false;
-      }
-    }
-    if (!this.religionCode || !this.castCode || !this.occupationCode) {
-      valid = false;
-    }}
-    else{
+
+    } else {
+
       const controls = [
         'COMPREGNO',
         'COMPREGDT',
@@ -1967,34 +1983,22 @@ applyFieldRules(flagName: string, flagValue: string, formControlName: string) {
         'COMPNETWORTH',
         'Propritor1'
       ];
+
+
       for (let c of controls) {
         const ctrl = this.form.get(c);
-        if (ctrl && !ctrl.disabled && ctrl.invalid) {
-          if (ctrl.errors?.['exists']) {
-            this.toastr.error("Fill correct data — your data already exists");
-            // shake step
-            const stepEl = document.querySelector(
-              `label[for="step-${this.currentStep}"]`
-            ) as HTMLElement;
-            if (stepEl) {
-              stepEl.classList.add('step-shake');
-              setTimeout(() => stepEl.classList.remove('step-shake'), 350);
-            }
-            this.scrollToFirstInvalid();
-          }
-          else {
-            this.toastr.error("Please fill required fields");
-            this.scrollToFirstInvalid();
-          }
-          ctrl.markAsTouched();
-          valid = false;
-        }
 
+        if (ctrl && !ctrl.disabled && ctrl.invalid) {
+          showError(!!ctrl.errors?.['exists']);
+          ctrl.markAsTouched();
+          return false; // ✅ EXIT IMMEDIATELY
+        }
       }
     }
 
-    return valid;
+    return true;
   }
+
 
   validateStep4(): boolean {
     let valid = true;
@@ -2126,21 +2130,21 @@ applyFieldRules(flagName: string, flagValue: string, formControlName: string) {
   }
 
   focusFirstInvalidField() {
-  setTimeout(() => {
-    const invalidField = document.querySelector(
-      '.invalid-check.ng-invalid:not([disabled])'
-    ) as HTMLElement;
+    setTimeout(() => {
+      const invalidField = document.querySelector(
+        '.invalid-check.ng-invalid:not([disabled])'
+      ) as HTMLElement;
 
-    if (invalidField) {
-      invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      invalidField.focus();
+      if (invalidField) {
+        invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        invalidField.focus();
 
-      // Add shake animation
-      invalidField.classList.add('shake-anim');
-      setTimeout(() => invalidField.classList.remove('shake-anim'), 400);
-    }
-  }, 50);
-}
+        // Add shake animation
+        invalidField.classList.add('shake-anim');
+        setTimeout(() => invalidField.classList.remove('shake-anim'), 400);
+      }
+    }, 50);
+  }
 
 
 

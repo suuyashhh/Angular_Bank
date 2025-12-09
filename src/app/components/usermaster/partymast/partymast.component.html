@@ -334,7 +334,7 @@
               <!-- A/C Type: bound to accountType -->
               <div class="form-floating form-floating-outline mb-4">
                 <select id="basic_accountType" class="form-select" [(ngModel)]="accountType" name="accountType"
-                  formControlName="AcType" autoTabIndex [tabIndexOrder]="1">
+                  formControlName="AcType" autoTabIndex [tabIndexOrder]="1" (change)="onAccountTypeChange()">
                   <option *ngFor="let res of accountTypes" [value]="res.code">
                     {{ res.name }}
                   </option>
@@ -360,7 +360,7 @@
                   PAN already exists in system!
                 </small>
               </div> -->
-              <div class="flex-1">
+              <div class="flex-1" [hidden]="isHidden('panNo')">
                 <div class="form-floating form-floating-outline flex-1">
 
                   <input type="text" class="form-control invalid-check" placeholder="PAN No" validatedInput="pan"
@@ -378,11 +378,11 @@
 
 
               <!-- Aadhaar shown only for Individual -->
-              <!-- <div *ngIf="accountType === '0'" class="form-floating form-floating-outline mb-4">
+              <!-- <div *ngIf="accountType === 0" class="form-floating form-floating-outline mb-4">
               <input type="text" id="basic_aadhaarNo" class="form-control invalid-check" placeholder="Aadhaar Card No" />
               <label for="basic_aadhaarNo">Aadhaar Card No</label>
             </div> -->
-              <!-- <div *ngIf="accountType === '0'" class="form-floating form-floating-outline mb-4 position-relative">
+              <!-- <div *ngIf="accountType === 0" class="form-floating form-floating-outline mb-4 position-relative">
 
                 <input type="text" class="form-control invalid-check" formControlName="aadhaar" aadhaarFormat
                   placeholder="Aadhaar Card No" [validIndicator]="form.controls['aadhaar']" />
@@ -394,12 +394,11 @@
                   Aadhaar must be 12 digits
                 </small>
               </div> -->
-              <div class="flex-1" [hidden]="accountType !== '0'">
+              <div class="flex-1" [hidden]="isHidden('adharCard')">
                 <div class="form-floating form-floating-outline flex-1">
 
                   <input type="text" class="form-control invalid-check" placeholder="Aadhaar No"
-                    validatedInput="aadhaar" aadhaarFormat formControlName="AdharNo" autoTabIndex [tabIndexOrder]="3"
-                    [hidden]="accountType !== '0'" />
+                    validatedInput="aadhaar" aadhaarFormat formControlName="AdharNo" autoTabIndex [tabIndexOrder]="3" />
 
                   <label>Aadhaar No</label>
 
@@ -434,7 +433,7 @@
                   GST must be 15 characters
                 </small>
               </div> -->
-              <div class="flex-1">
+              <div class="flex-1" [hidden]="isHidden('GSTNo')">
                 <div class="form-floating form-floating-outline flex-1">
 
                   <input type="text" class="form-control invalid-check" placeholder="GST No" validatedInput="gst"
@@ -458,9 +457,12 @@
                 <select id="basic_title" class="form-select invalid-check" formControlName="nmprefix" autoTabIndex
                   [tabIndexOrder]="5">
                   <option value="">Option</option>
-                  <option value="Mr">Mr</option>
+                  <option *ngFor="let res of PrefixType" [value]="res.prefixtype">
+                    {{ res.prefixtype }}
+                  </option>
+                  <!-- <option value="Mr">Mr</option>
                   <option value="Mrs">Mrs</option>
-                  <option value="Other">Other</option>
+                  <option value="Other">Other</option> -->
                 </select>
               </div>
 
@@ -807,7 +809,7 @@
 
           <!-- STEP 3: Personal + Company/Firm conditional content -->
           <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
-            <div *ngIf="accountType === '0'">
+            <div *ngIf="accountType === 0">
               <h4 class="mb-4 text-lg font-semibold">Personal Details</h4>
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <!-- Religion -->
@@ -906,7 +908,7 @@
 
                 <div class="form-floating form-floating-outline mb-0">
                   <input type="number" class="form-control invalid-check" id="age" placeholder="Age" min="0"
-                    formControlName="AGE" />
+                    formControlName="AGE" readonly/>
                   <label for="age">Age</label>
                 </div>
 
@@ -972,7 +974,7 @@
             </div>
 
             <!-- COMPANY/FIRM DETAILS: shown only for non-Individual -->
-            <div *ngIf="accountType !== '0'">
+            <div *ngIf="accountType !== 0">
               <h4 class="mb-4 text-lg font-semibold">Company/Firm Details</h4>
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div class="form-floating form-floating-outline mb-0">
