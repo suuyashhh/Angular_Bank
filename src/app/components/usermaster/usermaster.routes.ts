@@ -77,8 +77,8 @@ export const UserMaster_Routes: Routes = [
       {
         path: 'statemst',
         loadComponent: () =>
-          import('../Masters/statemst/statemst.component').then(
-            (m) => m.StatemstComponent
+          import('../Masters/commanmst-f2/commanmst-f2.component').then(
+            (m) => m.CommanmstF2Component
           ),
         title: 'State Master | SmartBank',
       },
@@ -114,11 +114,46 @@ export const UserMaster_Routes: Routes = [
       },
 
       {
-        path: 'Commanmst-f2',
+        path: 'Commanmst',
         loadComponent: () =>
           import('../Masters/commanmst-f2/commanmst-f2.component').then((m) => m.CommanmstF2Component),
         title: 'Comman Master | SmartBank',
       },
+      { path: 'castmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Cast Master | SmartBank' },          //1
+      { path: 'grademast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Grade Master | SmartBank' },      //2
+      { path: 'golditems', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Gold Items | SmartBank' },       //3
+      { path: 'occumast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Occupation Master | SmartBank' }, //4
+      { path: 'resnsmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Reason Master | SmartBank' },     //5
+      { path: 'staffmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Staff Master | SmartBank' },      //6
+      { path: 'talkmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Talk Master | SmartBank' },       //7
+      { path: 'pertmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Pert Master | SmartBank' },       //8
+      { path: 'villmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Village Master | SmartBank' },     //9
+      { path: 'vehicle', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Vehicle Master | SmartBank' },      //10
+      { path: 'zonemast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Zone Master | SmartBank' },        //11
+      { path: 'subkgroup', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'SubK Group | SmartBank' },       //12
+      { path: 'familymast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Family Master | SmartBank' },   //13
+      { path: 'purpmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Purpose Master | SmartBank' },    //14
+      { path: 'kycidmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'KYC ID Master | SmartBank' },     //15
+      { path: 'kycaddrmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'KYC Address Master | SmartBank' }, //16
+      { path: 'catgmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Category Master | SmartBank' },    //17
+      { path: 'diermast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Dier Master | SmartBank' },       //18
+      { path: 'heltmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Health Master | SmartBank' },     //19
+      { path: 'secumast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Security Master | SmartBank' },   //20
+      { path: 'lockergroup', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Locker Group | SmartBank' },    //21
+      { path: 'ddcity', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'DD City Master | SmartBank' },      //22
+      { path: 'clgtrntype', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Clg Trn Type | SmartBank' },    //23
+      { path: 'grpmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Group Master | SmartBank' },       //24
+      { path: 'compmast', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Company Master | SmartBank' },    //25
+      { path: 'valuator', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Valuator Master | SmartBank' },   //26
+      { path: 'bankmaster', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Bank Master | SmartBank' },     //27
+      { path: 'itemgroupmaster', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Item Group Master | SmartBank' }, //28
+      { path: 'itemmaster', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Item Master | SmartBank' },      //30
+
+      // Additional items at bottom
+      { path: 'divisionmaster', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Division Master | SmartBank' }, //36
+      { path: 'localdirector', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Local Director | SmartBank' }, //50
+      { path: 'areamaster', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Area Master | SmartBank' },       //51
+      { path: 'lawadcourt', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Lawad Court Master | SmartBank' } //52
     ],
   },
   {

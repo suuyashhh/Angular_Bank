@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { MenuCommServiceService } from '../../../shared/services/menu-comm-service.service';
 // import { ApiService } from '../../../services/api.service'; // when you wire APIs
 // import { ToastrService } from 'ngx-toastr';
 
@@ -54,16 +55,28 @@ export class CommanmstF2Component implements OnInit {
   readonly pageSize = 15;
   searchTerm = '';
 
+  menuName: any;
+
   // delete
   pendingDelete: { CODE: string; NAME: string } | null = null;
 
   constructor(
+    private menuComm: MenuCommServiceService,
     private route: ActivatedRoute,
     // private api: ApiService,
     // private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
+    this.menuComm.menu$.subscribe(data => {
+      
+    if (data) {
+      this.menuName = data.menuName;
+
+      // OPTIONAL → use menu name to select the correct master
+      // this.currentKey = data.menuName.toLowerCase();
+    }
+  });
     this.form = new FormGroup({
       CODE: new FormControl({ value: '', disabled: true }), // code generated on server
       NAME: new FormControl('', [Validators.required, Validators.maxLength(100)])
