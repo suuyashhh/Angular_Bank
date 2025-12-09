@@ -17,6 +17,7 @@ type Branch = { code: number; name: string };
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
+
   loginObj = { INI: '', CODE: '' };
   showPassword = false;
 
@@ -38,68 +39,91 @@ export class LoginComponent {
     private loader: LoaderService
   ) {}
 
-  login(): void {
-    if (!this.loginObj.INI || !this.loginObj.CODE) {
-      this.toastr.warning('Please enter both username/email and password.', 'Required');
-      return;
-    }
-
-    this.loader.show();
-
-    this.auth.login(this.loginObj).subscribe({
-      next: (res: any) => {
-        this.auth.setToken(res);
-        this.userName = res?.userDetails?.name ?? 'User';
-        const user = this.auth.getUser() || {};
-
-        // Branch selection flags
-        const allowAll = String(user.alloW_BR_SELECTION ?? 'N').toUpperCase() === 'Y';
-        const workingCode = Number(user.workinG_BRANCH ?? 0);
-
-        // Fetch all branches
-        this.api.get('BranchMast/GetAllBranches').subscribe({
-          next: (branches: any) => {
-            const list: any[] = Array.isArray(branches) ? branches : Object.values(branches || {});
-            let mapped: Branch[] = (list || [])
-              .filter(x => x && (x.name ?? x.Name))
-              .map(x => ({
-                code: Number(x.code ?? x.Code),
-                name: String(x.name ?? x.Name).trim(),
-              }))
-              .sort((a, b) => a.name.localeCompare(b.name));
-
-            // Filter by user permission
-            if (!allowAll) {
-              mapped = mapped.filter(b => b.code === workingCode);
-              if (mapped.length === 0 && workingCode) {
-                mapped = [{ code: workingCode, name: `Branch ${workingCode}` }];
-              }
-              this.selectedBranch = mapped[0] ?? null;
-              this.branchSearch = this.selectedBranch?.name ?? '';
-            }
-
-            this.branches = mapped;
-            this.filteredBranches = [...this.branches];
-
-            // ✅ Always show the branch selection modal after login
-            this.showModel = true;
-
-            this.loader.hide();
-          },
-          error: () => {
-            this.loader.hide();
-            this.toastr.error('Unable to load branches.', 'Error');
-          },
-        });
-      },
-      error: () => {
-        this.loader.hide();
-        this.toastr.error('Invalid username or password.', 'Login failed');
-      },
-    });
+  // ------------------------------------------------------------------
+  // ⭐ SECURED BANKING LOGIN
+  // ------------------------------------------------------------------
+login(): void {
+  if (!this.loginObj.INI || !this.loginObj.CODE) {
+    this.toastr.warning('Please enter both username and password.', 'Required');
+    return;
   }
 
-  // Dropdown and filtering
+  this.loader.show();
+
+  this.auth.login(this.loginObj).subscribe({
+    next: (res: any) => {
+      const decryptedRes = this.api.decryptResponse(res);
+      if (!decryptedRes || !decryptedRes.token) {
+      this.toastr.error('Invalid encrypted server response');
+      return;
+    }
+  
+      this.auth.setToken(decryptedRes);
+
+      const user = this.auth.getUser() || {};
+      this.userName = user.NAME ?? "User";
+
+      const allowAll = String(user.ALLOW_BR_SELECTION ?? "N").toUpperCase() === "Y";
+      const workingCode = Number(user.WORKING_BRANCH ?? 0);
+
+      // ⭐ Fetch Branch List
+      this.api.get('BranchMast/GetAllBranches').subscribe({
+        next: (branchesResp: any) => {
+
+          // ⭐ DECRYPT RESPONSE FIRST
+          const decrypted = this.api["decryptResponse"](branchesResp);  
+          console.log("DECRYPTED:", decrypted);
+
+          const list: any[] = Array.isArray(decrypted)
+            ? decrypted
+            : Object.values(decrypted || {});
+
+          let mapped: Branch[] = (list || [])
+            .filter(x => x && (x.Name || x.name || x.NAME))
+            .map(x => ({
+              code: Number(x.Code ?? x.code ?? x.CODE),
+              name: String(x.Name ?? x.name ?? x.NAME).trim()
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+          console.log("MAPPED:", mapped);
+
+          if (!allowAll && workingCode > 0) {
+            mapped = mapped.filter(b => b.code === workingCode);
+
+            if (mapped.length === 0) {
+              mapped = [{ code: workingCode, name: `Branch ${workingCode}` }];
+            }
+
+            this.selectedBranch = mapped[0] ?? null;
+            this.branchSearch = this.selectedBranch?.name ?? "";
+          }
+
+          this.branches = mapped;
+          this.filteredBranches = [...mapped];
+
+          this.showModel = true;
+          this.loader.hide();
+        },
+
+        error: () => {
+          this.loader.hide();
+          this.toastr.error('Unable to load branches.', 'Error');
+        }
+      });
+    },
+
+    error: () => {
+      this.loader.hide();
+      this.toastr.error('Invalid username or password.', 'Login Failed');
+    }
+  });
+}
+
+
+  // ------------------------------------------------------------------
+  // UI Helpers
+  // ------------------------------------------------------------------
   toggleDropdown(): void {
     this.dropdownOpen = !this.dropdownOpen;
     if (this.dropdownOpen) this.filteredBranches = this.filterBy(this.branchSearch);
@@ -110,7 +134,7 @@ export class LoginComponent {
   }
 
   private filterBy(term: string): Branch[] {
-    const t = (term || '').toLowerCase();
+    const t = (term || "").toLowerCase();
     if (!t) return [...this.branches];
     return this.branches.filter(b => b.name.toLowerCase().includes(t));
   }
@@ -121,19 +145,25 @@ export class LoginComponent {
     this.dropdownOpen = false;
   }
 
-  // When user clicks Continue
+  // ------------------------------------------------------------------
+  // ⭐ Final Step: Save branch & go inside system
+  // ------------------------------------------------------------------
   continue(): void {
     if (!this.selectedBranch) {
       this.toastr.warning('Please select a branch.', 'Required');
       return;
     }
 
-    sessionStorage.setItem('branchCode', String(this.selectedBranch.code));
-    this.auth.setSelectedBranch(this.selectedBranch.code, this.selectedBranch.name);
+    sessionStorage.setItem("branchCode", String(this.selectedBranch.code));
+
+    this.auth.setSelectedBranch(
+      this.selectedBranch.code,
+      this.selectedBranch.name
+    );
 
     this.showModel = false;
-    this.toastr.success('Login successful!', 'Login');
-    this.router.navigate(['USERMASTER']);
+    this.toastr.success("Login successful!", "Login");
+    this.router.navigate(["USERMASTER"]);
   }
 
   closeModal(): void {

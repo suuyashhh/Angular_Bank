@@ -69,7 +69,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit(): void {
     const fullUser = this.auth.getUser();
-    this.user = fullUser ? { ini: fullUser.ini, workinG_BRANCH: fullUser.workinG_BRANCH } : null;
+    this.user = fullUser ? { ini: fullUser.INI, workinG_BRANCH: fullUser.WORKING_BRANCH } : null;
 
     this.loadMenuMasterAndAccess();
   }
@@ -112,7 +112,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   private loadSelectedMenusForCurrentUser(programId: number = 1): void {
     const fullUser = this.auth.getUser();
-    const userLevel = fullUser?.useR_LAVEL;
+    const userLevel = fullUser?.USER_LAVEL;
 
     if (!userLevel) {
       this.selectedMenuSet = new Set();
