@@ -37,7 +37,8 @@ export class DashboardComponent {
     { pathName: 'Agent Master', link: '/USERMASTER/agentmst' },
     { pathName: 'chekr', link: '/USERMASTER/checkr' },
     { pathName: 'Deposite Account Opening', link: '/USERMASTER/DepositAccount' },
-    { pathName: 'Comman Master', link: '/USERMASTER/Commanmst-f2' }
+    { pathName: 'Comman Master', link: '/USERMASTER/Commanmst-f2' },
+    { pathName: 'Pending Voucher Passing', link: '/USERMASTER/PendingVoucherPassing' }
   ];
   filtered: Array<{ pathName: string; link: string }> = [];
 

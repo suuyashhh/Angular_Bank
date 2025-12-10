@@ -22,7 +22,6 @@ import { ShowErrorsDirective } from '../../../shared/directives/show-errors.dire
 import { ValidationSignal } from '../../../shared/services/validation-signals.service';
 import { VoterIdFormatDirective } from '../../../shared/directives/voterid-format.directive';
 import { PassportFormatDirective } from '../../../shared/directives/passport-format.directive';
-import { InputRestrictionDirective } from '../../../shared/directives/input-restriction.directive';
 import { DropdownOption, DropdownService } from '../../../shared/services/dropdown.service';
 import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
 import { AutoTabIndexDirective } from '../../../shared/directives/auto-tab-index.directive';
@@ -74,7 +73,6 @@ type Option = {
     ShowErrorsDirective,
     VoterIdFormatDirective,
     PassportFormatDirective,
-    InputRestrictionDirective,
     AutoTabIndexDirective,
     InputValidatorDirective
   ],
@@ -186,6 +184,7 @@ export class PartymastComponent implements OnInit {
   selectedCustomer: any = null;
 
   loading: boolean = false;
+  selectedCategory: string = 'Personal';
 
 
   // ---------- Template Refs ----------
@@ -412,6 +411,9 @@ export class PartymastComponent implements OnInit {
       next: (res: any) => {
         console.log("Prefix:", res);
         this.PrefixType = res;
+
+        // Optional: set default category to Personal
+        this.selectedCategory = 'Personal';
       },
       error: (err: any) => {
         console.error("Error fetching Prefix Types:", err);
@@ -429,6 +431,13 @@ export class PartymastComponent implements OnInit {
       if (!age) return;
       this.updateBirthdateFromAge(age);
     });
+  }
+
+  onPrefixChange(event: Event) {
+    const prefix = (event.target as HTMLSelectElement).value;
+
+    const record = this.PrefixType.find(x => x.prefixtype === prefix);
+    this.selectedCategory = record?.prefixCategory ?? '';
   }
 
   updateAgeFromBirthdate(date: string) {
@@ -551,6 +560,15 @@ export class PartymastComponent implements OnInit {
       aadhaarFront: [null],
       aadhaarBack: [null]
     });
+
+    // Watch prefix changes
+     this.form.get('nmprefix')?.valueChanges.subscribe((prefix:any) => {
+    const record = this.PrefixType.find((x: any) => x.prefixtype === prefix);
+    this.selectedCategory = record?.prefixCategory ?? 'Personal'; // default Personal
+
+    // Clear name field on prefix change
+    this.form.get('name')?.reset();
+  });
   }
   submit() {
     // make sure last step also validated
@@ -1354,20 +1372,91 @@ export class PartymastComponent implements OnInit {
     return item.selectId ?? item.code;
   }
 
-  // ---------- Preview Handlers ----------
-  onFileChange(event: Event, key: PreviewKey) {
-    const input = event.target as HTMLInputElement | null;
-    const file = input?.files?.[0];
-    if (!file) return;
-    console.log(input);
-    console.log(file);
-
+// -----------------------------
+// 1️⃣ IMAGE COMPRESSION FUNCTION
+// -----------------------------
+async compressImage(file: File, maxSizeKB: number = 60): Promise<string> {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => {
-      this.previews[key] = reader.result as string;
+
+    reader.onload = (event: ProgressEvent<FileReader>) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject('Canvas not supported');
+
+        // Optional: resize large images proportionally to reduce size
+        const maxDim = 1024; // max width or height
+        let width = img.width;
+        let height = img.height;
+        if (width > maxDim || height > maxDim) {
+          const ratio = Math.min(maxDim / width, maxDim / height);
+          width = width * ratio;
+          height = height * ratio;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let quality = 0.9; // start high, reduce gradually
+        const step = 0.05;
+
+        function compress() {
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          const sizeKB = Math.round((dataUrl.length * (3 / 4)) / 1024);
+
+          if (sizeKB <= maxSizeKB || quality <= 0.1) {
+            resolve(dataUrl);
+          } else {
+            quality -= step;
+            compress();
+          }
+        }
+
+        compress();
+      };
+
+      img.onerror = (err) => reject(err);
     };
+
+    reader.onerror = (err) => reject(err);
     reader.readAsDataURL(file);
+  });
+}
+  // ---------- Preview Handlers ----------
+  // 2️⃣ FILE CHANGE HANDLER
+// -----------------------------
+async onFileChange(event: Event, key: PreviewKey) {
+  const input = event.target as HTMLInputElement | null;
+  const file = input?.files?.[0];
+  if (!file) return;
+
+  // Only allow image files
+  if (!file.type.startsWith('image/')) {
+    console.warn('Only image files are allowed.');
+    return;
   }
+
+  const originalSizeKB = Math.round(file.size / 1024);
+  console.log(`Original size: ${originalSizeKB} KB`);
+
+  try {
+
+        const compressedDataUrl = await this.compressImage(file, 60);
+
+    // Calculate compressed size
+    const compressedSizeKB = Math.round((compressedDataUrl.length * 3 / 4) / 1024);
+    console.log(`Compressed size: ${compressedSizeKB} KB`);
+    // Compress image to ~60 KB
+    this.previews[key] = await this.compressImage(file, 60);
+  } catch (err) {
+    console.error('Image compression failed', err);
+  }
+}
 
   isImage(preview: string | null | undefined): boolean {
     return !!preview && typeof preview === 'string' && preview.startsWith('data:image/');
@@ -1736,7 +1825,7 @@ export class PartymastComponent implements OnInit {
         }
       });
     }
-    this.accountType = acNum; 
+    this.accountType = acNum;
     this.applyAccountTypeRules(acNum);
 
     console.log("✔ PATCHED SUCCESSFULLY");
