@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
 import { DropdownService } from '../../../shared/services/dropdown.service';
 import { ViewChild, ElementRef } from '@angular/core';
+import { PickerService } from '../../../services/picker.service';
 
 
 @Component({
@@ -46,11 +47,13 @@ export class AgentmstComponent implements OnInit {
   selectedBranchName = '';
   selectedAgentCode: string = '';
   selectedCustomerCode: string = '';
+  selectedBranchCode = '';
 
   constructor(
     private api: ApiService,
     private toastr: ToastrService,
-    private dropdown: DropdownService
+    private dropdown: DropdownService,
+    public picker: PickerService
   ) { }
 
   ngOnInit(): void {
@@ -77,6 +80,7 @@ export class AgentmstComponent implements OnInit {
     this.selectedBranchName = '';
     this.selectedAgentCode = '';
     this.selectedCustomerCode = '';
+
 
     this.data.reset({
       ID: 0,
@@ -149,29 +153,28 @@ export class AgentmstComponent implements OnInit {
   // ------------ Modal pickers ------------
 
   // Branch picker
-  openBranch(): void {
-    // TODO: change API if needed
-    this.api.get('BranchMast/GetAllBranches').subscribe({
-      next: (res: any) => {
-        const raw = Array.isArray(res)
-          ? res
-          : (res?.data && Array.isArray(res.data) ? res.data : (res ? [res] : []));
+  // openBranch(): void {
+  //   // TODO: change API if needed
+  //   this.api.get('BranchMast/GetAllBranches').subscribe({
+  //     next: (res: any) => {
+  //       const raw = Array.isArray(res)
+  //         ? res
+  //         : (res?.data && Array.isArray(res.data) ? res.data : (res ? [res] : []));
 
-        const list = raw.map((x: any) => ({
-          code: String(x.brnc_code ?? x.BRNC_CODE ?? x.code ?? ''),
-          name: String(x.brnc_name ?? x.BRNC_NAME ?? x.name ?? '')
-        }));
+  //       const list = raw.map((x: any) => ({
+  //         code: Number(x.brnc_code ?? x.BRNC_CODE ?? x.code ?? ''),
+  //         name: String(x.brnc_name ?? x.BRNC_NAME ?? x.name ?? '')
+  //       }));
 
-        this.dropdown.openPicker('branch', list).then(sel => {
-          if (!sel) return;
-          // ensure string types
-          this.selectedBranchName = String(sel.name ?? '');
-          this.data.patchValue({ BRNC_CODE: String(sel.code ?? '') });
-        });
-      },
-      error: () => this.toastr.error('Failed to load branches.')
-    });
-  }
+  //       this.dropdown.openPicker('branch', list).then(sel => {
+  //         if (!sel) return;
+  //         this.selectedBranchName = String(sel.name ?? '');
+  //         this.data.patchValue({ BRNC_CODE: this.selectedBranchCode = ''});
+  //       });
+  //     },
+  //     error: () => this.toastr.error('Failed to load branches.')
+  //   });
+  // }
 
   // Agent code picker (could reuse existing agents list or a special code list)
   openAgent(): void {
@@ -376,3 +379,4 @@ openCustomer(): void {
     return result;
   }
 }
+

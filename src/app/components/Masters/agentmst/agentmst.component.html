@@ -34,7 +34,7 @@
             <!-- Branch Code (select via modal) -->
             <div class="form-floating form-floating-outline mb-0" tabindex="0" #editFocusStart>
               <input id="branchCodeDisplay" type="text" class="form-control" placeholder="Select Branch" readonly
-                (click)="openBranch()" [value]="selectedBranchName" style="cursor:pointer" />
+                (click)="picker.openPicker('branch','primary')" [value]="selectedBranchName" style="cursor:pointer" />
               <!-- actual code stored in hidden control -->
               <input type="hidden" formControlName="BRNC_CODE" />
               <label for="branchCodeDisplay">Branch Code</label>
