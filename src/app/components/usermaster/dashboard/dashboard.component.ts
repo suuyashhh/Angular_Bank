@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
-import { Init } from 'v8';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -14,8 +13,12 @@ import { CommonModule } from '@angular/common';
 export class DashboardComponent {
   user: any;
   currentdate!: string;
-
   userImage = '../../assets/img/avatars/1.png';
+  
+  // Modal control properties
+  showImageModal = false;
+  modalImageUrl = '';
+  modalImageAlt = '';
 
   // --- minimal data + state
   private items = [
@@ -36,7 +39,7 @@ export class DashboardComponent {
     { pathName: 'Deposite Account Opening', link: '/USERMASTER/DepositAccount' },
     { pathName: 'Comman Master', link: '/USERMASTER/Commanmst-f2' }
   ];
-  filtered: Array<{ pathName: string; link: string }> = []; // empty initially → "No records found"
+  filtered: Array<{ pathName: string; link: string }> = [];
 
   constructor(private auth: AuthService) { }
 
@@ -52,11 +55,32 @@ export class DashboardComponent {
   onSearch(q: string) {
     const s = q.trim().toLowerCase();
     if (!s) {
-      // no query → show empty table (as requested)
       this.filtered = [];
       return;
     }
     this.filtered = this.items.filter(x => x.pathName.toLowerCase().includes(s));
   }
-}
 
+  // Open image preview modal
+  openImagePreview() {
+    this.modalImageUrl = this.userImage;
+    this.modalImageAlt = `${this.user?.NAME || 'User'}'s profile picture`;
+    this.showImageModal = true;
+    
+    // Prevent body scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Close image preview modal
+  closeImagePreview() {
+    this.showImageModal = false;
+    document.body.style.overflow = 'auto';
+  }
+
+  // Close modal when clicking on backdrop (outside image)
+  onBackdropClick(event: MouseEvent) {
+    if ((event.target as HTMLElement).classList.contains('modal-backdrop')) {
+      this.closeImagePreview();
+    }
+  }
+}

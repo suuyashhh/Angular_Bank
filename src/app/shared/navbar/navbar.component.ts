@@ -21,6 +21,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   user: any;
   userImage = '../../assets/img/avatars/1.png';
 
+  // Modal control properties
+  showImageModal = false;
+  modalImageUrl = '';
+  modalImageAlt = '';
+
   private totalSeconds = 20 * 60; // 20 minutes
   remainingSeconds = this.totalSeconds;
   private tickSub?: Subscription;
@@ -108,5 +113,27 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private emitHidden() {
     const hidden = this.autoHide && !this.hovering;
     this.hiddenChange.emit(hidden);
+  }
+  // Open image preview modal
+  openImagePreview() {
+    this.modalImageUrl = this.userImage;
+    this.modalImageAlt = `${this.user?.NAME || 'User'}'s profile picture`;
+    this.showImageModal = true;
+    
+    // Prevent body scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Close image preview modal
+  closeImagePreview() {
+    this.showImageModal = false;
+    document.body.style.overflow = 'auto';
+  }
+
+  // Close modal when clicking on backdrop (outside image)
+  onBackdropClick(event: MouseEvent) {
+    if ((event.target as HTMLElement).classList.contains('modal-backdrop')) {
+      this.closeImagePreview();
+    }
   }
 }
