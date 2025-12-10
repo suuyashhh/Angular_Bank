@@ -1,28 +1,16 @@
 <!-- Hotspot (invisible thin area at very top) - only active when autoHide is enabled -->
-<div
-  class="navbar-hotspot"
-  *ngIf="autoHide"
-  (mouseenter)="onHotspotEnter()"
-  (mouseleave)="onHotspotLeave()"
-  aria-hidden="true"
-></div>
+<div class="navbar-hotspot" *ngIf="autoHide" (mouseenter)="onHotspotEnter()" (mouseleave)="onHotspotLeave()"
+  aria-hidden="true"></div>
 
 <nav
   class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme shadow-xs bg-white p-5 mt-3 no-print"
-  id="layout-navbar"
-  [class.full-width]="isFullWidth"
-  [class.auto-hidden]="autoHide"
-  [class.hidden]="autoHide && !hovering"
-  (mouseenter)="onNavbarEnter()"
-  (mouseleave)="onNavbarLeave()"
->
+  id="layout-navbar" [class.full-width]="isFullWidth" [class.auto-hidden]="autoHide"
+  [class.hidden]="autoHide && !hovering" (mouseenter)="onNavbarEnter()" (mouseleave)="onNavbarLeave()">
 
   <!-- Menu Toggle Button -->
   <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0">
-    <button class="btn btn-text-secondary btn-icon"
-            type="button"
-            aria-label="Toggle sidebar"
-            (click)="toggleSidebar.emit()">
+    <button class="btn btn-text-secondary btn-icon" type="button" aria-label="Toggle sidebar"
+      (click)="toggleSidebar.emit()">
       <i class="ri-menu-3-line ri-24px"></i>
     </button>
   </div>
@@ -97,89 +85,13 @@
           </li>
         </ul>
       </li>
-      <!-- / Style Switcher-->
-
-      <!-- Notification -->
-      <!-- <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-4 me-xl-1 position-relative">
-        <a class="nav-link btn btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow waves-effect waves-light"
-          href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-          <i class="ri-notification-2-line ri-22px"></i>
-        </a>
-
-        <ul class="dropdown-menu dropdown-menu-end py-0">
-          <li class="dropdown-menu-header border-bottom">
-            <div class="dropdown-header d-flex align-items-center py-3">
-              <h6 class="mb-0 me-auto">Notification</h6>
-              <div class="d-flex align-items-center">
-                <span class="badge rounded-pill bg-label-primary me-2">8 New</span>
-                <a href="javascript:void(0)"
-                  class="btn btn-text-secondary rounded-pill btn-icon dropdown-notifications-all waves-effect waves-light"
-                  data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Mark all as read"
-                  data-bs-original-title="Mark all as read"><i class="ri-mail-open-line ri-20px text-body"></i></a>
-              </div>
-            </div>
-          </li>
-          <li class="dropdown-notifications-list scrollable-container ps">
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item list-group-item-action dropdown-notifications-item waves-effect">
-                <div class="d-flex">
-                  <div class="flex-shrink-0 me-3">
-                    <div class="avatar">
-                      <img src="../../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
-                    </div>
-                  </div>
-                  <div class="flex-grow-1">
-                    <h6 class="small mb-1">Congratulation Lettie 🎉</h6>
-                    <small class="mb-1 d-block text-body">Won the monthly best seller gold badge</small>
-                    <small class="text-muted">1h ago</small>
-                  </div>
-                  <div class="flex-shrink-0 dropdown-notifications-actions">
-                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span
-                        class="badge badge-dot"></span></a>
-                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
-                        class="ri-close-line"></span></a>
-                  </div>
-                </div>
-              </li>
-              <li class="list-group-item list-group-item-action dropdown-notifications-item waves-effect">
-                <div class="d-flex">
-                  <div class="flex-shrink-0 me-3">
-                    <div class="avatar">
-                      <span class="avatar-initial rounded-circle bg-label-danger">CF</span>
-                    </div>
-                  </div>
-                  <div class="flex-grow-1">
-                    <h6 class="mb-1 small">Charles Franklin</h6>
-                    <small class="mb-1 d-block text-body">Accepted your connection</small>
-                    <small class="text-muted">12hr ago</small>
-                  </div>
-                  <div class="flex-shrink-0 dropdown-notifications-actions">
-                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span
-                        class="badge badge-dot"></span></a>
-                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
-                        class="ri-close-line"></span></a>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </li>
-          <li class="border-top">
-            <div class="d-grid p-4">
-              <a class="btn btn-primary btn-sm d-flex waves-effect waves-light" href="javascript:void(0);">
-                <small class="align-middle">View all notifications</small>
-              </a>
-            </div>
-          </li>
-        </ul>
-      </li> -->
-      <!--/ Notification -->
 
       <!-- User -->
       <li class="nav-item navbar-dropdown dropdown-user dropdown">
         <a class="nav-link dropdown-toggle hide-arrow p-0 d-flex align-items-center gap-2"
-           href="javascript:void(0);" data-bs-toggle="dropdown">
+          data-bs-toggle="dropdown">
           <div class="avatar avatar-online">
-            <img src="../../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
+            <img [src]="userImage" alt="" class="w-px-40 h-auto rounded-circle">
           </div>
 
           <!-- ⏱ Small countdown pill near avatar -->
@@ -195,23 +107,34 @@
               <span class="fw-semibold text-danger">{{ countdown }}</span></small>
           </li>
 
-          <li>
-            <a class="dropdown-item waves-effect" href="pages-account-settings-account.html">
-              <div class="d-flex align-items-center">
-                <div class="flex-shrink-0 me-2">
-                  <div class="avatar avatar-online">
-                    <img src="../../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
-                  </div>
-                </div>
-                <div class="flex-grow-1">
-                  <h6 class="mb-0 small">{{user?.NAME}}</h6>
-                  <small class="text-muted">{{user?.INI}}</small>
-                </div>
-              </div>
-            </a>
-          </li>
+     <li>
+  <a class="dropdown-item waves-effect" >
+    <div class="d-flex align-items-center">
+      <div class="flex-shrink-0 me-3">
+        <div class="avatar avatar-online">
+          <img [src]="userImage" alt="" class="w-px-40 h-auto rounded-circle">
+        </div>
+      </div>
+      <div class="flex-grow-1">
+        <h6 class="mb-1 small fw-bold">{{user?.NAME}}</h6>
+        <div class="d-flex flex-column">
+          <div class="d-flex align-items-center mb-1">
+            <span class="text-slate-500 small me-2">Designation:</span>
+            <small class="text-muted">{{user?.DESIGNATION}}</small>
+          </div>
+          <div class="d-flex align-items-center">
+            <span class="text-slate-500 small me-2">Branch:</span>
+            <small class="text-muted">{{user?.selectedBranchName}}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</li>
 
-          <li><div class="dropdown-divider"></div></li>
+          <li>
+            <div class="dropdown-divider"></div>
+          </li>
 
           <li>
             <a class="dropdown-item waves-effect" href="pages-profile-user.html">
@@ -225,31 +148,7 @@
               <span class="align-middle">Settings</span>
             </a>
           </li>
-          <li>
-            <a class="dropdown-item waves-effect" href="pages-account-settings-billing.html">
-              <span class="d-flex align-items-center align-middle">
-                <i class="flex-shrink-0 ri-file-text-line ri-22px me-2"></i>
-                <span class="flex-grow-1 align-middle">Billing</span>
-                <span
-                  class="flex-shrink-0 badge badge-center rounded-pill bg-danger h-px-20 d-flex align-items-center justify-content-center">4</span>
-              </span>
-            </a>
-          </li>
-
-          <li><div class="dropdown-divider"></div></li>
-
-          <li>
-            <a class="dropdown-item waves-effect" href="pages-pricing.html">
-              <i class="ri-money-dollar-circle-line ri-22px me-2"></i>
-              <span class="align-middle">Pricing</span>
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item waves-effect" href="pages-faq.html">
-              <i class="ri-question-line ri-22px me-2"></i>
-              <span class="align-middle">FAQ</span>
-            </a>
-          </li>
+      
           <li>
             <div class="d-grid px-4 pt-2 pb-1">
               <a class="btn btn-danger d-flex waves-effect waves-light" (click)="logout()" style="color:white">
@@ -266,7 +165,8 @@
 
   <!-- Search Small Screens -->
   <div class="navbar-search-wrapper search-input-wrapper d-none">
-    <input type="text" class="form-control search-input container-xxl border-0" placeholder="Search..." aria-label="Search...">
+    <input type="text" class="form-control search-input container-xxl border-0" placeholder="Search..."
+      aria-label="Search...">
     <i class="ri-close-fill search-toggler cursor-pointer"></i>
   </div>
 </nav>

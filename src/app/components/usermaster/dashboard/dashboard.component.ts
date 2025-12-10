@@ -15,6 +15,8 @@ export class DashboardComponent {
   user: any;
   currentdate!: string;
 
+  userImage = '../../assets/img/avatars/1.png';
+
   // --- minimal data + state
   private items = [
     { pathName: 'Home', link: '/USERMASTER/dashboard' },
@@ -23,9 +25,9 @@ export class DashboardComponent {
     { pathName: 'District Master', link: '/USERMASTER/districtmst' },
     { pathName: 'State Master', link: '/USERMASTER/statemst' },
     { pathName: 'Taluka Master', link: '/USERMASTER/talukamst' },
-    { pathName: 'City Master', link: '/USERMASTER/citymst'},
-    { pathName: 'Staff Master', link: '/USERMASTER/staffmst'},
-    { pathName: 'Religion Master', link: '/USERMASTER/religionmst'},
+    { pathName: 'City Master', link: '/USERMASTER/citymst' },
+    { pathName: 'Staff Master', link: '/USERMASTER/staffmst' },
+    { pathName: 'Religion Master', link: '/USERMASTER/religionmst' },
     { pathName: 'User Menu Access', link: '/USERMASTER/UserMenuAccess' },
     { pathName: 'Check Menu Id', link: '/USERMASTER/CheckMenuId' },
     { pathName: 'Comman Master', link: '/USERMASTER/Commanmst-f2' },
@@ -40,6 +42,7 @@ export class DashboardComponent {
 
   ngOnInit() {
     this.user = this.auth.getUser();
+    this.userImage = this.auth.getUserImage();
 
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'long', year: 'numeric' };

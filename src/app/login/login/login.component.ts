@@ -25,7 +25,7 @@ export class LoginComponent {
   showModel = false;
   userName = '';
   userImage: SafeUrl | string = '../../assets/img/avatars/1.png'; // Default image
-  
+
   branches: Branch[] = [];
   filteredBranches: Branch[] = [];
   branchSearch = '';
@@ -36,12 +36,12 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
-    private auth: AuthService,
+    public auth: AuthService,
     private toastr: ToastrService,
     private api: ApiService,
     private loader: LoaderService,
     private sanitizer: DomSanitizer // Add DomSanitizer for safe URL
-  ) {}
+  ) { }
 
   // ------------------------------------------------------------------
   // ⭐ SECURED BANKING LOGIN
@@ -61,7 +61,7 @@ export class LoginComponent {
           this.toastr.error('Invalid encrypted server response');
           return;
         }
-    
+
         this.auth.setToken(decryptedRes);
 
         const user = this.auth.getUser() || {};
@@ -70,25 +70,26 @@ export class LoginComponent {
         const allowAll = String(user.ALLOW_BR_SELECTION ?? "N").toUpperCase() === "Y";
         const workingCode = Number(user.WORKING_BRANCH ?? 0);
         const userId = String(user.INI ?? '');
-        // ⭐ Fetch User Image First
-      this.api.get(`UserMenuAccess/GetUserImage/${userId}`).subscribe({
-  next: (UserImg: any) => {
-    const decryptedImg = this.api.decryptResponse(UserImg);
-    
-    if (decryptedImg && decryptedImg.user_img) {
-      this.userImage = this.sanitizer.bypassSecurityTrustUrl(decryptedImg.user_img);
-    } else {
-      this.userImage = '../../assets/img/avatars/1.png';
-    }
-    
-    this.fetchBranches(allowAll, workingCode);
-  },
-  error: (imgError) => {
-    console.error('Error fetching user image:', imgError);
-    this.userImage = '../../assets/img/avatars/1.png';
-    this.fetchBranches(allowAll, workingCode);
-  }
-});
+
+        // Inside the login method, update the image fetching part:
+        this.api.get(`UserMenuAccess/GetUserImage/${userId}`).subscribe({
+          next: (UserImg: any) => {
+            const decryptedImg = this.api.decryptResponse(UserImg);
+
+            let imageData = '';
+            if (decryptedImg && decryptedImg.user_img) {
+              imageData = decryptedImg.user_img;
+              // Store the image in AuthService (ADD THIS LINE)
+              this.auth.setUserImage(imageData);
+            }
+
+            this.fetchBranches(allowAll, workingCode);
+          },
+          error: (imgError) => {
+            console.error('Error fetching user image:', imgError);
+            this.fetchBranches(allowAll, workingCode);
+          }
+        });
       },
 
       error: () => {
@@ -104,7 +105,7 @@ export class LoginComponent {
     this.api.get('BranchMast/GetAllBranches').subscribe({
       next: (branchesResp: any) => {
         // ⭐ DECRYPT RESPONSE FIRST
-        const decrypted = this.api["decryptResponse"](branchesResp);  
+        const decrypted = this.api["decryptResponse"](branchesResp);
         console.log("DECRYPTED:", decrypted);
 
         const list: any[] = Array.isArray(decrypted)
