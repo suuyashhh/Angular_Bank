@@ -460,17 +460,19 @@
                   <option *ngFor="let res of PrefixType" [value]="res.prefixtype">
                     {{ res.prefixtype }}
                   </option>
-                  <!-- <option value="Mr">Mr</option>
-                  <option value="Mrs">Mrs</option>
-                  <option value="Other">Other</option> -->
                 </select>
               </div>
 
               <div class="flex-1">
-                <div class="form-floating form-floating-outline flex-1">
-                  <input type="text" id="basic_name" appInputValidator="name" class="form-control invalid-check"
+                <div *ngIf="selectedCategory === 'Personal'" class="form-floating form-floating-outline flex-1">
+                  <input *ngIf="selectedCategory === 'Personal'" type="text" id="basic_name" appInputValidator="name" class="form-control invalid-check"
                     placeholder="Name" formControlName="name" autoTabIndex [tabIndexOrder]="6" />
                   <label for="basic_name">Name</label>
+                </div>
+                <div *ngIf="selectedCategory === 'Company'" class="form-floating form-floating-outline flex-1">
+                  <input  type="text" id="basic_name" appInputValidator="company" class="form-control invalid-check"
+                    placeholder="Company Name" formControlName="name" autoTabIndex [tabIndexOrder]="6" />
+                  <label for="basic_name">Company Name</label>
                 </div>
               </div>
             </div>
@@ -867,17 +869,20 @@
                   </div>
                 </div>
 
+                <div class="flex-1">
 
-                <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
-                  <input type="date" class="form-control invalid-check" id="passportExp" placeholder="Passport Exp.Date"
-                    formControlName="passexpdate" />
-                  <label for="passportExp">Passport Exp. Date</label>
-                </div>
-
-                <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
-                  <input type="text" class="form-control invalid-check" id="passportIssueAuth"
-                    placeholder="Passport Issue Authority" formControlName="passauth" />
-                  <label for="passportIssueAuth">Passport Issue Authority</label>
+                  <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
+                    <input type="date" class="form-control invalid-check" id="passportExp" placeholder="Passport Exp.Date"
+                      formControlName="passexpdate" />
+                    <label for="passportExp">Passport Exp. Date</label>
+                  </div>
+                  </div>
+                  <div class="flex-1">
+                  <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
+                    <input type="text" class="form-control invalid-check" id="passportIssueAuth"
+                      placeholder="Passport Issue Authority" formControlName="passauth" />
+                    <label for="passportIssueAuth">Passport Issue Authority</label>
+                  </div>
                 </div>
 
                 <!-- <div class="form-floating form-floating-outline mb-0">

@@ -1,0 +1,137 @@
+<main class="w-full px-6 py-8">
+  <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
+    <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
+
+      <!-- Header -->
+      <div class="mb-6 flex items-center justify-between">
+        <nav class="text-sm text-gray-600">
+          <ol class="flex items-center gap-2">
+            <li><a routerLink="/USERMASTER/dashboard" class="hover:underline">Home</a></li>
+            <li>/</li>
+            <li class="font-semibold">Pending For Passing</li>
+          </ol>
+        </nav>
+      </div>
+
+      <!-- ✅ AUTHORIZATION SUMMARY CARDS -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+
+        <!-- Customer -->
+        <div class="bg-white rounded-xl shadow border p-5 hover:shadow-lg transition cursor-pointer">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Customer Account Opening Authorization</p>
+              <h3 class="text-2xl font-bold text-violet-600 mt-1">(0)</h3>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 text-xl">
+              👤
+            </div>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">Pending customer approvals</p>
+        </div>
+
+        <!-- Deposit -->
+        <div class="bg-white rounded-xl shadow border p-5 hover:shadow-lg transition cursor-pointer">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Deposit Account Opening Authorization</p>
+              <h3 class="text-2xl font-bold text-green-600 mt-1">(0)</h3>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xl">
+              💰
+            </div>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">Pending deposit approvals</p>
+        </div>
+
+        <!-- Loan -->
+        <div class="bg-white rounded-xl shadow border p-5 hover:shadow-lg transition cursor-pointer">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Loan Account Opening Authorization</p>
+              <h3 class="text-2xl font-bold text-red-600 mt-1">(0)</h3>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-xl">
+              🏦
+            </div>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">Pending loan approvals</p>
+        </div>
+
+      </div>
+
+      <!-- ✅ MAIN TABLE CARD -->
+      <div class="bg-white rounded-xl shadow overflow-hidden">
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-violet-600 text-white">
+              <tr>
+                <th class="px-4 py-3 text-left">Sr</th>
+                <th class="px-4 py-3 text-left">Request No</th>
+                <th class="px-4 py-3 text-left">Requester</th>
+                <th class="px-4 py-3 text-left">Type</th>
+                <th class="px-4 py-3 text-left">Date</th>
+                <th class="px-4 py-3 text-left">Status</th>
+                <th class="px-4 py-3 text-center">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">1</td>
+                <td class="px-4 py-3 font-semibold">REQ-1001</td>
+                <td class="px-4 py-3">Amit Patil</td>
+                <td class="px-4 py-3">Loan Account Opening Authorization</td>
+                <td class="px-4 py-3">10-12-2025</td>
+                <td class="px-4 py-3">
+                  <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 font-medium">
+                    Pending
+                  </span>
+                </td>
+
+                <td class="px-4 py-3 text-center">
+                  <div class="flex justify-center gap-2">
+                    <button class="px-3 py-1 rounded bg-blue-500 text-white text-xs">
+                      View
+                    </button>
+                    <button class="px-3 py-1 rounded bg-green-500 text-white text-xs">
+                      Approve
+                    </button>
+                    <button class="px-3 py-1 rounded bg-red-500 text-white text-xs">
+                      Reject
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Empty State -->
+              <tr>
+                <td colspan="7" class="text-center py-8 text-gray-500">
+                  No pending requests found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-between items-center px-4 py-3 border-t">
+          <p class="text-sm text-gray-600">
+            Showing 1 to 10 of 25 entries
+          </p>
+
+          <div class="flex gap-2">
+            <button class="px-3 py-1 border rounded">&laquo;</button>
+            <button class="px-3 py-1 border rounded bg-violet-600 text-white">1</button>
+            <button class="px-3 py-1 border rounded">2</button>
+            <button class="px-3 py-1 border rounded">&raquo;</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</main>

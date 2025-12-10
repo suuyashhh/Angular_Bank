@@ -114,7 +114,9 @@ export class ValidatedInputDirective {
       case 'pan': return value.length === 10;
       case 'gst': return value.length === 15;
       case 'mobile': return value.length === 10;
-      case 'phone': return value.length === 10;
+      case 'phone':
+  return value.length >= 8 && value.length <= 12 && this.validator.validate('phone', value);
+
       case 'voterid': return value.length >= 6;
       case 'passport': return value.length >= 8;
       default: return false;

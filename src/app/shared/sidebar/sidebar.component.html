@@ -51,21 +51,27 @@
       [routerLinkActiveOptions]="{ exact: false }">
 
       <!-- Parent node -->
-      <ng-container *ngIf="hasVisibleChildren(node); else leafTemplate">
-        <a href="javascript:void(0);" class="menu-link menu-toggle" (click)="toggleExpand(node)" [title]="node.name">
-          <!-- tooltip added -->
-          <i class="menu-icon ri-folder-2-fill"></i>
-          <div>{{ node.name }}</div>
-        </a>
+      <!-- Parent node -->
+<ng-container *ngIf="hasVisibleChildren(node); else leafTemplate">
+  <a href="javascript:void(0);" 
+     class="menu-link menu-toggle"
+     (click)="toggleExpand(node)"
+     [title]="node.name">
 
-        <ul class="menu-sub" *ngIf="node.expanded">
-          <ng-container *ngFor="let child of node.children">
-            <ng-container *ngIf="child.visible">
-              <ng-container *ngTemplateOutlet="menuNodeTpl; context: { $implicit: child }"></ng-container>
-            </ng-container>
-          </ng-container>
-        </ul>
+    <i class="menu-icon ri-folder-2-fill"></i>
+    <div>{{ node.name }}</div>
+  </a>
+
+  <!-- ✅ MUST ALWAYS EXIST FOR MENU JS -->
+  <ul class="menu-sub" [style.display]="node.expanded ? 'block' : 'none'">
+    <ng-container *ngFor="let child of node.children">
+      <ng-container *ngIf="child.visible">
+        <ng-container *ngTemplateOutlet="menuNodeTpl; context: { $implicit: child }"></ng-container>
       </ng-container>
+    </ng-container>
+  </ul>
+</ng-container>
+
 
       <!-- Leaf node -->
       <ng-template #leafTemplate>

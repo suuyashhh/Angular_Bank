@@ -72,7 +72,6 @@ login(): void {
 
           // ⭐ DECRYPT RESPONSE FIRST
           const decrypted = this.api["decryptResponse"](branchesResp);  
-          console.log("DECRYPTED:", decrypted);
 
           const list: any[] = Array.isArray(decrypted)
             ? decrypted
@@ -86,7 +85,6 @@ login(): void {
             }))
             .sort((a, b) => a.name.localeCompare(b.name));
 
-          console.log("MAPPED:", mapped);
 
           if (!allowAll && workingCode > 0) {
             mapped = mapped.filter(b => b.code === workingCode);

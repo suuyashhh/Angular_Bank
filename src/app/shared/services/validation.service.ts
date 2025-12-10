@@ -7,7 +7,7 @@ export class ValidationService {
   private aadhaarRegex = new RegExp('^[0-9]{12}$');
   private gstRegex = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$');
   private mobileRegex = new RegExp('^[6-9][0-9]{9}$');
-  private phoneRegex = new RegExp('^[0-9]{10}$');
+  private phoneRegex = new RegExp('^[0-9]{8,12}$');
   private emailRegex = new RegExp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[A-Za-z]{2,}$');
 
   // NEW ↓↓↓

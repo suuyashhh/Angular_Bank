@@ -22,7 +22,6 @@ import { ShowErrorsDirective } from '../../../shared/directives/show-errors.dire
 import { ValidationSignal } from '../../../shared/services/validation-signals.service';
 import { VoterIdFormatDirective } from '../../../shared/directives/voterid-format.directive';
 import { PassportFormatDirective } from '../../../shared/directives/passport-format.directive';
-import { InputRestrictionDirective } from '../../../shared/directives/input-restriction.directive';
 import { DropdownOption, DropdownService } from '../../../shared/services/dropdown.service';
 import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
 
@@ -71,7 +70,7 @@ type Option = {
     ShowErrorsDirective,
     VoterIdFormatDirective,
     PassportFormatDirective,
-    InputRestrictionDirective],
+],
   standalone: true,
   templateUrl: './depositaccount-opening.component.html',
   styleUrls: ['./depositaccount-opening.component.css']
