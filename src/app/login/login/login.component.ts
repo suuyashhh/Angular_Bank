@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { LoaderService } from '../../services/loader.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 type Branch = { code: number; name: string };
 
@@ -23,6 +24,8 @@ export class LoginComponent {
 
   showModel = false;
   userName = '';
+  userImage: SafeUrl | string = '../../assets/img/avatars/1.png'; // Default image
+
   branches: Branch[] = [];
   filteredBranches: Branch[] = [];
   branchSearch = '';
@@ -33,93 +36,116 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
-    private auth: AuthService,
+    public auth: AuthService,
     private toastr: ToastrService,
     private api: ApiService,
-    private loader: LoaderService
-  ) {}
+    private loader: LoaderService,
+    private sanitizer: DomSanitizer // Add DomSanitizer for safe URL
+  ) { }
 
   // ------------------------------------------------------------------
   // ⭐ SECURED BANKING LOGIN
   // ------------------------------------------------------------------
-login(): void {
-  if (!this.loginObj.INI || !this.loginObj.CODE) {
-    this.toastr.warning('Please enter both username and password.', 'Required');
-    return;
-  }
-
-  this.loader.show();
-
-  this.auth.login(this.loginObj).subscribe({
-    next: (res: any) => {
-      const decryptedRes = this.api.decryptResponse(res);
-      if (!decryptedRes || !decryptedRes.token) {
-      this.toastr.error('Invalid encrypted server response');
+  login(): void {
+    if (!this.loginObj.INI || !this.loginObj.CODE) {
+      this.toastr.warning('Please enter both username and password.', 'Required');
       return;
     }
-  
-      this.auth.setToken(decryptedRes);
 
-      const user = this.auth.getUser() || {};
-      this.userName = user.NAME ?? "User";
+    this.loader.show();
 
-      const allowAll = String(user.ALLOW_BR_SELECTION ?? "N").toUpperCase() === "Y";
-      const workingCode = Number(user.WORKING_BRANCH ?? 0);
+    this.auth.login(this.loginObj).subscribe({
+      next: (res: any) => {
+        const decryptedRes = this.api.decryptResponse(res);
+        if (!decryptedRes || !decryptedRes.token) {
+          this.toastr.error('Invalid encrypted server response');
+          return;
+        }
 
-      // ⭐ Fetch Branch List
-      this.api.get('BranchMast/GetAllBranches').subscribe({
-        next: (branchesResp: any) => {
+        this.auth.setToken(decryptedRes);
 
-          // ⭐ DECRYPT RESPONSE FIRST
-          const decrypted = this.api["decryptResponse"](branchesResp);  
-          console.log("DECRYPTED:", decrypted);
+        const user = this.auth.getUser() || {};
+        this.userName = user.NAME ?? "User";
 
-          const list: any[] = Array.isArray(decrypted)
-            ? decrypted
-            : Object.values(decrypted || {});
+        const allowAll = String(user.ALLOW_BR_SELECTION ?? "N").toUpperCase() === "Y";
+        const workingCode = Number(user.WORKING_BRANCH ?? 0);
+        const userId = String(user.INI ?? '');
 
-          let mapped: Branch[] = (list || [])
-            .filter(x => x && (x.Name || x.name || x.NAME))
-            .map(x => ({
-              code: Number(x.Code ?? x.code ?? x.CODE),
-              name: String(x.Name ?? x.name ?? x.NAME).trim()
-            }))
-            .sort((a, b) => a.name.localeCompare(b.name));
+        // Inside the login method, update the image fetching part:
+        this.api.get(`UserMenuAccess/GetUserImage/${userId}`).subscribe({
+          next: (UserImg: any) => {
+            const decryptedImg = this.api.decryptResponse(UserImg);
 
-          console.log("MAPPED:", mapped);
-
-          if (!allowAll && workingCode > 0) {
-            mapped = mapped.filter(b => b.code === workingCode);
-
-            if (mapped.length === 0) {
-              mapped = [{ code: workingCode, name: `Branch ${workingCode}` }];
+            let imageData = '';
+            if (decryptedImg && decryptedImg.user_img) {
+              imageData = decryptedImg.user_img;
+              // Store the image in AuthService (ADD THIS LINE)
+              this.auth.setUserImage(imageData);
             }
 
-            this.selectedBranch = mapped[0] ?? null;
-            this.branchSearch = this.selectedBranch?.name ?? "";
+            this.fetchBranches(allowAll, workingCode);
+          },
+          error: (imgError) => {
+            console.error('Error fetching user image:', imgError);
+            this.fetchBranches(allowAll, workingCode);
+          }
+        });
+      },
+
+      error: () => {
+        this.loader.hide();
+        this.toastr.error('Invalid username or password.', 'Login Failed');
+      }
+    });
+  }
+
+  // Helper method to fetch branches (separated for cleaner code)
+  private fetchBranches(allowAll: boolean, workingCode: number): void {
+    // ⭐ Fetch Branch List
+    this.api.get('BranchMast/GetAllBranches').subscribe({
+      next: (branchesResp: any) => {
+        // ⭐ DECRYPT RESPONSE FIRST
+        const decrypted = this.api["decryptResponse"](branchesResp);
+        console.log("DECRYPTED:", decrypted);
+
+        const list: any[] = Array.isArray(decrypted)
+          ? decrypted
+          : Object.values(decrypted || {});
+
+        let mapped: Branch[] = (list || [])
+          .filter(x => x && (x.Name || x.name || x.NAME))
+          .map(x => ({
+            code: Number(x.Code ?? x.code ?? x.CODE),
+            name: String(x.Name ?? x.name ?? x.NAME).trim()
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        console.log("MAPPED:", mapped);
+
+        if (!allowAll && workingCode > 0) {
+          mapped = mapped.filter(b => b.code === workingCode);
+
+          if (mapped.length === 0) {
+            mapped = [{ code: workingCode, name: `Branch ${workingCode}` }];
           }
 
-          this.branches = mapped;
-          this.filteredBranches = [...mapped];
-
-          this.showModel = true;
-          this.loader.hide();
-        },
-
-        error: () => {
-          this.loader.hide();
-          this.toastr.error('Unable to load branches.', 'Error');
+          this.selectedBranch = mapped[0] ?? null;
+          this.branchSearch = this.selectedBranch?.name ?? "";
         }
-      });
-    },
 
-    error: () => {
-      this.loader.hide();
-      this.toastr.error('Invalid username or password.', 'Login Failed');
-    }
-  });
-}
+        this.branches = mapped;
+        this.filteredBranches = [...mapped];
 
+        this.showModel = true;
+        this.loader.hide();
+      },
+
+      error: () => {
+        this.loader.hide();
+        this.toastr.error('Unable to load branches.', 'Error');
+      }
+    });
+  }
 
   // ------------------------------------------------------------------
   // UI Helpers
