@@ -13,7 +13,8 @@ export type PickerField =
   | 'occupation'
   | 'idproof'
   | 'addrproof'
-  | 'otherstaff';
+  | 'otherstaff'
+  | 'branch';
 
 export type PickerTarget = 'primary' | 'corr';
 
@@ -71,6 +72,8 @@ export class PickerService {
       idproof: { primary: null, corr: null },
       addrproof: { primary: null, corr: null },
       otherstaff: { primary: null, corr: null },
+      branch:{primary:null, corr:null}
+      
     };
 
   constructor(
@@ -129,6 +132,7 @@ export class PickerService {
       case 'occupation': this.loadOccupationList(); break;
       case 'idproof': this.loadIDProofList(); break;
       case 'addrproof': this.loadAddrProofList(); break;
+      case 'branch': this.loadBranch(); break;
       default: this.pickerLoading$.next(false);
     }
   }
@@ -263,6 +267,7 @@ export class PickerService {
       idproof: 'ID Proof',
       addrproof: 'Address Proof',
       otherstaff: 'Staff',
+      branch: 'branch'
     }[field];
   }
 
@@ -465,4 +470,24 @@ export class PickerService {
       }
     });
   }
+
+  private loadBranch() {
+    this.api.get('BranchMast/GetAllBranches').subscribe({
+      next: (res: any[]) => {
+        const list = res.map(x => ({
+          code: Number(x.code ?? 0),
+          name: String(x.name ?? '').trim()
+        }));
+
+        this.pickerOptions$.next(list);
+        this.pickerFiltered$.next(list);
+        this.pickerLoading$.next(false);
+      },
+      error: () => {
+        this.toastr.error("Failed to load branch.");
+        this.pickerLoading$.next(false);
+      }
+    });
+  }
+
 }

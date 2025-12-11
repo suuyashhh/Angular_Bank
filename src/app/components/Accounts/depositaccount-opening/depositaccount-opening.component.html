@@ -1,0 +1,840 @@
+<svg style="display: none;">
+  <!-- USER -->
+  <symbol id="icon-user" viewBox="0 0 24 24">
+    <path d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 
+    2.2-5 5 2.2 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+  </symbol>
+
+  <!-- HOME -->
+  <symbol id="icon-home" viewBox="0 0 24 24">
+    <path d="M12 3l9 8h-3v10h-12v-10h-3z" />
+  </symbol>
+
+  <!-- ID CARD -->
+  <symbol id="icon-id" viewBox="0 0 24 24">
+    <path d="M3 4h18v16h-18v-16zm2 3v2h4v-2h-4zm8 0v2h6v-2h-6zm-8 4v2h4v-2h-4zm8 
+    0v2h6v-2h-6zm-8 4v2h10v-2h-10z" />
+  </symbol>
+
+  <!-- OFFICE -->
+  <symbol id="icon-office" viewBox="0 0 24 24">
+    <path d="M3 3h18v18h-18v-18zm4 4h2v2h-2v-2zm4 0h2v2h-2v-2zm4 
+    0h2v2h-2v-2zm-8 4h2v2h-2v-2zm4 0h2v2h-2v-2zm4 
+    0h2v2h-2v-2zm-8 4h10v2h-10v-2z" />
+  </symbol>
+
+  <!-- CHECK CIRCLE -->
+  <symbol id="icon-check-circle" viewBox="0 0 24 24">
+    <path d="M12 2c5.5 0 10 4.5 10 10s-4.5 10-10 
+    10-10-4.5-10-10 4.5-10 10-10zm-1 14l7-7-1.4-1.4-5.6 
+    5.6-2.6-2.6-1.4 1.4 4 4z" />
+  </symbol>
+
+  <!-- CHECK -->
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="M20 6l-11 11-5-5 1.4-1.4 3.6 3.6 9.6-9.6z" />
+  </symbol>
+
+  <!-- CROSS -->
+  <symbol id="icon-cross" viewBox="0 0 24 24">
+    <path d="M6 6l12 12m0-12l-12 12" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" />
+  </symbol>
+</svg>
+
+<!-- Full-bleed Wizard Page (updated) -->
+<main class="w-full min-h-screen bg-gray-50">
+  <!-- container: to center & give left column breathing room -->
+  <div class="max-w-screen-2xl mx-auto px-6 py-8">
+
+    <!-- WRAPPER: left = main scrollable area, right = fixed aside -->
+    <div class="relative">
+
+      <!-- LEFT: main card — ADD right margin to avoid overlap with fixed aside -->
+      <div class="mr-0 lg:mr-[320px]"> <!-- reserve space for fixed aside (width + gap) -->
+        <div class="card wizard-card w-full rounded-2xl overflow-hidden bg-white shadow-sm">
+          <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
+
+            <!-- HEADER: page path (left) + Edit Names button (right) -->
+            <div class="mb-4 flex items-center justify-between">
+              <nav class="text-sm text-gray-600" aria-label="Breadcrumb">
+                <ol class="flex items-center gap-2">
+                  <li class="flex items-center gap-2">
+                    <span class="text-gray-400">/</span>
+                    <a class="hover:underline text-gray-600" routerLink="/USERMASTER/dashboard">Home</a>
+                  </li>
+                  <li class="text-gray-300">/</li>
+                  <li class="font-semibold text-gray-800">Deposite Account Opening</li>
+                </ol>
+              </nav>
+
+              <div class="flex items-center gap-3">
+                <button type="button"
+                  class="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50"
+                  title="Edit display names" (click)="openEdit()" *ngIf="!isEditMode">
+                  <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                  Edit Names
+                </button>
+
+                <button type="button"
+                  class="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50"
+                  title="New names" (click)="openEdit()" *ngIf="isEditMode">
+                  <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                  New Names
+                </button>
+              </div>
+            </div>
+            <!-- /HEADER -->
+
+            <!-- STEP radios (hidden) -->
+            <input class="wizard-state" type="radio" name="wizard" id="step-1" checked />
+            <input class="wizard-state" type="radio" name="wizard" id="step-2" />
+            <input class="wizard-state" type="radio" name="wizard" id="step-3" />
+            <input class="wizard-state" type="radio" name="wizard" id="step-4" />
+            <input class="wizard-state" type="radio" name="wizard" id="step-5" />
+
+            <!-- Stepper (kept intact) -->
+            <div class="wizard-steps my-6 w-full">
+              <div
+                class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
+                <div
+                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                  [ngClass]="getStepClass(1)" (click)="tryOpenStep(1)">
+                  <ng-container [ngSwitch]="getStepIcon(1)">
+
+                    <!-- ACTIVE ICONS -->
+                    <svg *ngSwitchCase="'user'" class="step-svg">
+                      <use href="#icon-user" />
+                    </svg>
+                    <svg *ngSwitchCase="'home'" class="step-svg">
+                      <use href="#icon-home" />
+                    </svg>
+                    <svg *ngSwitchCase="'id'" class="step-svg">
+                      <use href="#icon-id" />
+                    </svg>
+                    <svg *ngSwitchCase="'office'" class="step-svg">
+                      <use href="#icon-office" />
+                    </svg>
+                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                      <use href="#icon-check-circle" />
+                    </svg>
+
+                    <!-- VALID -->
+                    <svg *ngSwitchCase="'check'" class="step-svg">
+                      <use href="#icon-check" />
+                    </svg>
+
+                    <!-- INVALID -->
+                    <svg *ngSwitchCase="'cross'" class="step-svg">
+                      <use href="#icon-cross" />
+                    </svg>
+
+                    <!-- DEFAULT NUMBER -->
+                    <span *ngSwitchDefault>{{ 1 }}</span>
+
+                  </ng-container>
+                </div>
+
+
+
+                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+                <div
+                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                  [ngClass]="getStepClass(2)" (click)="tryOpenStep(2)">
+                  <ng-container [ngSwitch]="getStepIcon(2)">
+
+                    <!-- ACTIVE ICONS -->
+                    <svg *ngSwitchCase="'user'" class="step-svg">
+                      <use href="#icon-user" />
+                    </svg>
+                    <svg *ngSwitchCase="'home'" class="step-svg">
+                      <use href="#icon-home" />
+                    </svg>
+                    <svg *ngSwitchCase="'id'" class="step-svg">
+                      <use href="#icon-id" />
+                    </svg>
+                    <svg *ngSwitchCase="'office'" class="step-svg">
+                      <use href="#icon-office" />
+                    </svg>
+                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                      <use href="#icon-check-circle" />
+                    </svg>
+
+                    <!-- VALID -->
+                    <svg *ngSwitchCase="'check'" class="step-svg">
+                      <use href="#icon-check" />
+                    </svg>
+
+                    <!-- INVALID -->
+                    <svg *ngSwitchCase="'cross'" class="step-svg">
+                      <use href="#icon-cross" />
+                    </svg>
+
+                    <!-- DEFAULT NUMBER -->
+                    <span *ngSwitchDefault>{{ 2 }}</span>
+
+                  </ng-container>
+                </div>
+
+                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+                <div
+                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                  [ngClass]="getStepClass(3)" (click)="tryOpenStep(3)">
+                  <ng-container [ngSwitch]="getStepIcon(3)">
+
+                    <!-- ACTIVE ICONS -->
+                    <svg *ngSwitchCase="'user'" class="step-svg">
+                      <use href="#icon-user" />
+                    </svg>
+                    <svg *ngSwitchCase="'home'" class="step-svg">
+                      <use href="#icon-home" />
+                    </svg>
+                    <svg *ngSwitchCase="'id'" class="step-svg">
+                      <use href="#icon-id" />
+                    </svg>
+                    <svg *ngSwitchCase="'office'" class="step-svg">
+                      <use href="#icon-office" />
+                    </svg>
+                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                      <use href="#icon-check-circle" />
+                    </svg>
+
+                    <!-- VALID -->
+                    <svg *ngSwitchCase="'check'" class="step-svg">
+                      <use href="#icon-check" />
+                    </svg>
+
+                    <!-- INVALID -->
+                    <svg *ngSwitchCase="'cross'" class="step-svg">
+                      <use href="#icon-cross" />
+                    </svg>
+
+                    <!-- DEFAULT NUMBER -->
+                    <span *ngSwitchDefault>{{ 3 }}</span>
+
+                  </ng-container>
+                </div>
+
+                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+                <div
+                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                  [ngClass]="getStepClass(4)" (click)="tryOpenStep(4)">
+                  <ng-container [ngSwitch]="getStepIcon(4)">
+
+                    <!-- ACTIVE ICONS -->
+                    <svg *ngSwitchCase="'user'" class="step-svg">
+                      <use href="#icon-user" />
+                    </svg>
+                    <svg *ngSwitchCase="'home'" class="step-svg">
+                      <use href="#icon-home" />
+                    </svg>
+                    <svg *ngSwitchCase="'id'" class="step-svg">
+                      <use href="#icon-id" />
+                    </svg>
+                    <svg *ngSwitchCase="'office'" class="step-svg">
+                      <use href="#icon-office" />
+                    </svg>
+                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                      <use href="#icon-check-circle" />
+                    </svg>
+
+                    <!-- VALID -->
+                    <svg *ngSwitchCase="'check'" class="step-svg">
+                      <use href="#icon-check" />
+                    </svg>
+
+                    <!-- INVALID -->
+                    <svg *ngSwitchCase="'cross'" class="step-svg">
+                      <use href="#icon-cross" />
+                    </svg>
+
+                    <!-- DEFAULT NUMBER -->
+                    <span *ngSwitchDefault>{{ 4 }}</span>
+
+                  </ng-container>
+                </div>
+
+                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+                <div
+                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                  [ngClass]="getStepClass(5)" (click)="tryOpenStep(5)">
+                  <ng-container [ngSwitch]="getStepIcon(5)">
+
+                    <!-- ACTIVE ICONS -->
+                    <svg *ngSwitchCase="'user'" class="step-svg">
+                      <use href="#icon-user" />
+                    </svg>
+                    <svg *ngSwitchCase="'home'" class="step-svg">
+                      <use href="#icon-home" />
+                    </svg>
+                    <svg *ngSwitchCase="'id'" class="step-svg">
+                      <use href="#icon-id" />
+                    </svg>
+                    <svg *ngSwitchCase="'office'" class="step-svg">
+                      <use href="#icon-office" />
+                    </svg>
+                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                      <use href="#icon-check-circle" />
+                    </svg>
+
+                    <!-- VALID -->
+                    <svg *ngSwitchCase="'check'" class="step-svg">
+                      <use href="#icon-check" />
+                    </svg>
+
+                    <!-- INVALID -->
+                    <svg *ngSwitchCase="'cross'" class="step-svg">
+                      <use href="#icon-cross" />
+                    </svg>
+
+                    <!-- DEFAULT NUMBER -->
+                    <span *ngSwitchDefault>{{ 5 }}</span>
+
+                  </ng-container>
+                </div>
+
+              </div>
+            </div>
+
+
+
+
+            <div class="form-floating form-floating-outline mb-4" *ngIf="isEditMode">
+              <div class="form-floating form-floating-outline mb-4">
+                <input class="form-control" [(ngModel)]="searchText" readonly (click)="getCustomers()"
+                  placeholder="Customer ID" />
+
+                <label for="demo">Customer ID</label>
+              </div>
+
+              <app-dropdpwn-modal></app-dropdpwn-modal>
+            </div>
+
+            <!-- Panels -->
+            <div class="wizard-panels">
+              <form [formGroup]="form">
+                <!-- STEP 1: Basic Details -->
+                <section id="panel-1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step-1">
+                  <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
+
+                  <!-- TOP ROW: stays 1 col mobile / 2 col sm (keeps your original layout) -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="glCode" class="form-control w-full" [(ngModel)]="searchText" readonly
+                        (click)="getCustomers()" placeholder="G.L.CODE" />
+                      <label for="glCode">G.L.CODE</label>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="agentCode" class="form-control w-full" [(ngModel)]="searchText" readonly
+                        (click)="getCustomers()" placeholder="Agent Code" />
+                      <label for="agentCode">Agent Code</label>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="accountNo" class="form-control w-full" [(ngModel)]="searchText" readonly
+                        (click)="getCustomers()" placeholder="Account No" />
+                      <label for="accountNo">Account No</label>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="customerId" class="form-control w-full" [(ngModel)]="searchText" readonly
+                        (click)="getCustomers()" placeholder="Coustomer Id" />
+                      <label for="customerId">Coustomer Id</label>
+                    </div>
+                  </div>
+
+                  <!-- NAME: full width -->
+                  <div class="mt-4">
+                    <div class="form-floating form-floating-outline">
+                      <input type="text" id="basic_name" class="form-control w-full" restrict="customerName"
+                        placeholder="Name" formControlName="name" />
+                      <label for="basic_name">Name</label>
+                    </div>
+                  </div>
+
+                  <!-- ADDRESS ROW: exactly one row with 3 equal columns on lg screens -->
+                  <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+                    <div class="form-floating form-floating-outline">
+                      <input type="text" id="addr_permanent_line1" class="form-control w-full" name="permanentAddrLine1"
+                        placeholder="Permanent Address" formControlName="ADDR1" />
+                      <label for="addr_permanent_line1">Permanent Address</label>
+                    </div>
+
+                    <div class="form-floating form-floating-outline">
+                      <input type="text" id="addr_permanent_line2" class="form-control w-full" name="permanentAddrLine2"
+                        placeholder="Permanent Address II" formControlName="ADDR2" />
+                      <label for="addr_permanent_line2">Permanent Address II</label>
+                    </div>
+
+                    <div class="form-floating form-floating-outline">
+                      <input type="text" id="addr_permanent_line3" class="form-control w-full" name="permanentAddrLine3"
+                        placeholder="Permanent Address III" formControlName="ADDR3" />
+                      <label for="addr_permanent_line3">Permanent Address III</label>
+                    </div>
+                  </div>
+
+                  <!-- PIN CODE placed inside same 2-column grid -->
+                  <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="pinCode" class="form-control w-full" placeholder="PIN CODE"
+                        formControlName="PINCODE" />
+                      <label for="pinCode">PIN CODE</label>
+                    </div>
+
+                    <!-- empty placeholder cell so alignment stays perfect -->
+                    <div></div>
+                  </div>
+
+
+                  <!-- NAV / buttons (keeps existing alignment) -->
+                  <div class="mt-6 flex items-center justify-between gap-3">
+                    <button type="button" (click)="navigateTo(1)"
+                      class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+                      Previous
+                    </button>
+
+                    <button type="button" (click)="goToStep(2)"
+                      class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+                      Next
+                    </button>
+                  </div>
+                </section>
+
+                <!-- STEP 2: General Information -->
+                <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
+                  <h4 class="mb-4 text-lg font-semibold">General Information</h4>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                    <!-- Permanent Address lines -->
+                    <div class="form-floating form-floating-outline mb-4">
+                       <input type="text" id="customerId" class="form-control w-full" [(ngModel)]="searchText" readonly
+                        (click)="getCustomers()" placeholder="Account Type" />
+                      <label for="addr_permanent_line1">Account Type</label>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-4 always-float">
+                       <input type="text" id="customerId" class="form-control w-full" [(ngModel)]="searchText" readonly
+                        (click)="getCustomers()" placeholder="Mode Of Operation" />
+                      <label for="addr_permanent_line2">Mode Of Operation</label>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-4 always-float">
+                      <input type="text" id="IDProof" class="form-control" placeholder="I.D.Proof"
+                          [value]="idproofName" readonly (click)="picker.openPicker('idproof','primary')"
+                          style="cursor:pointer" />
+                        <input type="hidden" name="PerentCode" [(ngModel)]="idproofCode"
+                          [ngModelOptions]="{standalone: true}" />
+                        <label for="Perent">Perent</label>
+                    </div>
+
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="addr_city" class="form-control" placeholder="Sign Auth"                        
+                        style="cursor:pointer" />
+
+                      <label for="addr_city">Sign Auth</label>
+                    </div>
+
+                    <!-- Other Information Country -->
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="OtherInformation " class="form-control" placeholder="Other Information "      />
+                      <label for="OtherInformation ">Other Information </label>
+                    </div>
+
+                    <!-- Introduced By Code State -->
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="IntroducedByCode" class="form-control"  placeholder="Introduced By Code" />
+                      <label for="IntroducedByCode">Introduced By Code</label>
+                    </div>
+
+                    <!-- Introduced By District -->
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="addr_district" class="form-control" placeholder="Introduced By" />
+                      <label for="addr_district">Introduced By </label>
+                    </div>
+
+                    <!-- Primary Taluka -->
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="addr_taluka" class="form-control" placeholder="Deposit Collectopn Mode"
+                         />
+                      <label for="addr_taluka">Deposit Collectopn Mode</label>
+                    </div>
+
+                    <!-- 🔵 PRIMARY AREA -->
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="addr_area" class="form-control" placeholder="Ref.Staff I"
+                        style="cursor:pointer" />
+                    
+                      <label for="addr_area">Ref.Staff I</label>
+                    </div>
+
+                    <!-- Primary Ref.Staff II -->
+                    <div class="form-floating form-floating-outline mb-4">
+                      <input type="text" id="addr_pincode" class="form-control" readonly placeholder="Ref.Staff II" />
+                      <label for="addr_pincode">Ref.Staff II</label>
+                    </div>
+                  </div>
+
+
+              
+                  <!-- Nav buttons -->
+                  <div class="mt-6 flex items-center justify-between gap-3">
+
+                    <!-- PREVIOUS -->
+                    <button type="button" (click)="navigateTo(1)"
+                      class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+                      Previous
+                    </button>
+
+                    <!-- NEXT -->
+                    <button type="button" (click)="goToStep(3)"
+                      class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+                      Next
+                    </button>
+
+                  </div>
+
+                </section>
+
+
+
+                <!-- Shared picker modal -->
+                <app-picker-modal></app-picker-modal>
+                <app-dropdpwn-modal></app-dropdpwn-modal>
+
+                <!-- STEP 3: Personal + Company/Firm conditional content -->
+                <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
+                  <div *ngIf="accountType === '0'">
+                    <h4 class="mb-4 text-lg font-semibold">Scheme</h4>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <!-- Religion -->
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" id="religionCode" class="form-control" placeholder="Interest Scheme "
+                          [value]="religionName" readonly (click)="picker.openPicker('religion','primary')"
+                          style="cursor:pointer" />
+                        <input type="hidden" name="religionCode" [(ngModel)]="religionCode"
+                          [ngModelOptions]="{standalone: true}" />
+                        <label for="religionCode">Interest Scheme </label>
+                      </div>
+
+                      <div class="flex-1">
+                        <div class="form-floating form-floating-outline flex-1">
+
+                          <input type="text" class="form-control" placeholder="Interest Paid Type" passportFormat
+                           formControlName="Interest Paid Type" />
+                          <label>Interest Paid Type </label>
+                        </div>
+                      </div>
+
+                      <!-- Cast -->
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="date" id="castCode" class="form-control" placeholder="A/c Opening Date"  />
+                        <label for="castCode">A/c Opening Date</label>
+                      </div>
+
+                      <!-- Occupation -->
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" id="occupation" class="form-control" placeholder=" Int.Rate" />
+                        <label for="occupation"> Int.Rate</label>
+                      </div>
+
+                      
+                      <div class="flex-1">
+                        <div class="form-floating form-floating-outline flex-1">
+
+                          <input type="text" class="form-control" placeholder="Election Card No." voteridFormat
+                            validatedInput="voterid" formControlName="voteridno" />
+
+                          <label> Maturity Date </label>
+
+                          <small class="text-danger mt-1 block" *ngIf="voterid?.invalid?.()">
+                            Invalid Voter ID (e.g., ABC1234567)
+                          </small>
+
+                        </div>
+                      </div>
+
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="date" class="form-control" placeholder="Last Int.Date "
+                          formControlName="LastInt.Date " />
+                        <label for="LastInt.Date ">Last Int.Date </label>
+                      </div>
+                  
+
+
+                    </div>
+                  </div>
+
+
+                  <div class="mt-6 flex items-center justify-between gap-3">
+
+                    <!-- PREVIOUS -->
+                    <button type="button" (click)="navigateTo(2)"
+                      class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+                      Previous
+                    </button>
+
+                    <!-- NEXT -->
+                    <button type="button" (click)="goToStep(4)"
+                      class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+                      Next
+                    </button>
+
+                  </div>
+
+                </section>
+
+                <!-- STEP 4: Installment Info (omitted lengthy bits for brevity) -->
+                <section id="panel-4" class="panel" data-step="4" role="tabpanel" aria-labelledby="step-4">
+                  <h4 class="mb-4 text-lg font-semibold">Installment Info</h4>
+                   <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Inst.Type	" placeholder="Inst.Type	"
+                          formControlName="Inst.Type	" />
+                        <label for="Inst.Type	">Inst.Type	</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Installment Amount	" placeholder="Installment Amount	"
+                          formControlName="Installment Amount	" />
+                        <label for="Installment Amount	">Installment Amount	</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" placeholder="No.Of Installment (In Months)	"
+                          formControlName="No.Of Installment (In Months)	" />
+                        <label for="No.Of Installment (In Months)	">No.Of Installment (In Months)	</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Payable Amount" placeholder="Payable Amount"
+                          formControlName="Payable Amount" />
+                        <label for="Payable Amount">Payable Amount</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Int.Rate" placeholder="Int.Rate"
+                          formControlName="Int.Rate" />
+                        <label for="Int.Rate">Int.Rate</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="text" class="form-control" id="Maturity Date" placeholder="Maturity Date"
+                          formControlName="Maturity Date" />
+                        <label for="Maturity Date">Maturity Date</label>
+                      </div>
+
+                    </div>
+
+                  <div class="mt-6 flex items-center justify-between gap-3">
+
+                    <!-- PREVIOUS -->
+                    <button type="button" (click)="navigateTo(3)"
+                      class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
+                      Previous
+                    </button>
+
+                    <!-- NEXT -->
+                    <button type="button" (click)="goToStep(5)"
+                      class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
+                      Next
+                    </button>
+
+                  </div>
+                </section>
+
+                <!-- STEP 5: Printing -->
+                <section id="panel-5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step-5">
+                  <h4 class="mb-4 text-lg font-semibold">Printing</h4>
+ 
+                  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="date" class="form-control" id="Last Trn.Date" placeholder="Last Trn.Date "
+                          formControlName="Last Trn.Date 	" />
+                        <label for="Last Trn.Date">Last Trn.Date 	</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="date" class="form-control" id="PassBook Fill Date" placeholder="PassBook Fill Date"
+                          formControlName="PassBook Fill Date" />
+                        <label for="PassBook Fill Date	">PassBook Fill Date</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-0">
+                        <input type="date" class="form-control" placeholder="A/c Close Date"
+                          formControlName="A/c Close Date" />
+                        <label for="A/c Close Date">A/c Close Date</label>
+                      </div>
+
+                    </div>
+
+                  <div class="mt-6 flex items-center justify-between gap-3">
+                    <label for="step-4"
+                      class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
+                    <button type="submit"
+                      class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700"
+                      (click)="submit()">Save</button>
+                  </div>
+                </section>
+              </form>
+            </div> <!-- /wizard-panels -->
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: fixed aside (20%) — modern purple/white theme, ALWAYS FIXED in viewport -->
+      <aside class="hidden lg:block fixed top-24 right-8 w-72 z-40 transform-gpu will-change-transform"
+        aria-label="Party Info">
+        <div
+          class="h-full rounded-lg bg-white border border-gray-200 shadow-lg overflow-hidden ring-1 ring-[#8c57ff]/8">
+          <!-- gradient header -->
+          <div class="px-4 py-3 bg-gradient-to-r from-[#8c57ff] to-[#a855f7] text-white">
+            <div class="text-xs uppercase tracking-wide font-semibold opacity-90">A/c Opening Date</div>
+            <div class="mt-1 text-lg font-bold">17/09/2025</div>
+            <div class="mt-2 text-sm font-medium text-white/90">Party Info</div>
+          </div>
+
+          <!-- body -->
+          <div class="p-4 text-sm text-gray-700">
+            <ul class="space-y-3">
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Member Type</span>
+                <span class="text-rose-700 font-semibold">Associate</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Member No.</span>
+                <span class="text-rose-700 font-semibold">16</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Birth Date</span>
+                <span class="text-rose-700 font-semibold">04/05/1971</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Age</span>
+                <span class="text-rose-700 font-semibold">54</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Sex</span>
+                <span class="text-rose-700 font-semibold">Male</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Mobile No.</span>
+                <span class="text-rose-700 font-medium">8180821172</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Phone No.</span>
+                <span class="text-rose-700 font-medium">025614589654785</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Zone</span>
+                <span class="text-rose-700 font-medium uppercase">MANGALORE</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Aadhar No.</span>
+                <span class="text-rose-700 font-medium">8545621698723</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">PAN No.</span>
+                <span class="text-rose-700 font-medium">SFDGD812424</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">G.S.T. No.</span>
+                <span class="text-rose-700 font-medium">HYUDFGEDEDIED522</span>
+              </li>
+
+              <li class="flex justify-between items-start">
+                <span class="font-medium text-gray-600">Occupation</span>
+                <span class="text-rose-700 font-medium">DEVELOPER</span>
+              </li>
+            </ul>
+
+            <div class="mt-4 text-center">
+              <a href="#" class="inline-block text-sm font-medium text-[#6b21a8] underline">Click Here To See<br />Photo
+                and Signature</a>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</main>
+
+<!-- PREVIEW modal kept as-is (your existing modal markup) -->
+<!-- ... -->
+
+<!-- Styles (kept inline so copy/paste is simple) -->
+<style>
+  /* keep wizard-state visually hidden */
+  .wizard-state {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* panel toggles */
+  .wizard-panels .panel {
+    display: none;
+  }
+
+  #step-1:checked~.wizard-panels #panel-1 {
+    display: block;
+  }
+
+  #step-2:checked~.wizard-panels #panel-2 {
+    display: block;
+  }
+
+  #step-3:checked~.wizard-panels #panel-3 {
+    display: block;
+  }
+
+  #step-4:checked~.wizard-panels #panel-4 {
+    display: block;
+  }
+
+  #step-5:checked~.wizard-panels #panel-5 {
+    display: block;
+  }
+
+  /* Subtle card shadow / rounded look */
+  .card-body {
+    background: transparent;
+  }
+
+  /* step active style (you had earlier) */
+  #step-1:checked~.wizard-steps label[for="step-1"],
+  #step-2:checked~.wizard-steps label[for="step-2"],
+  #step-3:checked~.wizard-steps label[for="step-3"],
+  #step-4:checked~.wizard-steps label[for="step-4"],
+  #step-5:checked~.wizard-steps label[for="step-5"] {
+    background: linear-gradient(135deg, #8c57ff 0%, #a855f7 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 6px 18px rgba(140, 87, 255, 0.25);
+    transform: translateY(-1px);
+  }
+</style>

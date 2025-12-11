@@ -24,9 +24,7 @@ import { VoterIdFormatDirective } from '../../../shared/directives/voterid-forma
 import { PassportFormatDirective } from '../../../shared/directives/passport-format.directive';
 import { DropdownOption, DropdownService } from '../../../shared/services/dropdown.service';
 import { DropdpwnModalComponent } from '../../../shared/dropdpwn-modal/dropdpwn-modal.component';
-import { AutoTabIndexDirective } from '../../../shared/directives/auto-tab-index.directive';
-import { InputValidatorDirective } from '../../../shared/directives/input-validator.directive';
-import { log } from 'node:console';
+
 type PickerField = 'city' | 'area' | 'religion' | 'cast' | 'occupation' | 'idproof' | 'addrproof' | 'otherstaff';
 type PickerTarget = 'primary' | 'corr';
 type PreviewKey = 'photo' | 'sign' | 'pan' | 'aadhaarFront' | 'aadhaarBack';
@@ -50,9 +48,8 @@ type Option = {
 };
 
 @Component({
-  selector: 'app-partymast',
-  standalone: true,
-  imports: [
+  selector: 'app-depositaccount-opening',
+  imports:[
     CommonModule,
     FormsModule,
     RouterModule,
@@ -73,20 +70,15 @@ type Option = {
     ShowErrorsDirective,
     VoterIdFormatDirective,
     PassportFormatDirective,
-    AutoTabIndexDirective,
-    InputValidatorDirective
-  ],
-
-  templateUrl: './partymast.component.html',
-  styleUrls: ['./partymast.component.css']
+],
+  standalone: true,
+  templateUrl: './depositaccount-opening.component.html',
+  styleUrls: ['./depositaccount-opening.component.css']
 })
-export class PartymastComponent implements OnInit {
+export class DepositaccountOpeningComponent implements OnInit {
 
   // ---------- general ----------
-  accountType: number = 0;
-  accountTypes: any[] = [];
-
-  PrefixType: any[] = [];
+  accountType = '0';
 
   // Other/Staff fields
   otherStaffType = 'O'; // Default to 'Other'
@@ -182,9 +174,6 @@ export class PartymastComponent implements OnInit {
   searchText: string = '';
   searchTextChanged = new Subject<string>();
   selectedCustomer: any = null;
-
-  loading: boolean = false;
-  selectedCategory: string = 'Personal';
 
 
   // ---------- Template Refs ----------
@@ -391,111 +380,33 @@ export class PartymastComponent implements OnInit {
 
     });
 
-    this.load();
-
   }
-
-  load() {
-
-    this.api.get(`AccountTypeMaster/GetAllAccountType`).subscribe({
-      next: (res: any) => {
-        console.log("Account Types:", res);
-        this.accountTypes = res;
-        this.applyAccountTypeRules(this.accountType);
-      },
-      error: (err: any) => {
-        console.error("Error fetching Account Types:", err);
-      }
-    });
-    this.api.get(`PrefixMaster/GetAllPrefix`).subscribe({
-      next: (res: any) => {
-        console.log("Prefix:", res);
-        this.PrefixType = res;
-
-        // Optional: set default category to Personal
-        this.selectedCategory = 'Personal';
-      },
-      error: (err: any) => {
-        console.error("Error fetching Prefix Types:", err);
-      }
-    });
-
-    // Auto-calculate age when birthdate changes
-    this.form.get('birthdate')?.valueChanges.subscribe((date: any) => {
-      if (!date) return;
-      this.updateAgeFromBirthdate(date);
-    });
-
-    // Auto-calculate birthdate when age changes
-    this.form.get('AGE')?.valueChanges.subscribe((age: any) => {
-      if (!age) return;
-      this.updateBirthdateFromAge(age);
-    });
-  }
-
-  onPrefixChange(event: Event) {
-    const prefix = (event.target as HTMLSelectElement).value;
-
-    const record = this.PrefixType.find(x => x.prefixtype === prefix);
-    this.selectedCategory = record?.prefixCategory ?? '';
-  }
-
-  updateAgeFromBirthdate(date: string) {
-    const birth = new Date(date);
-    const today = new Date();
-
-    let age = today.getFullYear() - birth.getFullYear();
-    const m = today.getMonth() - birth.getMonth();
-
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-
-    // Prevent infinite loop by checking existing value
-    if (this.form.get('AGE')?.value !== age) {
-      this.form.patchValue({ AGE: age }, { emitEvent: false });
-    }
-  }
-  updateBirthdateFromAge(age: number) {
-    if (!age || age <= 0) return;
-
-    const today = new Date();
-    const birth = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
-
-    const formatted = birth.toISOString().split("T")[0];
-
-    // Prevent infinite loop
-    if (this.form.get('birthdate')?.value !== formatted) {
-      this.form.patchValue({ birthdate: formatted }, { emitEvent: false });
-    }
-  }
-
 
 
   form_Group() {
     this.form = this.fb.group({
       // Step 1 – Basic Details
-      AcType: ['0', Validators.required],
-      panNo: ['', Validators.required],
-      AdharNo: ['', Validators.required],
-      GSTNo: ['', Validators.required],
-      nmprefix: ['', Validators.required],
-      name: ['', Validators.required],
+      AcType: ['0',Validators.required],
+      panNo: ['',Validators.required],
+      AdharNo: ['',Validators.required],
+      GSTNo: ['',Validators.required],
+      nmprefix: ['',Validators.required],
+      name: ['',Validators.required],
 
       // Step 2 – Address (Permanent)
-      ADDR1: ['', Validators.required],
+      ADDR1: ['',Validators.required],
       ADDR2: [''],
       ADDR3: [''],
-      City: ['', Validators.required],
-      cityCode: [null, Validators.required],
-      countryCode: [null, Validators.required],
-      stateCode: [null, Validators.required],
-      districtCode: [null, Validators.required],
-      talukaCode: [null, Validators.required],
-      areaCode: [null, Validators.required],
-      pincode: ['', Validators.required],
+      City: ['',Validators.required],
+      cityCode: [null,Validators.required],
+      countryCode: [null,Validators.required],
+      stateCode: [null,Validators.required],
+      districtCode: [null,Validators.required],
+      talukaCode: [null,Validators.required],
+      areaCode: [null,Validators.required],
+      pincode: ['',Validators.required],
       phone: [''],
-      mobile: ['', Validators.required],
+      mobile: ['',Validators.required],
 
       // Corresponding Address toggle
       useDifferentCorresponding: [false],
@@ -513,16 +424,16 @@ export class PartymastComponent implements OnInit {
       corrPincode: [''],
 
       // Step 3 – Personal Details
-      Religon: [null, Validators.required],
-      Cast: [null, Validators.required],
-      OCCU: [null, Validators.required],
+      Religon: [null,Validators.required],
+      Cast: [null,Validators.required],
+      OCCU: [null,Validators.required],
       passportno: [''],
       passexpdate: [''],
       passauth: [''],
       voteridno: [''],
-      birthdate: ['', Validators.required],
-      AGE: ['', Validators.required],
-      SEX: ['', Validators.required],
+      birthdate: ['',Validators.required],
+      AGE: ['',Validators.required],
+      SEX: ['',Validators.required],
       ST_DIR: ['O'],
       Ref_STDIR: [null],
 
@@ -545,7 +456,7 @@ export class PartymastComponent implements OnInit {
       OFFICEADDR3: [''],
       OFFICEPHONE: [''],
       OFFICEPHONE1: [''],
-      EMAIL_ID: ['', Validators.required],
+      EMAIL_ID: ['',Validators.required],
 
       // Step 5 – KYC Details
       KycIdProof: [false],
@@ -560,29 +471,20 @@ export class PartymastComponent implements OnInit {
       aadhaarFront: [null],
       aadhaarBack: [null]
     });
-
-    // Watch prefix changes
-     this.form.get('nmprefix')?.valueChanges.subscribe((prefix:any) => {
-    const record = this.PrefixType.find((x: any) => x.prefixtype === prefix);
-    this.selectedCategory = record?.prefixCategory ?? 'Personal'; // default Personal
-
-    // Clear name field on prefix change
-    this.form.get('name')?.reset();
-  });
   }
   submit() {
-    // make sure last step also validated
-    const lastValid = this.stepValidators[5]();
-    this.stepStatus[5] = lastValid;
+      // make sure last step also validated
+  const lastValid = this.stepValidators[5]();
+  this.stepStatus[5] = lastValid;
 
-    // ensure all steps true
-    for (let i = 1; i <= 5; i++) {
-      if (this.stepStatus[i] !== true) {
-        this.toastr.error(`Step ${i} is not completed correctly`);
-        this.navigateTo(i);
-        return;
-      }
-    }
+  // ensure all steps true
+  // for (let i = 1; i <= 5; i++) {
+  //   if (this.stepStatus[i] !== true) {
+  //     this.toastr.error(`Step ${i} is not completed correctly`);
+  //     this.navigateTo(i);
+  //     return;
+  //   }
+  // }
     if (!this.form) return;
 
     // -----------------------------
@@ -774,58 +676,34 @@ export class PartymastComponent implements OnInit {
   }
 
   getCustomers() {
-
-    // Loader only for list fetch (optional)
-    this.loading = true;
-
+    // load last 20 (search = null)
     this.api.get(
       `PartyMaster/GetCustomers?branchCode=${this.branchCode}&search=`
-    )
-      .pipe(finalize(() => this.loading = false))
-      .subscribe({
-        next: (res: any) => {
-
-          // Open picker with results
-          this.dropdown.openPicker('Customers', res).then(sel => {
-            if (sel) {
-              // Picker closed → start loader for detail loading
-              this.loading = true;
-
-              this.resetPartyMasterForm();
-              this.setSelectedCustomer(sel);   // detail loading happens here
-            }
-          });
-
-        },
-        error: err => console.error(err)
-      });
+    ).subscribe({
+      next: (res: any) => {
+        this.dropdown.openPicker('Customers', res).then(sel => {
+          if (sel) {
+            this.setSelectedCustomer(sel);
+          }
+        });
+      }
+    });
   }
-
 
   setSelectedCustomer(cust: any) {
     this.selectedCustomer = cust;
-    this.searchText = cust.name;
+    this.searchText = cust.name;   // show in main input
 
-    // Detail API → already called after loader = true
     this.api.get(
       `PartyMaster/GetCustomerById?custCode=${cust.code}`
-    )
-      .pipe(finalize(() => this.loading = false))  // Stop loader after detail fetched
-      .subscribe({
-        next: (res: any) => {
-          console.log(res);
+    ).subscribe({
+      next: (res: any) => {
+        console.log(res);
 
-          this.patchPartyMaster(res);
-          this.validateAllStepsOnEdit();
-        },
-        error: err => console.error(err)
-      });
-  }
-
-
-  isControlEnabled(controlName: string): boolean {
-    const control = this.form.get(controlName);
-    return control && control.enabled;
+        this.patchPartyMaster(res);
+        this.validateAllStepsOnEdit();
+      }
+    });
   }
 
 
@@ -1372,91 +1250,20 @@ export class PartymastComponent implements OnInit {
     return item.selectId ?? item.code;
   }
 
-// -----------------------------
-// 1️⃣ IMAGE COMPRESSION FUNCTION
-// -----------------------------
-async compressImage(file: File, maxSizeKB: number = 60): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = (event: ProgressEvent<FileReader>) => {
-      const img = new Image();
-      img.src = event.target?.result as string;
-
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return reject('Canvas not supported');
-
-        // Optional: resize large images proportionally to reduce size
-        const maxDim = 1024; // max width or height
-        let width = img.width;
-        let height = img.height;
-        if (width > maxDim || height > maxDim) {
-          const ratio = Math.min(maxDim / width, maxDim / height);
-          width = width * ratio;
-          height = height * ratio;
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0, width, height);
-
-        let quality = 0.9; // start high, reduce gradually
-        const step = 0.05;
-
-        function compress() {
-          const dataUrl = canvas.toDataURL('image/jpeg', quality);
-          const sizeKB = Math.round((dataUrl.length * (3 / 4)) / 1024);
-
-          if (sizeKB <= maxSizeKB || quality <= 0.1) {
-            resolve(dataUrl);
-          } else {
-            quality -= step;
-            compress();
-          }
-        }
-
-        compress();
-      };
-
-      img.onerror = (err) => reject(err);
-    };
-
-    reader.onerror = (err) => reject(err);
-    reader.readAsDataURL(file);
-  });
-}
   // ---------- Preview Handlers ----------
-  // 2️⃣ FILE CHANGE HANDLER
-// -----------------------------
-async onFileChange(event: Event, key: PreviewKey) {
-  const input = event.target as HTMLInputElement | null;
-  const file = input?.files?.[0];
-  if (!file) return;
+  onFileChange(event: Event, key: PreviewKey) {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+    if (!file) return;
+    console.log(input);
+    console.log(file);
 
-  // Only allow image files
-  if (!file.type.startsWith('image/')) {
-    console.warn('Only image files are allowed.');
-    return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.previews[key] = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
-
-  const originalSizeKB = Math.round(file.size / 1024);
-  console.log(`Original size: ${originalSizeKB} KB`);
-
-  try {
-
-        const compressedDataUrl = await this.compressImage(file, 60);
-
-    // Calculate compressed size
-    const compressedSizeKB = Math.round((compressedDataUrl.length * 3 / 4) / 1024);
-    console.log(`Compressed size: ${compressedSizeKB} KB`);
-    // Compress image to ~60 KB
-    this.previews[key] = await this.compressImage(file, 60);
-  } catch (err) {
-    console.error('Image compression failed', err);
-  }
-}
 
   isImage(preview: string | null | undefined): boolean {
     return !!preview && typeof preview === 'string' && preview.startsWith('data:image/');
@@ -1541,7 +1348,6 @@ async onFileChange(event: Event, key: PreviewKey) {
 
   openEdit() {
     this.isEditMode = !this.isEditMode;
-    this.resetPartyMasterForm();
   }
 
   resetPartyMasterForm() {
@@ -1551,17 +1357,8 @@ async onFileChange(event: Event, key: PreviewKey) {
       this.form.reset();
     }
 
-    this.form.patchValue({
-      AcType: '0',
-      nmprefix: '',
-      Religon: null,
-      Cast: null,
-      OCCU: null,
-      SEX: '',
-      KycIdProof: false,
-      KycAddrProof: false
-    });
-    this.searchText = '';
+    this.form.AcType = '0';
+    this.form.nmprefix = '';
 
     // 2️⃣ Reset picker selections
     this.selectedCountryCode = null;
@@ -1634,57 +1431,18 @@ async onFileChange(event: Event, key: PreviewKey) {
     // 5️⃣ Reset base64Image
     this.base64Image = null;
 
-    this.resetStepper();
-
     console.log("✔ FORM RESET COMPLETED");
   }
-  resetStepper() {
-
-    // reset internal step
-    this.currentStep = 1;
-
-    // reset validation states
-    this.stepStatus = {
-      1: null,
-      2: null,
-      3: null,
-      4: null,
-      5: null
-    };
-
-    // reset radio buttons
-    const step1 = document.getElementById('step-1') as HTMLInputElement;
-    const step2 = document.getElementById('step-2') as HTMLInputElement;
-    const step3 = document.getElementById('step-3') as HTMLInputElement;
-    const step4 = document.getElementById('step-4') as HTMLInputElement;
-    const step5 = document.getElementById('step-5') as HTMLInputElement;
-
-    if (step1) step1.checked = true;
-    if (step2) step2.checked = false;
-    if (step3) step3.checked = false;
-    if (step4) step4.checked = false;
-    if (step5) step5.checked = false;
-
-    // remove shake classes if any exist
-    setTimeout(() => {
-      const steps = document.querySelectorAll('.step');
-      steps.forEach(s => s.classList.remove('step-shake'));
-    }, 50);
-
-    console.log("✔ STEPPER RESET COMPLETED");
-  }
-
 
   patchPartyMaster(data: any) {
 
     if (!data) return;
-    const acStr = data.acType ?? '0';   // ✅ keep backend as string
-    const acNum = Number(acStr);
+
     // --------------------------
     // 1️⃣  PATCH FORM FIELDS
     // --------------------------
     this.form.patchValue({
-      AcType: acStr,
+      AcType: data.acType,
       panNo: data.pan_no,
       AdharNo: data.adharNo,
       GSTNo: data.gstNo,
@@ -1825,506 +1583,424 @@ async onFileChange(event: Event, key: PreviewKey) {
         }
       });
     }
-    this.accountType = acNum;
-    this.applyAccountTypeRules(acNum);
 
     console.log("✔ PATCHED SUCCESSFULLY");
   }
 
-  stepValidators: any = {
-    1: () => this.validateStep1(),
-    2: () => this.validateStep2(),
-    3: () => this.validateStep3(),
-    4: () => this.validateStep4(),
-    5: () => this.validateStep5()
-  };
+stepValidators:any = {
+  1: () => this.validateStep1(),
+  2: () => this.validateStep2(),
+  3: () => this.validateStep3(),
+  4: () => this.validateStep4(),
+  5: () => this.validateStep5()
+};
 
 
-  // null = not checked yet, true = valid, false = invalid
-  stepStatus: any = {
-    1: null,
-    2: null,
-    3: null,
-    4: null,
-    5: null
-  };
+// null = not checked yet, true = valid, false = invalid
+stepStatus: any = {
+  1: null,
+  2: null,
+  3: null,
+  4: null,
+  5: null
+};
 
-  currentStep = 1;
+currentStep = 1;
 
 
 
-  // goToStep(step: number) {
-  //   const valid = this.stepValidators[step - 1]();
+// goToStep(step: number) {
+//   const valid = this.stepValidators[step - 1]();
 
-  //   if (!valid) {
-  //     this.toastr.error("Please fill all required fields");
-  //     return;
+//   if (!valid) {
+//     this.toastr.error("Please fill all required fields");
+//     return;
+//   }
+
+//   // manually click radio button
+//   const radio = document.getElementById(`step-${step}`) as HTMLInputElement;
+//   if (radio) radio.checked = true;
+// }
+
+validateStep1(): boolean {
+  const controls = [
+    'AcType',
+    'panNo',
+    'AdharNo',
+    'GSTNo',
+    'nmprefix',
+    'name'
+  ];
+
+  let valid = true;
+
+  for (let c of controls) {
+    const ctrl = this.form.get(c);
+    if (ctrl && !ctrl.disabled && ctrl.invalid) {
+      
+      // ❗ Detect exists error
+      if (ctrl.errors?.['exists']) {
+  this.toastr.error("Fill correct data — your data already exists");
+
+  // shake step
+  const stepEl = document.querySelector(
+    `label[for="step-${this.currentStep}"]`
+  ) as HTMLElement;
+  if (stepEl) {
+    stepEl.classList.add('step-shake');
+    setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+  }
+
+  this.scrollToFirstInvalid();
+}
+else {
+  this.toastr.error("Please fill required fields");
+  this.scrollToFirstInvalid();
+}
+
+
+      ctrl.markAsTouched();
+      valid = false;
+    }
+  }
+
+  return valid;
+}
+
+
+validateStep2(): boolean {
+
+  const controls = ['ADDR1', 'ADDR2', 'ADDR3', 'phone', 'mobile'];
+
+  let valid = true;
+
+  for (let c of controls) {
+    const ctrl = this.form.get(c);
+    if (ctrl && !ctrl.disabled && ctrl.invalid) {
+
+      if (ctrl.errors?.['exists']) {
+  this.toastr.error("Fill correct data — your data already exists");
+
+  // shake step
+  const stepEl = document.querySelector(
+    `label[for="step-${this.currentStep}"]`
+  ) as HTMLElement;
+  if (stepEl) {
+    stepEl.classList.add('step-shake');
+    setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+  }
+
+  this.scrollToFirstInvalid();
+}
+else {
+  this.toastr.error("Please fill required fields");
+  this.scrollToFirstInvalid();
+}
+
+
+      ctrl.markAsTouched();
+      valid = false;
+    }
+  }
+
+  if (!this.selectedCityCode
+    || !this.selectedAreaCode
+    || !this.selectedCountryCode
+    || !this.selectedStateCode
+    || !this.selectedDistrictCode
+    || !this.selectedTalukaCode
+  ) {
+    this.toastr.error("Please fill required fields");
+    valid = false;
+  }
+
+  return valid;
+}
+
+
+validateStep3(): boolean {
+  let valid = true;
+
+  const controls = [
+    'passportno',
+    'passexpdate',
+    'voteridno',
+    'birthdate',
+    'AGE',
+    'SEX'
+  ];
+
+  for (let c of controls) {
+    const ctrl = this.form.get(c);
+    if (ctrl && !ctrl.disabled && ctrl.invalid) {
+
+      if (ctrl.errors?.['exists']) {
+  this.toastr.error("Fill correct data — your data already exists");
+
+  // shake step
+  const stepEl = document.querySelector(
+    `label[for="step-${this.currentStep}"]`
+  ) as HTMLElement;
+  if (stepEl) {
+    stepEl.classList.add('step-shake');
+    setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+  }
+
+  this.scrollToFirstInvalid();
+}
+else {
+  this.toastr.error("Please fill required fields");
+  this.scrollToFirstInvalid();
+}
+
+
+      ctrl.markAsTouched();
+      valid = false;
+    }
+  }
+
+  if (!this.religionCode || !this.castCode || !this.occupationCode) {
+    valid = false;
+  }
+
+  return valid;
+}
+
+validateStep4(): boolean {
+  let valid = true;
+
+  const controls = [
+    'officename',
+    'OFFICEPIN',
+    'OFFICEADDR1',
+    'OFFICEPHONE',
+    'EMAIL_ID'
+  ];
+
+  for (let c of controls) {
+    const ctrl = this.form.get(c);
+    if (ctrl && !ctrl.disabled && ctrl.invalid) {
+
+      if (ctrl.errors?.['exists']) {
+  this.toastr.error("Fill correct data — your data already exists");
+
+  // shake step
+  const stepEl = document.querySelector(
+    `label[for="step-${this.currentStep}"]`
+  ) as HTMLElement;
+  if (stepEl) {
+    stepEl.classList.add('step-shake');
+    setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+  }
+
+  this.scrollToFirstInvalid();
+}
+else {
+  this.toastr.error("Please fill required fields");
+  this.scrollToFirstInvalid();
+}
+
+
+      ctrl.markAsTouched();
+      valid = false;
+    }
+  }
+
+  return valid;
+}
+
+validateStep5(): boolean {
+  let valid = true;
+
+  // ---------------------------
+  // 1️⃣ CHECKBOX + PICKER VALIDATION
+  // ---------------------------
+  if (!this.form.get('KycIdProof')?.value || !this.idproofCode) {
+    this.toastr.error("Please select I.D. Proof");
+    valid = false;
+  }
+
+  if (!this.form.get('KycAddrProof')?.value || !this.addrproofCode) {
+    this.toastr.error("Please select Address Proof");
+    valid = false;
+  }
+
+  // ---------------------------
+  // 2️⃣ REQUIRED FILES
+  // ---------------------------
+  const requiredFiles: { key: PreviewKey; label: string }[] = [
+    { key: 'photo', label: 'Photo' },
+    { key: 'sign', label: 'Signature' },
+    { key: 'pan', label: 'PAN Card' },
+    { key: 'aadhaarFront', label: 'Aadhaar Front' },
+    { key: 'aadhaarBack', label: 'Aadhaar Back' },
+  ];
+
+  for (let f of requiredFiles) {
+    if (!this.previews[f.key]) {
+      this.toastr.error(`${f.label} is required`);
+      valid = false;
+    }
+  }
+
+  // ---------------------------
+  // 3️⃣ IF INVALID → SHAKE + SCROLL
+  // ---------------------------
+  if (!valid) {
+    const stepEl = document.querySelector(
+      `label[for="step-${this.currentStep}"]`
+    ) as HTMLElement;
+
+    if (stepEl) {
+      stepEl.classList.add('step-shake');
+      setTimeout(() => stepEl.classList.remove('step-shake'), 350);
+    }
+
+    this.scrollToMissingFile();
+  }
+
+  return valid;
+}
+
+private scrollToMissingFile() {
+  const fileKeys: PreviewKey[] = [
+    'photo',
+    'sign',
+    'pan',
+    'aadhaarFront',
+    'aadhaarBack'
+  ];
+
+  for (const key of fileKeys) {
+    if (!this.previews[key]) {
+      const el = document.querySelector(`[data-key="${key}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        break;
+      }
+    }
+  }
+}
+
+
+
+goToStep(step: number) {
+  // const current = this.currentStep;
+
+  // const isValid = this.stepValidators[current]();
+  // this.stepStatus[current] = isValid;
+
+  // if (!isValid) {
+  //   this.toastr.error("Please fill required fields");
+
+  //   // scroll to the first invalid field
+  //   this.scrollToFirstInvalid();
+
+  //   // shake step circle
+  //   const stepEl = document.querySelector(
+  //     `label[for="step-${current}"]`
+  //   ) as HTMLElement;
+
+  //   if (stepEl) {
+  //     stepEl.classList.add('step-shake');
+  //     setTimeout(() => stepEl.classList.remove('step-shake'), 350);
   //   }
 
-  //   // manually click radio button
-  //   const radio = document.getElementById(`step-${step}`) as HTMLInputElement;
-  //   if (radio) radio.checked = true;
+  //   return;
+  //}
+
+  this.navigateTo(step);
+}
+
+
+tryOpenStep(step: number) {
+  // user cannot open step N if any previous step invalid or not completed
+  // for (let i = 1; i < step; i++) {
+  //   if (this.stepStatus[i] !== true) {
+  //     this.toastr.error(`Step ${i} is not completed`);
+  //     return;
+  //   }
   // }
 
-  fieldConfigMap: any = {
-    adharCard: 'AdharNo',
-    panCard: 'panNo',
-    gst: 'GSTNo'
+  this.navigateTo(step);
+}
+
+navigateTo(step: number) {
+  const r = document.getElementById(`step-${step}`) as HTMLInputElement;
+  if (r) {
+    r.checked = true;
+    this.currentStep = step;  // ⭐ THIS SETS ACTIVE STEP
+  }
+}
+
+
+getStepClass(step: number) {
+  const status = this.stepStatus[step];
+
+  return {
+    // ACTIVE STEP (blue border background)
+    'border-violet-600 bg-violet-50 text-violet-700': this.currentStep === step,
+
+    // VALID (green)
+    'border-green-500 bg-green-50 text-green-700': status === true && this.currentStep !== step,
+
+    // INVALID (red)
+    'border-red-500 bg-red-50 text-red-700': status === false && this.currentStep !== step,
+
+    // DEFAULT (gray)
+    'border-gray-300 bg-gray-50 text-gray-500': status === null && this.currentStep !== step
   };
-  applyAccountTypeRules(typeCode: number) {
-    console.log(`Applying rules for account type: ${typeCode}`);
-
-    const selectedType = this.accountTypes.find((x: any) => x.code === Number(typeCode));
-    if (!selectedType) return;
-
-    Object.keys(this.fieldConfigMap).forEach((key) => {
-      const controlName = this.fieldConfigMap[key];
-      const control = this.form.get(controlName);
-
-      const rule = selectedType[key] ?? 'N'; // ✅ DEFAULT NULL → 'N'
-
-      if (!control) return;
-
-      control.enable({ emitEvent: false });
-      control.clearValidators();
-
-      if (rule === 'Y') {
-        control.setValidators([Validators.required]);
-      }
-
-      if (rule === 'D') {
-        control.disable({ emitEvent: false });
-        control.setValue(null, { emitEvent: false });
-      }
-
-      control.updateValueAndValidity({ emitEvent: false });
-    });
-  }
-
-  isHidden(fieldKey: string): boolean {
-    const selectedType = this.accountTypes.find((x: any) => x.code == this.accountType);
-    return selectedType?.[fieldKey] === 'D';
-  }
-
-  onAccountTypeChange() {
-    const typeStr = this.form.get('AcType')?.value;   // ✅ string from form
-    const num = Number(typeStr);                      // ✅ convert to number
-
-    this.accountType = num;
-
-    this.applyAccountTypeRules(num);
-
-    console.log('Account type (string):', typeStr);
-    console.log('Account type (number):', num);
-  }
+}
 
 
 
+getStepIcon(step: number): string {
+  const activeIcons: any = {
+    1: 'user',
+    2: 'home',
+    3: 'id',
+    4: 'office',
+    5: 'check-circle'
+  };
 
-  validateStep1(): boolean {
-    const selectedType = this.accountTypes.find(x => x.code == this.accountType);
+  const current = this.currentStep;
+  const status = this.stepStatus[step];
 
-    const controls = [
-      'AcType',
-      selectedType?.panCard === 'Y' ? 'panNo' : null,
-      selectedType?.adharCard === 'Y' ? 'AdharNo' : null,
-      selectedType?.gst === 'Y' ? 'GSTNo' : null,
-      'nmprefix',
-      'name'
-    ].filter(Boolean) as string[];
+  // ACTIVE → main SVG
+  if (current === step) return activeIcons[step];
 
-    for (let c of controls) {
-      const ctrl = this.form.get(c);
+  // VALID → green check
+  if (status === true) return 'check';
 
-      if (ctrl && !ctrl.disabled && ctrl.invalid) {
-        this.toastr.error("Please fill required fields");
-        ctrl.markAsTouched();
-        this.scrollToFirstInvalid();
-        return false;
-      }
+  // INVALID → red cross
+  if (status === false) return 'cross';
+
+  // DEFAULT
+  return 'number';
+}
+
+scrollToFirstInvalid() {
+  setTimeout(() => {
+    const invalidField: HTMLElement | null =
+      document.querySelector('.ng-invalid:not([disabled])');
+
+    if (invalidField) {
+      invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // add shake animation to invalid field
+      invalidField.classList.add('shake-anim');
+      setTimeout(() => {
+        invalidField.classList.remove('shake-anim');
+      }, 350);
     }
-
-    return true;
+  }, 50);
+}
+private validateAllStepsOnEdit() {
+  for (let s = 1; s <= 5; s++) {
+    const isValid = this.stepValidators[s]();
+    this.stepStatus[s] = isValid;
   }
-
-
-  validateStep2(): boolean {
-
-    const controls = ['ADDR1', 'ADDR2', 'ADDR3', 'mobile'];
-
-    let valid = true;
-
-    for (let c of controls) {
-      const ctrl = this.form.get(c);
-      if (ctrl && !ctrl.disabled && ctrl.invalid) {
-
-        if (ctrl.errors?.['exists']) {
-          this.toastr.error("Fill correct data — your data already exists");
-
-          // shake step
-          const stepEl = document.querySelector(
-            `label[for="step-${this.currentStep}"]`
-          ) as HTMLElement;
-          if (stepEl) {
-            stepEl.classList.add('step-shake');
-            setTimeout(() => stepEl.classList.remove('step-shake'), 350);
-          }
-
-          this.scrollToFirstInvalid();
-        }
-        else {
-          this.toastr.error("Please fill required fields");
-          this.scrollToFirstInvalid();
-        }
-
-
-        ctrl.markAsTouched();
-        valid = false;
-      }
-    }
-
-    if (!this.selectedCityCode
-      || !this.selectedAreaCode
-      || !this.selectedCountryCode
-      || !this.selectedStateCode
-      || !this.selectedDistrictCode
-      || !this.selectedTalukaCode
-    ) {
-      this.toastr.error("Please fill required fields");
-      valid = false;
-    }
-
-    return valid;
-  }
-
-
-  validateStep3(): boolean {
-    let valid = true;
-
-    const showError = (exists = false) => {
-      if (exists) {
-        this.toastr.error("Fill correct data — your data already exists");
-      } else {
-        this.toastr.error("Please fill required fields");
-      }
-
-      const stepEl = document.querySelector(
-        `label[for="step-${this.currentStep}"]`
-      ) as HTMLElement;
-
-      if (stepEl) {
-        stepEl.classList.add('step-shake');
-        setTimeout(() => stepEl.classList.remove('step-shake'), 350);
-      }
-
-      this.scrollToFirstInvalid();
-    };
-
-    if (this.accountType == 0) {
-      const controls = [
-        'passportno',
-        'passexpdate',
-        'voteridno',
-        'birthdate',
-        'AGE',
-        'SEX'
-      ];
-
-      for (let c of controls) {
-        const ctrl = this.form.get(c);
-
-        if (ctrl && !ctrl.disabled && ctrl.invalid) {
-          showError(!!ctrl.errors?.['exists']);
-          ctrl.markAsTouched();
-          return false; // ✅ EXIT IMMEDIATELY
-        }
-      }
-
-      // ✅ Passport dependency check
-      if (this.form.get('passportno')?.value) {
-        if (!this.form.get('passexpdate')?.value || !this.form.get('passauth')?.value) {
-          this.toastr.error("Please fill required fields");
-          return false;
-        }
-      }
-
-      // ✅ Other staff dependency
-      if (this.otherStaffType == 'S' && !this.otherStaffName) {
-        this.toastr.error("Please fill required fields");
-        return false;
-      }
-
-      // ✅ Religious / caste / occupation dependency
-      if (!this.religionCode || !this.castCode || !this.occupationCode) {
-        this.toastr.error("Please fill required fields");
-        return false;
-      }
-
-    } else {
-
-      const controls = [
-        'COMPREGNO',
-        'COMPREGDT',
-        'COMPBRANCH',
-        'COMPNATURE',
-        'COMPPAIDCAPT',
-        'COMPTURNOVER',
-        'COMPNETWORTH',
-        'Propritor1'
-      ];
-
-
-      for (let c of controls) {
-        const ctrl = this.form.get(c);
-
-        if (ctrl && !ctrl.disabled && ctrl.invalid) {
-          showError(!!ctrl.errors?.['exists']);
-          ctrl.markAsTouched();
-          return false; // ✅ EXIT IMMEDIATELY
-        }
-      }
-    }
-
-    return true;
-  }
-
-
-  validateStep4(): boolean {
-    let valid = true;
-
-    const controls = [
-      'officename',
-      'OFFICEPIN',
-      'OFFICEADDR1',
-      'OFFICEPHONE',
-      'EMAIL_ID'
-    ];
-
-    for (let c of controls) {
-      const ctrl = this.form.get(c);
-      if (ctrl && !ctrl.disabled && ctrl.invalid) {
-
-        if (ctrl.errors?.['exists']) {
-          this.toastr.error("Fill correct data — your data already exists");
-
-          // shake step
-          const stepEl = document.querySelector(
-            `label[for="step-${this.currentStep}"]`
-          ) as HTMLElement;
-          if (stepEl) {
-            stepEl.classList.add('step-shake');
-            setTimeout(() => stepEl.classList.remove('step-shake'), 350);
-          }
-
-          this.scrollToFirstInvalid();
-        }
-        else {
-          this.toastr.error("Please fill required fields");
-          this.scrollToFirstInvalid();
-        }
-
-
-        ctrl.markAsTouched();
-        valid = false;
-      }
-    }
-
-    return valid;
-  }
-
-  validateStep5(): boolean {
-    let valid = true;
-
-    // ---------------------------
-    // 1️⃣ CHECKBOX + PICKER VALIDATION
-    // ---------------------------
-    if (!this.form.get('KycIdProof')?.value || !this.idproofCode) {
-      this.toastr.error("Please select I.D. Proof");
-      valid = false;
-    }
-
-    if (!this.form.get('KycAddrProof')?.value || !this.addrproofCode) {
-      this.toastr.error("Please select Address Proof");
-      valid = false;
-    }
-
-    // ---------------------------
-    // 3️⃣ IF INVALID → SHAKE + SCROLL
-    // ---------------------------
-    if (!valid) {
-      const stepEl = document.querySelector(
-        `label[for="step-${this.currentStep}"]`
-      ) as HTMLElement;
-
-      if (stepEl) {
-        stepEl.classList.add('step-shake');
-        setTimeout(() => stepEl.classList.remove('step-shake'), 350);
-      }
-
-      this.scrollToMissingFile();
-    }
-
-    return valid;
-  }
-
-  private scrollToMissingFile() {
-    const fileKeys: PreviewKey[] = [
-      'photo',
-      'sign',
-      'pan',
-      'aadhaarFront',
-      'aadhaarBack'
-    ];
-
-    for (const key of fileKeys) {
-      if (!this.previews[key]) {
-        const el = document.querySelector(`[data-key="${key}"]`);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          break;
-        }
-      }
-    }
-  }
-
-
-
-  goToStep(step: number) {
-    const current = this.currentStep;
-
-    const isValid = this.stepValidators[current]();
-    this.stepStatus[current] = isValid;
-
-    if (!isValid) {
-      this.toastr.error("Please fill required fields");
-
-      // scroll to the first invalid field
-      this.scrollToFirstInvalid();
-      this.focusFirstInvalidField();
-
-      // shake step circle
-      const stepEl = document.querySelector(
-        `label[for="step-${current}"]`
-      ) as HTMLElement;
-
-      if (stepEl) {
-        stepEl.classList.add('step-shake');
-        setTimeout(() => stepEl.classList.remove('step-shake'), 350);
-      }
-
-      return;
-    }
-
-    this.navigateTo(step);
-  }
-
-  focusFirstInvalidField() {
-    setTimeout(() => {
-      const invalidField = document.querySelector(
-        '.invalid-check.ng-invalid:not([disabled])'
-      ) as HTMLElement;
-
-      if (invalidField) {
-        invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        invalidField.focus();
-
-        // Add shake animation
-        invalidField.classList.add('shake-anim');
-        setTimeout(() => invalidField.classList.remove('shake-anim'), 400);
-      }
-    }, 50);
-  }
-
-
-
-  tryOpenStep(step: number) {
-    // user cannot open step N if any previous step invalid or not completed
-    for (let i = 1; i < step; i++) {
-      if (this.stepStatus[i] !== true) {
-        this.toastr.error(`Step ${i} is not completed`);
-        return;
-      }
-    }
-
-    this.navigateTo(step);
-  }
-
-  navigateTo(step: number) {
-    const r = document.getElementById(`step-${step}`) as HTMLInputElement;
-    if (r) {
-      r.checked = true;
-      this.currentStep = step;  // ⭐ THIS SETS ACTIVE STEP
-    }
-  }
-
-
-  getStepClass(step: number) {
-    const status = this.stepStatus[step];
-
-    return {
-      // ACTIVE STEP (blue border background)
-      'border-violet-600 bg-violet-50 text-violet-700': this.currentStep === step,
-
-      // VALID (green)
-      'border-green-500 bg-green-50 text-green-700': status === true && this.currentStep !== step,
-
-      // INVALID (red)
-      'border-red-500 bg-red-50 text-red-700': status === false && this.currentStep !== step,
-
-      // DEFAULT (gray)
-      'border-gray-300 bg-gray-50 text-gray-500': status === null && this.currentStep !== step
-    };
-  }
-
-
-
-  getStepIcon(step: number): string {
-    const activeIcons: any = {
-      1: 'user',
-      2: 'home',
-      3: 'id',
-      4: 'office',
-      5: 'check-circle'
-    };
-
-    const current = this.currentStep;
-    const status = this.stepStatus[step];
-
-    // ACTIVE → main SVG
-    if (current === step) return activeIcons[step];
-
-    // VALID → green check
-    if (status === true) return 'check';
-
-    // INVALID → red cross
-    if (status === false) return 'cross';
-
-    // DEFAULT
-    return 'number';
-  }
-
-  scrollToFirstInvalid() {
-    setTimeout(() => {
-      const invalidField: HTMLElement | null =
-        document.querySelector('.ng-invalid:not([disabled])');
-
-      if (invalidField) {
-        invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        // add shake animation to invalid field
-        invalidField.classList.add('shake-anim');
-        setTimeout(() => {
-          invalidField.classList.remove('shake-anim');
-        }, 350);
-      }
-    }, 50);
-  }
-  private validateAllStepsOnEdit() {
-    for (let s = 1; s <= 5; s++) {
-      const isValid = this.stepValidators[s]();
-      this.stepStatus[s] = isValid;
-    }
-  }
+}
 
 
 

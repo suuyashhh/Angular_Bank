@@ -61,12 +61,27 @@ export class AuthService {
     let id = this.safeGetStorage(this.DEVICE_ID_KEY);
 
     if (!id) {
-      id = crypto.randomUUID();
+      id = this.secureUUID();
       this.safeSetStorage(this.DEVICE_ID_KEY, id);
     }
 
     return id;
   }
+
+  private secureUUID(): string {
+    // Use native crypto if available
+    if (window.crypto && 'randomUUID' in crypto) {
+      return crypto.randomUUID();
+    }
+
+    // ✅ Fallback: RFC4122-compliant UUID v4
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 15) >> 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
 
   getDeviceId(): string {
     return this.getOrCreateDeviceId();
@@ -75,17 +90,17 @@ export class AuthService {
   // Safe Storage
   private safeSetStorage(key: string, value: string): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    try { localStorage.setItem(key, value); } catch { }
+    try { sessionStorage.setItem(key, value); } catch { }
   }
 
   private safeGetStorage(key: string): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
-    try { return localStorage.getItem(key); } catch { return null; }
+    try { return sessionStorage.getItem(key); } catch { return null; }
   }
 
   private safeRemoveStorage(key: string): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    try { localStorage.removeItem(key); } catch { }
+    try { sessionStorage.removeItem(key); } catch { }
   }
 
   private encrypt(data: any): string {
@@ -102,33 +117,34 @@ export class AuthService {
   // --------------------------------------------------------------------
   // ⭐ LOGIN — AES ENCRYPT + APP-KEY (HMAC added by interceptor)
   // --------------------------------------------------------------------
-login(credentials: any) {
-  const key = CryptoJS.enc.Utf8.parse(this.secretKey);
-  const iv = CryptoJS.enc.Utf8.parse("0000000000000000");
+  login(credentials: any) {
+    const key = CryptoJS.enc.Utf8.parse(this.secretKey);
+    const iv = CryptoJS.enc.Utf8.parse("0000000000000000");
 
-  const encryptedPayload = CryptoJS.AES.encrypt(
-    JSON.stringify(credentials),
-    key,
-    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-  ).toString();
+    const encryptedPayload = CryptoJS.AES.encrypt(
+      JSON.stringify(credentials),
+      key,
+      { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+    ).toString();
 
-  const body = { data: encryptedPayload };
+    const body = { data: encryptedPayload };
 
-  const ts = Date.now().toString();
-  const device = this.getDeviceId();
-  const raw = encryptedPayload + "|" + ts + "|" + device;
-  const signature = CryptoJS.HmacSHA256(raw, environment.HMAC_KEY).toString();
+    const hmac_key = environment.HMAC_KEY
+    const ts = Date.now().toString();
+    const device = this.getDeviceId();
+    const raw = encryptedPayload + "|" + ts + "|" + device;
+    const signature = CryptoJS.HmacSHA256(raw, hmac_key).toString();
 
-  return this.http.post(`${this.baseUrl}Login/Login`, body, {
-    headers: new HttpHeaders({
-      "Content-Type": "application/json",
-      "X-APP-KEY": environment.APP_KEY,
-      "X-DEVICE-ID": device,
-      "X-TIMESTAMP": ts,
-      "X-SIGNATURE": signature
-    })
-  });
-}
+    return this.http.post(`${this.baseUrl}Login/Login`, body, {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-APP-KEY": environment.APP_KEY,
+        "X-DEVICE-ID": device,
+        "X-TIMESTAMP": ts,
+        "X-SIGNATURE": signature
+      })
+    });
+  }
 
 
 
@@ -177,57 +193,57 @@ login(credentials: any) {
   }
 
   // Store session
-setToken(res: any): void {
-  try {
-    if (!res || !res.token) {
-      console.error("❌ setToken(): Missing token:", res);
-      return;
+  setToken(res: any): void {
+    try {
+      if (!res || !res.token) {
+        console.error("❌ setToken(): Missing token:", res);
+        return;
+      }
+
+      // store in memory
+      this.inMemoryToken = res.token;
+      this.inMemoryUser = res.userDetails;
+
+      // store encrypted in localStorage
+      const sessionObj = {
+        token: res.token,
+        userDetails: res.userDetails
+      };
+
+      const encrypted = this.encrypt(sessionObj);
+      this.safeSetStorage(this.STORAGE_KEY, encrypted);
+
+      console.log("✅ Token saved successfully");
+
+      this.startAuthorizeHeartbeat();
+      this.resetInactivityTimer();
+    } catch (err) {
+      console.error("❌ setToken() failed:", err);
     }
-
-    // store in memory
-    this.inMemoryToken = res.token;
-    this.inMemoryUser = res.userDetails;
-
-    // store encrypted in localStorage
-    const sessionObj = {
-      token: res.token,
-      userDetails: res.userDetails
-    };
-
-    const encrypted = this.encrypt(sessionObj);
-    this.safeSetStorage(this.STORAGE_KEY, encrypted);
-
-    console.log("✅ Token saved successfully");
-
-    this.startAuthorizeHeartbeat();
-    this.resetInactivityTimer();
-  } catch (err) {
-    console.error("❌ setToken() failed:", err);
   }
-}
 
 
   getToken(): string | null {
-  if (this.inMemoryToken) return this.inMemoryToken;
+    if (this.inMemoryToken) return this.inMemoryToken;
 
-  const stored = this.safeGetStorage(this.STORAGE_KEY);
-  if (!stored) return null;
+    const stored = this.safeGetStorage(this.STORAGE_KEY);
+    if (!stored) return null;
 
-  let decrypted: any = null;
-  try {
-    decrypted = this.decrypt(stored);
-  } catch (e) {
-    console.error("❌ Failed to decrypt stored session:", e);
-    return null;
+    let decrypted: any = null;
+    try {
+      decrypted = this.decrypt(stored);
+    } catch (e) {
+      console.error("❌ Failed to decrypt stored session:", e);
+      return null;
+    }
+
+    if (!decrypted || !decrypted.token) return null;
+
+    this.inMemoryToken = decrypted.token;
+    this.inMemoryUser = decrypted.userDetails;
+
+    return decrypted.token;
   }
-
-  if (!decrypted || !decrypted.token) return null;
-
-  this.inMemoryToken = decrypted.token;
-  this.inMemoryUser = decrypted.userDetails;
-
-  return decrypted.token;
-}
 
 
   getUser(): any {
@@ -241,25 +257,44 @@ setToken(res: any): void {
     return this.inMemoryUser;
   }
 
-isLoggedIn(): boolean {
-  try {
-    const token = this.getToken();
-    if (!token) return false;
-    if (token.length < 20) return false;
+  isLoggedIn(): boolean {
+    try {
+      const token = this.getToken();
+      if (!token) return false;
+      if (token.length < 20) return false;
 
-    return true;
-  } catch {
-    return false;
+      return true;
+    } catch {
+      return false;
+    }
   }
-}
 
 
+  // ======== ADD THIS METHOD ========
+  setUserImage(imageData: string): void {
+    if (imageData) {
+      this.safeSetStorage("userImage", imageData);
+    } else {
+      this.safeRemoveStorage("userImage");
+    }
+  }
 
+  // ======== ADD THIS METHOD ========
+  getUserImage(): string {
+    const stored = this.safeGetStorage("userImage");
+    if (stored) {
+      return stored;
+    }
+    return '../../assets/img/avatars/1.png'; // default
+  }
+
+  // ======== UPDATE logout method ========
   logout(trigger: string = "manual"): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
 
     this.safeRemoveStorage(this.STORAGE_KEY);
+    this.safeRemoveStorage("userImage"); // ADD THIS LINE
     sessionStorage.clear();
     this.inMemoryToken = null;
     this.inMemoryUser = null;
@@ -299,32 +334,32 @@ isLoggedIn(): boolean {
   }
 
   // Branch selection
-setSelectedBranch(code: number, name: string): void {
-  // recover token if missing
-  if (!this.inMemoryToken) {
-    this.inMemoryToken = this.getToken();
+  setSelectedBranch(code: number, name: string): void {
+    // recover token if missing
+    if (!this.inMemoryToken) {
+      this.inMemoryToken = this.getToken();
+    }
+
+    const existingUser = this.getUser() ?? {};
+
+    const updatedUser = {
+      ...existingUser,
+      selectedBranchCode: code,
+      selectedBranchName: name
+    };
+
+    this.inMemoryUser = updatedUser;
+
+    const session = {
+      token: this.inMemoryToken,
+      userDetails: updatedUser
+    };
+
+    const encrypted = this.encrypt(session);
+    this.safeSetStorage(this.STORAGE_KEY, encrypted);
+
+    console.log("✔ Branch stored without breaking session:", session);
   }
-
-  const existingUser = this.getUser() ?? {};
-
-  const updatedUser = {
-    ...existingUser,
-    selectedBranchCode: code,
-    selectedBranchName: name
-  };
-
-  this.inMemoryUser = updatedUser;
-
-  const session = {
-    token: this.inMemoryToken,
-    userDetails: updatedUser
-  };
-
-  const encrypted = this.encrypt(session);
-  this.safeSetStorage(this.STORAGE_KEY, encrypted);
-
-  console.log("✔ Branch stored without breaking session:", session);
-}
 
 
   // Inactivity
