@@ -6,9 +6,9 @@
 .custom-modal-body { padding: 24px 24px 12px 24px !important; background: white !important; max-height: calc(80vh - 120px); overflow: auto; }
 
 /* Form input visuals */
-.form-floating-outline .form-control { border:2px solid #e5e7eb !important; border-radius:12px !important; background:#fafafa !important; transition: all 0.2s ease !important; padding:12px 14px !important; }
+.form-floating-outline .form-control { border:2px solid #e5e7eb !important; border-radius:12px !important; background:#fafafa !important; transition: all 0.2s ease !important; padding:12px 14px !important; font-weight:600 !important; color:#374151 !important; }
 .form-floating-outline .form-control:focus { outline:none !important; border-color:#8c57ff !important; background:white !important; box-shadow:0 0 0 3px rgba(140,87,255,0.08) !important; transform: translateY(-1px) !important; }
-.form-floating-outline label { display:flex !important; align-items:center !important; gap:8px !important; font-weight:600 !important; color:#374151 !important; }
+.form-floating-outline label { display:flex !important; align-items:center !important; gap:8px !important; font-weight:300 !important; color:#374151 !important; }
 .form-floating-outline label i { font-size:16px !important; color:#8c57ff !important; }
 
 
