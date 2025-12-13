@@ -62,7 +62,7 @@
                 </ol>
               </nav>
 
-           
+
             </div>
 
             <input class="wizard-state" type="radio" name="wizard" id="step-1" checked />
@@ -275,7 +275,10 @@
 
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="form-floating form-floating-outline mb-4">
-                      <input type="text" id="glCode" class="form-control w-full" placeholder="G.L.CODE" />
+                      <input type="text" id="glCode" class="form-control w-full" (click)="openGlCodeModel()"
+                        formControlName="GLName" style="cursor: pointer;" placeholder="Select G.L.CODE" />
+                      <input type="hidden" formControlName="GLCode">
+                      <input type="hidden" formControlName="GLType">
                       <label for="glCode">G.L.CODE</label>
                     </div>
 
