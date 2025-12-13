@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DropdownService } from '../services/dropdown.service';
@@ -10,11 +10,17 @@ import { DropdownService } from '../services/dropdown.service';
   templateUrl: './dropdpwn-modal.component.html',
   styleUrls: ['./dropdpwn-modal.component.css'],
 })
-export class DropdpwnModalComponent implements AfterViewInit {
+export class DropdpwnModalComponent implements AfterViewInit, OnInit {
   @ViewChild('modalSearchInput') modalSearchInput!: ElementRef;
 
 
     constructor(public picker: DropdownService) {}
+  ngOnInit(): void {
+    this.picker.searchChanged$.subscribe(q => {
+    this.picker.filter(q);
+  });
+  }
+
 
     ngAfterViewInit() {
     // When modal opens -> focus input

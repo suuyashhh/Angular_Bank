@@ -10,6 +10,8 @@
 .form-floating-outline .form-control:focus { outline:none !important; border-color:#8c57ff !important; background:white !important; box-shadow:0 0 0 3px rgba(140,87,255,0.08) !important; transform: translateY(-1px) !important; }
 .form-floating-outline label { display:flex !important; align-items:center !important; gap:8px !important; font-weight:600 !important; color:#374151 !important; }
 .form-floating-outline label i { font-size:16px !important; color:#8c57ff !important; }
+/* make placeholder visible inside floating inputs (optional) */
+.form-floating input::placeholder { opacity: 1 !important; color: #9ca3af; }
 
 
 /* Responsive */
@@ -56,5 +58,20 @@
 
 .step-shake {
   animation: stepShake 0.35s ease-in-out;
+}
+
+.req-star {
+  color: red;
+  margin-left: 3px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.text-danger {
+  color: red !important;
+}
+
+.input-error {
+  border-color: red !important;
 }
 

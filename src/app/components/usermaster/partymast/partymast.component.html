@@ -1,8 +1,13 @@
-<svg style="display: none;">
+<svg style="display: none">
   <!-- USER -->
   <symbol id="icon-user" viewBox="0 0 24 24">
     <path d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 
     2.2-5 5 2.2 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+  </symbol>
+
+  <!-- Contact -->
+  <symbol id="icon-contact-phone" viewBox="0 0 24 24">
+    <path d="M3 4h18v16h-18v-16zm2 2v.2l7 4.8 7-4.8v-.2h-14zm14 12v-9l-7 4.7-7-4.7v9h14z" />
   </symbol>
 
   <!-- HOME -->
@@ -41,12 +46,10 @@
   </symbol>
 </svg>
 
-
 <!-- Full-bleed Wizard Page (complete) -->
 <main class="w-full px-6 py-8">
-  <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top:0!important;">
+  <div class="card wizard-card w-full rounded-2xl overflow-hidden" style="padding-top: 0 !important">
     <div class="card-body mt-1 p-6 md:p-8 w-full min-w-0">
-
       <!-- HEADER: page path (left) + Edit Names button (right) -->
       <div class="mb-4 flex items-center justify-between">
         <nav class="text-sm text-gray-600" aria-label="Breadcrumb">
@@ -59,7 +62,7 @@
             <li class="font-semibold text-gray-800">Party Master</li>
           </ol>
         </nav>
-        <div *ngIf="currentStep != 1" class="inline-flex items-center gap-3 px-5 py-5 "></div>
+        <div *ngIf="currentStep != 1" class="inline-flex items-center gap-3 px-5 py-5"></div>
         <div *ngIf="currentStep == 1">
           <button type="button"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50"
@@ -88,28 +91,28 @@
         <div class="loader"></div>
       </div>
 
-
-
       <!-- STEP radios (hidden) -->
       <input class="wizard-state" type="radio" name="wizard" id="step-1" checked />
       <input class="wizard-state" type="radio" name="wizard" id="step-2" />
       <input class="wizard-state" type="radio" name="wizard" id="step-3" />
       <input class="wizard-state" type="radio" name="wizard" id="step-4" />
       <input class="wizard-state" type="radio" name="wizard" id="step-5" />
+      <input class="wizard-state" type="radio" name="wizard" id="step-6" />
 
       <!-- Stepper -->
       <div class="wizard-steps my-6 w-full">
         <div
           class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
-
           <div
             class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
             [ngClass]="getStepClass(1)" (click)="tryOpenStep(1)">
             <ng-container [ngSwitch]="getStepIcon(1)">
-
               <!-- ACTIVE ICONS -->
               <svg *ngSwitchCase="'user'" class="step-svg">
                 <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'contact'" class="step-svg">
+                <use href="#icon-contact-phone" />
               </svg>
               <svg *ngSwitchCase="'home'" class="step-svg">
                 <use href="#icon-home" />
@@ -136,11 +139,8 @@
 
               <!-- DEFAULT NUMBER -->
               <span *ngSwitchDefault>{{ 1 }}</span>
-
             </ng-container>
           </div>
-
-
 
           <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
 
@@ -148,10 +148,12 @@
             class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
             [ngClass]="getStepClass(2)" (click)="tryOpenStep(2)">
             <ng-container [ngSwitch]="getStepIcon(2)">
-
               <!-- ACTIVE ICONS -->
               <svg *ngSwitchCase="'user'" class="step-svg">
                 <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'contact'" class="step-svg">
+                <use href="#icon-contact-phone" />
               </svg>
               <svg *ngSwitchCase="'home'" class="step-svg">
                 <use href="#icon-home" />
@@ -178,7 +180,6 @@
 
               <!-- DEFAULT NUMBER -->
               <span *ngSwitchDefault>{{ 2 }}</span>
-
             </ng-container>
           </div>
 
@@ -188,10 +189,12 @@
             class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
             [ngClass]="getStepClass(3)" (click)="tryOpenStep(3)">
             <ng-container [ngSwitch]="getStepIcon(3)">
-
               <!-- ACTIVE ICONS -->
               <svg *ngSwitchCase="'user'" class="step-svg">
                 <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'contact'" class="step-svg">
+                <use href="#icon-contact-phone" />
               </svg>
               <svg *ngSwitchCase="'home'" class="step-svg">
                 <use href="#icon-home" />
@@ -218,7 +221,6 @@
 
               <!-- DEFAULT NUMBER -->
               <span *ngSwitchDefault>{{ 3 }}</span>
-
             </ng-container>
           </div>
 
@@ -228,10 +230,12 @@
             class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
             [ngClass]="getStepClass(4)" (click)="tryOpenStep(4)">
             <ng-container [ngSwitch]="getStepIcon(4)">
-
               <!-- ACTIVE ICONS -->
               <svg *ngSwitchCase="'user'" class="step-svg">
                 <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'contact'" class="step-svg">
+                <use href="#icon-contact-phone" />
               </svg>
               <svg *ngSwitchCase="'home'" class="step-svg">
                 <use href="#icon-home" />
@@ -258,7 +262,6 @@
 
               <!-- DEFAULT NUMBER -->
               <span *ngSwitchDefault>{{ 4 }}</span>
-
             </ng-container>
           </div>
 
@@ -268,10 +271,12 @@
             class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
             [ngClass]="getStepClass(5)" (click)="tryOpenStep(5)">
             <ng-container [ngSwitch]="getStepIcon(5)">
-
               <!-- ACTIVE ICONS -->
               <svg *ngSwitchCase="'user'" class="step-svg">
                 <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'contact'" class="step-svg">
+                <use href="#icon-contact-phone" />
               </svg>
               <svg *ngSwitchCase="'home'" class="step-svg">
                 <use href="#icon-home" />
@@ -298,20 +303,56 @@
 
               <!-- DEFAULT NUMBER -->
               <span *ngSwitchDefault>{{ 5 }}</span>
-
             </ng-container>
           </div>
 
+          <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+
+          <div
+            class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+            [ngClass]="getStepClass(6)" (click)="tryOpenStep(6)">
+            <ng-container [ngSwitch]="getStepIcon(6)">
+              <!-- ACTIVE ICONS -->
+              <svg *ngSwitchCase="'user'" class="step-svg">
+                <use href="#icon-user" />
+              </svg>
+              <svg *ngSwitchCase="'contact'" class="step-svg">
+                <use href="#icon-contact-phone" />
+              </svg>
+              <svg *ngSwitchCase="'home'" class="step-svg">
+                <use href="#icon-home" />
+              </svg>
+              <svg *ngSwitchCase="'id'" class="step-svg">
+                <use href="#icon-id" />
+              </svg>
+              <svg *ngSwitchCase="'office'" class="step-svg">
+                <use href="#icon-office" />
+              </svg>
+              <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                <use href="#icon-check-circle" />
+              </svg>
+
+              <!-- VALID -->
+              <svg *ngSwitchCase="'check'" class="step-svg">
+                <use href="#icon-check" />
+              </svg>
+
+              <!-- INVALID -->
+              <svg *ngSwitchCase="'cross'" class="step-svg">
+                <use href="#icon-cross" />
+              </svg>
+
+              <!-- DEFAULT NUMBER -->
+              <span *ngSwitchDefault>{{ 6 }}</span>
+            </ng-container>
+          </div>
         </div>
       </div>
 
-
-
-
       <div class="form-floating form-floating-outline mb-4" *ngIf="isEditMode">
         <div class="form-floating form-floating-outline mb-4">
-          <input class="form-control invalid-check" [(ngModel)]="searchText" readonly (click)="getCustomers()"
-            placeholder="Customer ID" />
+          <input class="form-control invalid-check" [(ngModel)]="searchText" readonly [disabled]="currentStep !== 1"
+            (click)="getCustomers()" placeholder="Customer ID" />
 
           <label for="demo">Customer ID</label>
         </div>
@@ -324,161 +365,254 @@
         <form [formGroup]="form">
           <!-- STEP 1: Basic Details -->
           <section id="panel-1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step-1">
-            <h4 class="mb-4 text-lg font-semibold">Basic Details</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="basic_customerId" class="form-control invalid-check" placeholder="Customer Id" />
-              <label for="basic_customerId">Customer Id</label>
-            </div> -->
+            <!-- Header -->
+            <h4 class="mb-6 text-xl font-semibold text-gray-800">
+              Basic Details
+            </h4>
 
-              <!-- A/C Type: bound to accountType -->
-              <div class="form-floating form-floating-outline mb-4">
-                <select id="basic_accountType" class="form-select" [(ngModel)]="accountType" name="accountType"
-                  formControlName="AcType" autoTabIndex [tabIndexOrder]="1" (change)="onAccountTypeChange()">
-                  <option *ngFor="let res of accountTypes" [value]="res.code">
-                    {{ res.name }}
-                  </option>
-                </select>
-                <label for="basic_accountType">A/C Type</label>
+            <!-- Form Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+              <!-- A/C Type -->
+              <div class="form-group">
+                <div class="form-floating form-floating-outline">
+                  <select id="basic_accountType" class="form-select invalid-check" [(ngModel)]="accountType"
+                    name="accountType" formControlName="AcType" autoTabIndex [tabIndexOrder]="1"
+                    (change)="onAccountTypeChange()">
+                    <option value="" disabled selected></option>
+                    <option *ngFor="let res of accountTypes" [value]="res.code">
+                      {{ res.name }}
+                    </option>
+                  </select>
+                  <label for="basic_accountType">
+                    <i class="fas fa-credit-card"></i>
+                    A/C Type <span class="req-star">*</span>
+                  </label>
+                </div>
+                <small class="text-danger mt-1 block" *ngIf="
+                    form.get('AcType')?.invalid && form.get('AcType')?.touched
+                  ">
+                  Account type is required
+                </small>
               </div>
 
-              <!-- <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="basic_panNo" class="form-control invalid-check" placeholder="Pan Card No" />
-              <label for="basic_panNo">Pan Card No</label>
-            </div> -->
-              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
-                <input type="text" class="form-control invalid-check" formControlName="pan" panFormat placeholder="Pan No"
-                  [validIndicator]="form.controls['pan']" />
-
-                <label>PAN No</label>
-
-                <small class="text-danger" *ngIf="form.controls['pan'].hasError('panInvalid')">
-                  Invalid PAN (ABCDE1234F)
-                </small>
-
-                <small class="text-danger" *ngIf="form.controls['pan'].hasError('panTaken')">
-                  PAN already exists in system!
-                </small>
-              </div> -->
-              <div class="flex-1" [hidden]="isHidden('panNo')">
-                <div class="form-floating form-floating-outline flex-1">
-
-                  <input type="text" class="form-control invalid-check" placeholder="PAN No" validatedInput="pan"
-                    panFormat formControlName="panNo" autoTabIndex [tabIndexOrder]="2" />
-
-                  <label>PAN No</label>
-
-                  <small class="text-danger mt-1 block" *ngIf="pan.invalid()">
-                    Invalid PAN (ABCDE1234F)
-                  </small>
-
+              <!-- PAN Card -->
+              <div class="flex-1" [hidden]="isHidden('panCard')">
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline flex-1" [requiredStar]="getDocRequired('panCard')">
+                    <input type="text" id="panNo" formControlName="panNo" class="form-control invalid-check"
+                      placeholder=" " validatedInput="pan" panFormat showFieldError [messages]="{
+                        required: 'PAN is required',
+                        pattern: 'Invalid PAN format (ABCDE1234F)'
+                      }" />
+                    <label for="panNo">
+                      <i class="fas fa-id-card"></i>
+                      PAN No
+                    </label>
+                  </div>
+                  <!-- Error will be shown by directive below the form-group -->
                 </div>
               </div>
 
-
-
-              <!-- Aadhaar shown only for Individual -->
-              <!-- <div *ngIf="accountType === 0" class="form-floating form-floating-outline mb-4">
-              <input type="text" id="basic_aadhaarNo" class="form-control invalid-check" placeholder="Aadhaar Card No" />
-              <label for="basic_aadhaarNo">Aadhaar Card No</label>
-            </div> -->
-              <!-- <div *ngIf="accountType === 0" class="form-floating form-floating-outline mb-4 position-relative">
-
-                <input type="text" class="form-control invalid-check" formControlName="aadhaar" aadhaarFormat
-                  placeholder="Aadhaar Card No" [validIndicator]="form.controls['aadhaar']" />
-
-                <label>Aadhaar Card No</label>
-
-                <small class="text-danger"
-                  *ngIf="form.controls['aadhaar'].touched && form.controls['aadhaar'].hasError('aadhaarInvalid')">
-                  Aadhaar must be 12 digits
-                </small>
-              </div> -->
+              <!-- Aadhaar Card -->
               <div class="flex-1" [hidden]="isHidden('adharCard')">
-                <div class="form-floating form-floating-outline flex-1">
-
-                  <input type="text" class="form-control invalid-check" placeholder="Aadhaar No"
-                    validatedInput="aadhaar" aadhaarFormat formControlName="AdharNo" autoTabIndex [tabIndexOrder]="3" />
-
-                  <label>Aadhaar No</label>
-
-                  <small class="text-danger mt-1 block" *ngIf="aadhaar.invalid()">
-                    Aadhaar must be 12 digits
-                  </small>
-
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline flex-1" [requiredStar]="getDocRequired('adharCard')">
+                    <input type="text" id="AdharNo" formControlName="AdharNo" class="form-control invalid-check"
+                      placeholder=" " validatedInput="aadhaar" aadhaarFormat showFieldError [messages]="{
+                        required: 'Aadhaar is required',
+                        minlength: 'Must be 12 digits'
+                      }" />
+                    <label for="AdharNo">
+                      <i class="fas fa-fingerprint"></i>
+                      Aadhaar No
+                    </label>
+                  </div>
                 </div>
               </div>
 
-
-
-
-
-
-
-
-              <!-- <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="basic_gstNo" class="form-control invalid-check" placeholder="GST No" />
-                <label for="basic_gstNo">GST No</label>
-              </div> -->
               <!-- GST -->
-              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
-
-                <input type="text" class="form-control invalid-check" placeholder="GST No" formControlName="gst" gstFormat
-                  [validIndicator]="form.controls['gst']" />
-
-                <label>GST No</label>
-
-                <small class="text-danger"
-                  *ngIf="form.controls['gst'].touched && form.controls['gst'].hasError('gstInvalid')">
-                  GST must be 15 characters
-                </small>
-              </div> -->
-              <div class="flex-1" [hidden]="isHidden('GSTNo')">
-                <div class="form-floating form-floating-outline flex-1">
-
-                  <input type="text" class="form-control invalid-check" placeholder="GST No" validatedInput="gst"
-                    gstFormat formControlName="GSTNo" autoTabIndex [tabIndexOrder]="4" />
-
-                  <label>GST No</label>
-
-                  <small class="text-danger mt-1 block" *ngIf="gst.invalid()">
-                    GST must be 15 characters
-                  </small>
-
-                </div>
-              </div>
-
-
-
-            </div>
-
-            <div class="mt-4 flex items-center gap-3">
-              <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
-                <select id="basic_title" class="form-select invalid-check" formControlName="nmprefix" autoTabIndex
-                  [tabIndexOrder]="5">
-                  <option value="">Option</option>
-                  <option *ngFor="let res of PrefixType" [value]="res.prefixtype">
-                    {{ res.prefixtype }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="flex-1">
-                <div *ngIf="selectedCategory === 'Personal'" class="form-floating form-floating-outline flex-1">
-                  <input *ngIf="selectedCategory === 'Personal'" type="text" id="basic_name" appInputValidator="name" class="form-control invalid-check"
-                    placeholder="Name" formControlName="name" autoTabIndex [tabIndexOrder]="6" />
-                  <label for="basic_name">Name</label>
-                </div>
-                <div *ngIf="selectedCategory === 'Company'" class="form-floating form-floating-outline flex-1">
-                  <input  type="text" id="basic_name" appInputValidator="company" class="form-control invalid-check"
-                    placeholder="Company Name" formControlName="name" autoTabIndex [tabIndexOrder]="6" />
-                  <label for="basic_name">Company Name</label>
+              <div class="flex-1" [hidden]="isHidden('gst')">
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline flex-1" [requiredStar]="getDocRequired('gst')">
+                    <input type="text" id="GSTNo" formControlName="GSTNo" class="form-control invalid-check"
+                      placeholder=" " validatedInput="gst" gstFormat showFieldError [messages]="{
+                        required: 'GST is required',
+                        pattern: 'Invalid GST format (15 characters)'
+                      }" />
+                    <label for="GSTNo">
+                      <i class="fas fa-file-invoice-dollar"></i>
+                      GST No
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
 
+            <!-- Name Section -->
+            <div class="mb-8">
+              <h5 class="text-base font-semibold text-gray-700 mb-4">
+                Personal Information
+              </h5>
+
+              <div class="flex flex-col sm:flex-row gap-4">
+                <!-- Prefix Select -->
+                <div class="sm:w-48">
+                  <div class="form-group">
+                    <div class="form-floating form-floating-outline">
+                      <select id="basic_title" class="form-select invalid-check" formControlName="nmprefix" autoTabIndex
+                        [tabIndexOrder]="5">
+                        <option value="" selected></option>
+                        <option *ngFor="let res of PrefixType" [value]="res.prefixtype">
+                          {{ res.prefixtype }}
+                        </option>
+                      </select>
+                      <label for="basic_title">
+                        <i class="fas fa-user-tag"></i>
+                        Title
+                      </label>
+                    </div>
+                    <small class="text-danger mt-1 block" *ngIf="
+                        form.get('nmprefix')?.invalid &&
+                        form.get('nmprefix')?.touched
+                      ">
+                      Title is required
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Name Input -->
+                <div class="flex-1">
+                  <div class="form-group">
+                    <div class="form-floating form-floating-outline flex-1" requiredStar="Y">
+                      <input type="text" id="basic_name" class="form-control invalid-check" formControlName="name"
+                        placeholder=" " appInputValidator="name" showFieldError
+                        [messages]="{ required: 'Name is required' }" />
+                      <label for="basic_name">
+                        <i class="fas fa-user"></i>
+                        Full Name
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
+              <button type="button" (click)="navigateTo(1)"
+                class="inline-flex items-center px-6 py-3 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors font-medium step-shake">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Previous
+              </button>
+
+              <button type="button" (click)="goToStep(2)"
+                class="inline-flex items-center px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:from-purple-700 hover:to-purple-600 transition-colors font-medium shadow-md hover:shadow-lg step-shake"
+                autoTabIndex [tabIndexOrder]="7">
+                Next
+                <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- STEP 2: Contact Details -->
+          <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
+            <h4 class="mb-4 text-lg font-semibold">Contact Details</h4>
+
+            <!-- MAIN SPLIT PANEL -->
+            <div class="relative grid grid-cols-1 lg:grid-cols-2 gap-14">
+              <!-- Vertical Divider -->
+              <div class="hidden lg:block absolute left-1/2 top-0 h-full w-px bg-gray-300 shadow-sm"></div>
+
+              <!-- LEFT - PRIMARY -->
+              <div class="pr-6">
+                <div class="flex items-center justify-between mb-7">
+                  <span class="text-base text-lg font-semibold text-gray-500 tracking-wide">
+                    Primary Contact
+                  </span>
+                </div>
+
+                <div class="space-y-4">
+                  <!-- Phone -->
+                  <div class="form-floating form-floating-outline flex-1">
+                    <input type="text" class="form-control invalid-check" placeholder="Phone No" validatedInput="phone"
+                      phoneFormat formControlName="phone" autoTabIndex [tabIndexOrder]="13" />
+                    <label>Phone No</label>
+                    <small class="text-danger mt-1 block" *ngIf="phone.invalid()">
+                      Phone number must be 10 digits
+                    </small>
+                  </div>
+
+                  <!-- Mobile -->
+                  <div class="form-floating form-floating-outline flex-1">
+                    <input type="text" class="form-control invalid-check" placeholder="Mobile No"
+                      validatedInput="mobile" mobileFormat formControlName="mobile" autoTabIndex [tabIndexOrder]="14" />
+                    <label>Mobile No</label>
+                    <small class="text-danger mt-1 block" *ngIf="mobile.invalid()">
+                      Mobile must start with 6–9 and have 10 digits
+                    </small>
+                  </div>
+
+                  <!-- Email -->
+                  <!-- <div class="form-floating form-floating-outline flex-1">
+                    <input type="email" class="form-control invalid-check" placeholder="Email" validatedInput="email"
+                      formControlName="EMAIL_ID" />
+
+                    <label>Email</label>
+
+                    <small class="text-danger mt-1 block" *ngIf="email.invalid()">
+                      Enter a valid email address
+                    </small>
+                  </div> -->
+                </div>
+              </div>
+
+              <!-- RIGHT - ALTERNATE -->
+              <div class="pl-6">
+                <div class="flex items-center justify-between mb-7">
+                  <span class="text-base text-lg font-semibold text-gray-500 tracking-wide">
+                    Alternate Contact
+                  </span>
+                </div>
+
+                <div class="space-y-4">
+                  <!-- Phone -->
+                  <div class="form-floating form-floating-outline flex-1">
+                    <input type="text" class="form-control invalid-check" placeholder="Phone No" validatedInput="phone"
+                      phoneFormat formControlName="phone1" autoTabIndex [tabIndexOrder]="13" />
+                    <label>Phone No</label>
+                    <small class="text-danger mt-1 block" *ngIf="phone.invalid()">
+                      Phone number must be 10 digits
+                    </small>
+                  </div>
+
+                  <!-- Mobile -->
+                  <div class="form-floating form-floating-outline flex-1">
+                    <input type="text" class="form-control invalid-check" placeholder="Mobile No"
+                      validatedInput="mobile" mobileFormat formControlName="mobile1" autoTabIndex
+                      [tabIndexOrder]="14" />
+                    <label>Mobile No</label>
+                    <small class="text-danger mt-1 block" *ngIf="mobile.invalid()">
+                      Mobile must start with 6–9 and have 10 digits
+                    </small>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="form-floating form-floating-outline flex-1">
+                    <input type="email" class="form-control invalid-check" placeholder="Email" validatedInput="email"
+                      formControlName="EMAIL_ID" />
+
+                    <label>Email</label>
+
+                    <small class="text-danger mt-1 block" *ngIf="email.invalid()">
+                      Enter a valid email address
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nav buttons -->
             <div class="mt-6 flex items-center justify-between gap-3">
-
               <!-- PREVIOUS -->
               <button type="button" (click)="navigateTo(1)"
                 class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
@@ -486,55 +620,49 @@
               </button>
 
               <!-- NEXT -->
-              <button type="button" (click)="goToStep(2)"
-                class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white" autoTabIndex
-                [tabIndexOrder]="7">
+              <button type="button" (click)="goToStep(3)" autoTabIndex [tabIndexOrder]="10"
+                class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
                 Next
               </button>
-
             </div>
-
           </section>
-
-          <!-- STEP 2: Address Details -->
-          <!-- STEP 2: Address Details -->
-          <section id="panel-2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step-2">
+          <!-- STEP 3: Address Details -->
+          <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
             <h4 class="mb-4 text-lg font-semibold">Address Details</h4>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
               <!-- Permanent Address lines -->
               <div class="form-floating form-floating-outline mb-4">
                 <input type="text" id="addr_permanent_line1" class="form-control invalid-check"
                   name="permanentAddrLine1" appInputValidator="address" placeholder="Permanent Address"
-                  formControlName="ADDR1" autoTabIndex [tabIndexOrder]="8" />
+                  formControlName="ADDR1" autoTabIndex [tabIndexOrder]="8" maxlength="80" />
                 <label for="addr_permanent_line1">Permanent Address</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-4 always-float">
                 <input type="text" id="addr_permanent_line2" class="form-control invalid-check"
                   name="permanentAddrLine2" appInputValidator="address" placeholder="Permanent Address II"
-                  formControlName="ADDR2" autoTabIndex [tabIndexOrder]="9" />
+                  formControlName="ADDR2" autoTabIndex [tabIndexOrder]="9" maxlength="80" />
                 <label for="addr_permanent_line2">Permanent Address II</label>
               </div>
 
               <div class="form-floating form-floating-outline mb-4 always-float">
                 <input type="text" id="addr_permanent_line3" class="form-control invalid-check"
                   name="permanentAddrLine3" appInputValidator="address" placeholder="Permanent Address III"
-                  formControlName="ADDR3" autoTabIndex [tabIndexOrder]="10" />
+                  formControlName="ADDR3" autoTabIndex [tabIndexOrder]="10" maxlength="80" />
                 <label for="addr_permanent_line3">Permanent Address III</label>
               </div>
 
               <!-- 🔵 PRIMARY CITY -->
               <div class="form-floating form-floating-outline mb-4">
                 <input type="text" id="addr_city" class="form-control invalid-check" placeholder="City"
-                  [value]="selectedCityName" readonly (click)="picker.openPicker('city','primary')"
-                  style="cursor:pointer" autoTabIndex [tabIndexOrder]="11" />
+                  [value]="selectedCityName" readonly (click)="picker.openPicker('city', 'primary')"
+                  style="cursor: pointer" autoTabIndex [tabIndexOrder]="11" />
 
                 <input type="hidden" name="cityCode" [(ngModel)]="selectedCityCode"
-                  [ngModelOptions]="{standalone: true}" />
+                  [ngModelOptions]="{ standalone: true }" />
                 <input type="hidden" name="cityUnicId" [(ngModel)]="selectedCityUnicId"
-                  [ngModelOptions]="{standalone: true}" />
+                  [ngModelOptions]="{ standalone: true }" />
                 <label for="addr_city">City</label>
               </div>
 
@@ -543,7 +671,7 @@
                 <input type="text" id="addr_country" class="form-control invalid-check" readonly placeholder="Country"
                   [value]="selectedCountryName" />
                 <input type="hidden" name="countryCode" [(ngModel)]="selectedCountryCode"
-                  [ngModelOptions]="{standalone: true}" />
+                  [ngModelOptions]="{ standalone: true }" />
                 <label for="addr_country">Country</label>
               </div>
 
@@ -552,7 +680,7 @@
                 <input type="text" id="addr_state" class="form-control invalid-check" readonly placeholder="State"
                   [value]="selectedStateName" />
                 <input type="hidden" name="stateCode" [(ngModel)]="selectedStateCode"
-                  [ngModelOptions]="{standalone: true}" />
+                  [ngModelOptions]="{ standalone: true }" />
                 <label for="addr_state">State</label>
               </div>
 
@@ -561,7 +689,7 @@
                 <input type="text" id="addr_district" class="form-control invalid-check" readonly placeholder="District"
                   [value]="selectedDistrictName" />
                 <input type="hidden" name="districtCode" [(ngModel)]="selectedDistrictCode"
-                  [ngModelOptions]="{standalone: true}" />
+                  [ngModelOptions]="{ standalone: true }" />
                 <label for="addr_district">District</label>
               </div>
 
@@ -570,117 +698,27 @@
                 <input type="text" id="addr_taluka" class="form-control invalid-check" readonly placeholder="Taluka"
                   [value]="selectedTalukaName" />
                 <input type="hidden" name="talukaCode" [(ngModel)]="selectedTalukaCode"
-                  [ngModelOptions]="{standalone: true}" />
+                  [ngModelOptions]="{ standalone: true }" />
                 <label for="addr_taluka">Taluka</label>
               </div>
 
               <!-- 🔵 PRIMARY AREA -->
               <div class="form-floating form-floating-outline mb-4">
                 <input type="text" id="addr_area" class="form-control invalid-check" readonly placeholder="Area"
-                  [value]="selectedAreaName" (click)="picker.openPicker('area','primary')" style="cursor:pointer"
+                  [value]="selectedAreaName" (click)="picker.openPicker('area', 'primary')" style="cursor: pointer"
                   autoTabIndex [tabIndexOrder]="12" />
                 <input type="hidden" name="areaCode" [(ngModel)]="selectedAreaCode"
-                  [ngModelOptions]="{standalone: true}" />
+                  [ngModelOptions]="{ standalone: true }" />
                 <label for="addr_area">Area</label>
               </div>
 
               <!-- Primary Pincode -->
               <div class="form-floating form-floating-outline mb-4">
-                <input type="text" id="addr_pincode" class="form-control invalid-check" readonly placeholder="PinCode"
+                <input type="text" id="addr_pincode" class="form-control invalid-check" placeholder="PinCode"
                   appInputValidator="pincode" [value]="selectedPincode" />
-                <input type="hidden" name="pin" [(ngModel)]="selectedPincode" [ngModelOptions]="{standalone: true}" />
+                <input type="hidden" name="pin" [(ngModel)]="selectedPincode" [ngModelOptions]="{ standalone: true }" />
                 <label for="addr_pincode">PinCode</label>
               </div>
-
-              <!-- Phone / Mobile -->
-              <!-- <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_phone" class="form-control invalid-check" placeholder="Phone no" />
-              <label for="addr_phone">Phone no</label>
-            </div>
-
-            <div class="form-floating form-floating-outline mb-4">
-              <input type="text" id="addr_mobile" class="form-control invalid-check" placeholder="Mobile no" />
-              <label for="addr_mobile">Mobile no</label>
-            </div> -->
-              <!-- PHONE (Optional) -->
-              <!-- 
-              <div class="form-floating form-floating-outline mb-4 position-relative">
-
-                <input type="text" class="form-control invalid-check" placeholder="Phone no" formControlName="phone" phoneFormat
-                  [validIndicator]="form.controls['phone']" />
-
-                <label>Phone no</label>
-
-                <small class="text-danger"
-                  *ngIf="form.controls['phone'].touched && form.controls['phone'].hasError('phoneInvalid')">
-                  Enter valid phone number (10 digits)
-                </small>
-              </div> -->
-              <div class="flex-1">
-                <div class="form-floating form-floating-outline flex-1">
-
-                  <input type="text" class="form-control invalid-check" placeholder="Phone No" validatedInput="phone"
-                    phoneFormat formControlName="phone" autoTabIndex [tabIndexOrder]="13" />
-
-                  <label>Phone No</label>
-
-                  <small class="text-danger mt-1 block" *ngIf="phone.invalid()">
-                    Phone number must be 10 digits
-                  </small>
-
-                </div>
-              </div>
-
-
-
-
-              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
-                <input type="text" class="form-control invalid-check" placeholder="Mobile no" formControlName="mobile" mobileFormat
-                  [validIndicator]="form.controls['mobile']" />
-                <label>Mobile no</label>
-
-                <small class="text-danger" *ngIf="form.controls['mobile'].hasError('required')">Required</small>
-                <small class="text-danger" *ngIf="form.controls['mobile'].hasError('mobileInvalid')">
-                  Start with 6–9, 10 digits
-                </small>
-              </div> -->
-
-
-              <!-- MOBILE (Required) -->
-              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
-
-                <input type="text" id="addr_mobile" class="form-control invalid-check" placeholder="Mobile no"
-                  formControlName="mobile" mobileFormat [validIndicator]="form.controls['mobile']" />
-
-                <label for="addr_mobile">Mobile no</label>
-
-                <small class="text-danger"
-                  *ngIf="form.controls['mobile'].touched && form.controls['mobile'].hasError('required')">
-                  Mobile number is required
-                </small>
-
-                <small class="text-danger"
-                  *ngIf="form.controls['mobile'].touched && form.controls['mobile'].hasError('mobileInvalid')">
-                  Start with 6–9 and must be 10 digits
-                </small>
-              </div> -->
-              <div class="flex-1">
-                <div class="form-floating form-floating-outline flex-1">
-
-                  <input type="text" class="form-control invalid-check" placeholder="Mobile No" validatedInput="mobile"
-                    mobileFormat formControlName="mobile" autoTabIndex [tabIndexOrder]="14" />
-
-                  <label>Mobile No</label>
-
-                  <small class="text-danger mt-1 block" *ngIf="mobile.invalid()">
-                    Mobile must start with 6–9 and have 10 digits
-                  </small>
-
-                </div>
-              </div>
-
-
-
             </div>
 
             <!-- Toggle Corr Address -->
@@ -688,7 +726,7 @@
               <label class="inline-flex items-center gap-3">
                 <input type="checkbox" id="chk_correspondingAddr" [(ngModel)]="useDifferentCorresponding"
                   name="useDifferentCorresponding" class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm"
-                  [ngModelOptions]="{standalone: true}" autoTabIndex [tabIndexOrder]="15" />
+                  [ngModelOptions]="{ standalone: true }" autoTabIndex [tabIndexOrder]="15" />
                 <span class="text-sm text-gray-700">
                   Do You Want Fill Different Corresponding Address ?
                 </span>
@@ -727,10 +765,10 @@
                 <!-- City -->
                 <div class="form-floating form-floating-outline mb-4">
                   <input type="text" id="corr_city" class="form-control invalid-check" readonly placeholder="City"
-                    [value]="corrCityName" (click)="picker.openPicker('city','corr')" style="cursor:pointer"
+                    [value]="corrCityName" (click)="picker.openPicker('city', 'corr')" style="cursor: pointer"
                     autoTabIndex [tabIndexOrder]="19" />
                   <input type="hidden" [(ngModel)]="corrSelectedCityCode" name="corrCityCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="corr_city">City</label>
                 </div>
 
@@ -738,7 +776,7 @@
                   <input type="text" id="corr_country" class="form-control invalid-check" readonly placeholder="Country"
                     [value]="corrCountryName" />
                   <input type="hidden" [(ngModel)]="corrSelectedCountryCode" name="corrCountryCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="corr_country">Country</label>
                 </div>
 
@@ -746,7 +784,7 @@
                   <input type="text" id="corr_state" class="form-control invalid-check" readonly placeholder="State"
                     [value]="corrStateName" />
                   <input type="hidden" [(ngModel)]="corrSelectedStateCode" name="corrStateCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="corr_state">State</label>
                 </div>
 
@@ -754,7 +792,7 @@
                   <input type="text" id="corr_district" class="form-control invalid-check" readonly
                     placeholder="District" [value]="corrDistrictName" />
                   <input type="hidden" [(ngModel)]="corrSelectedDistrictCode" name="corrDistrictCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="corr_district">District</label>
                 </div>
 
@@ -762,16 +800,16 @@
                   <input type="text" id="corr_taluka" class="form-control invalid-check" readonly placeholder="Taluka"
                     [value]="corrTalukaName" />
                   <input type="hidden" [(ngModel)]="corrSelectedTalukaCode" name="corrTalukaCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="corr_taluka">Taluka</label>
                 </div>
 
                 <div class="form-floating form-floating-outline mb-4">
                   <input type="text" id="corr_area" class="form-control invalid-check" readonly placeholder="Area"
-                    [value]="corrAreaName" (click)="picker.openPicker('area','corr')" style="cursor:pointer"
+                    [value]="corrAreaName" (click)="picker.openPicker('area', 'corr')" style="cursor: pointer"
                     autoTabIndex [tabIndexOrder]="20" />
                   <input type="hidden" [(ngModel)]="corrSelectedAreaCode" name="corrAreaCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="corr_area">Area</label>
                 </div>
 
@@ -780,83 +818,65 @@
                     appInputValidator="pincode" [value]="corrPincode" />
                   <label for="corr_pincode">Pincode</label>
                 </div>
-
               </div>
             </div>
 
             <!-- Nav buttons -->
             <div class="mt-6 flex items-center justify-between gap-3">
-
               <!-- PREVIOUS -->
-              <button type="button" (click)="navigateTo(1)"
+              <button type="button" (click)="navigateTo(2)"
                 class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
                 Previous
               </button>
 
               <!-- NEXT -->
-              <button type="button" (click)="goToStep(3)" autoTabIndex [tabIndexOrder]="21"
+              <button type="button" (click)="goToStep(4)" autoTabIndex [tabIndexOrder]="21"
                 class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
                 Next
               </button>
-
             </div>
-
           </section>
-
-
 
           <!-- Shared picker modal -->
           <app-picker-modal></app-picker-modal>
           <app-dropdpwn-modal></app-dropdpwn-modal>
 
-          <!-- STEP 3: Personal + Company/Firm conditional content -->
-          <section id="panel-3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step-3">
+          <!-- STEP 4: Personal + Company/Firm conditional content -->
+          <section id="panel-4" class="panel" data-step="4" role="tabpanel" aria-labelledby="step-4">
             <div *ngIf="accountType === 0">
               <h4 class="mb-4 text-lg font-semibold">Personal Details</h4>
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <!-- Religion -->
                 <div class="form-floating form-floating-outline mb-0">
-                  <!-- <input type="text" class="form-control invalid-check" id="religionCode" placeholder="Religion Code"
-                  [value]="religionName" readonly (click)="openPicker('religion')" style="cursor:pointer" /> -->
                   <input type="text" id="religionCode" class="form-control invalid-check" placeholder="Religion Code"
-                    [value]="religionName" readonly (click)="picker.openPicker('religion','primary')"
-                    style="cursor:pointer" />
+                    [value]="religionName" readonly (click)="picker.openPicker('religion', 'primary')"
+                    style="cursor: pointer" />
                   <input type="hidden" name="religionCode" [(ngModel)]="religionCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="religionCode">Religion</label>
                 </div>
 
                 <!-- Cast -->
                 <div class="form-floating form-floating-outline mb-0">
-                  <!-- <input type="text" class="form-control invalid-check" id="castCode" placeholder="Cast Code" [value]="castName"
-                  readonly (click)="openPicker('cast')" style="cursor:pointer" /> -->
                   <input type="text" id="castCode" class="form-control invalid-check" placeholder="Cast Code"
-                    [value]="castName" readonly (click)="picker.openPicker('cast','primary')" style="cursor:pointer" />
-                  <input type="hidden" name="castCode" [(ngModel)]="castCode" [ngModelOptions]="{standalone: true}" />
+                    [value]="castName" readonly (click)="picker.openPicker('cast', 'primary')"
+                    style="cursor: pointer" />
+                  <input type="hidden" name="castCode" [(ngModel)]="castCode" [ngModelOptions]="{ standalone: true }" />
                   <label for="castCode">Caste</label>
                 </div>
 
                 <!-- Occupation -->
                 <div class="form-floating form-floating-outline mb-0">
-                  <!-- <input type="text" class="form-control invalid-check" id="occupation" placeholder="Occupation"
-                  [value]="occupationName" readonly (click)="openPicker('occupation')" style="cursor:pointer" /> -->
                   <input type="text" id="occupation" class="form-control invalid-check" placeholder="Occupation"
-                    [value]="occupationName" readonly (click)="picker.openPicker('occupation','primary')"
-                    style="cursor:pointer" />
+                    [value]="occupationName" readonly (click)="picker.openPicker('occupation', 'primary')"
+                    style="cursor: pointer" />
                   <input type="hidden" name="occupationCode" [(ngModel)]="occupationCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="occupation">Occupation</label>
                 </div>
 
-
-                <!-- <div class="form-floating form-floating-outline mb-0 sm:col-span-1">
-                  <input type="text" class="form-control invalid-check" id="passportNo" placeholder="Passport No." />
-                  <label for="passportNo">Passport No.</label>
-                </div> -->
-
                 <div class="flex-1">
                   <div class="form-floating form-floating-outline flex-1">
-
                     <input type="text" class="form-control invalid-check" placeholder="Passport No." passportFormat
                       validatedInput="passport" formControlName="passportno" />
 
@@ -865,19 +885,17 @@
                     <small class="text-danger mt-1 block" *ngIf="passport?.invalid?.()">
                       Invalid Passport No (e.g., A1234567)
                     </small>
-
                   </div>
                 </div>
 
                 <div class="flex-1">
-
                   <div class="form-floating form-floating-outline mb-0 sm:col-span-2">
-                    <input type="date" class="form-control invalid-check" id="passportExp" placeholder="Passport Exp.Date"
-                      formControlName="passexpdate" />
+                    <input type="date" class="form-control invalid-check" id="passportExp"
+                      placeholder="Passport Exp.Date" formControlName="passexpdate" />
                     <label for="passportExp">Passport Exp. Date</label>
                   </div>
-                  </div>
-                  <div class="flex-1">
+                </div>
+                <div class="flex-1">
                   <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
                     <input type="text" class="form-control invalid-check" id="passportIssueAuth"
                       placeholder="Passport Issue Authority" formControlName="passauth" />
@@ -885,13 +903,8 @@
                   </div>
                 </div>
 
-                <!-- <div class="form-floating form-floating-outline mb-0">
-                  <input type="text" class="form-control invalid-check" id="electionCardNo" placeholder="Election Card No." />
-                  <label for="electionCardNo">Election Card No.</label>
-                </div> -->
                 <div class="flex-1">
                   <div class="form-floating form-floating-outline flex-1">
-
                     <input type="text" class="form-control invalid-check" placeholder="Election Card No." voteridFormat
                       validatedInput="voterid" formControlName="voteridno" />
 
@@ -900,10 +913,8 @@
                     <small class="text-danger mt-1 block" *ngIf="voterid?.invalid?.()">
                       Invalid Voter ID (e.g., ABC1234567)
                     </small>
-
                   </div>
                 </div>
-
 
                 <div class="form-floating form-floating-outline mb-0">
                   <input type="date" class="form-control invalid-check" id="birthDate" placeholder="Birth Date"
@@ -913,7 +924,7 @@
 
                 <div class="form-floating form-floating-outline mb-0">
                   <input type="number" class="form-control invalid-check" id="age" placeholder="Age" min="0"
-                    formControlName="AGE" readonly/>
+                    formControlName="AGE" readonly />
                   <label for="age">Age</label>
                 </div>
 
@@ -947,15 +958,13 @@
                   </div>
                 </div>
 
-
-
                 <!-- Other / Staff (fixed small width) -->
                 <div class="sm:col-span-3">
                   <div class="flex items-start gap-4">
                     <div class="w-36 min-w-[9rem]">
                       <div class="form-floating form-floating-outline flex-1 max-w-[140px]">
                         <select id="otherStaffType" class="form-select" [(ngModel)]="otherStaffType"
-                          (change)="onOtherStaffTypeChange()" [ngModelOptions]="{standalone: true}">
+                          (change)="onOtherStaffTypeChange()" [ngModelOptions]="{ standalone: true }">
                           <option value="O">Other</option>
                           <option value="S">Staff</option>
                         </select>
@@ -965,16 +974,15 @@
 
                     <div class="flex-1">
                       <div class="form-floating form-floating-outline flex-1">
-                        <input class="form-control invalid-check" type="text" [readonly]="true"
-                          [disabled]="otherStaffType === 'O' || isOtherStaffSelected" (click)="loadOtherStaffList()"
-                          [value]="otherStaffName?.name || otherStaffName || ''" placeholder="Select Other/Staff" />
+                        <input class="form-control invalid-check" type="text" [readonly]="true" [disabled]="
+                            otherStaffType === 'O' || isOtherStaffSelected
+                          " (click)="loadOtherStaffList()" [value]="otherStaffName?.name || otherStaffName || ''"
+                          placeholder="Select Other/Staff" />
                         <label for="otherStaffName">Other/Staff Name</label>
                       </div>
                     </div>
                   </div>
                 </div>
-
-
               </div>
             </div>
 
@@ -1039,110 +1047,6 @@
             </div>
 
             <div class="mt-6 flex items-center justify-between gap-3">
-
-              <!-- PREVIOUS -->
-              <button type="button" (click)="navigateTo(2)"
-                class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
-                Previous
-              </button>
-
-              <!-- NEXT -->
-              <button type="button" (click)="goToStep(4)"
-                class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
-                Next
-              </button>
-
-            </div>
-
-          </section>
-
-          <!-- STEP 4: Other Details (omitted lengthy bits for brevity) -->
-          <section id="panel-4" class="panel" data-step="4" role="tabpanel" aria-labelledby="step-4">
-            <h4 class="mb-4 text-lg font-semibold">Other Details</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control invalid-check" id="officeName" placeholder="Office Name"
-                  appInputValidator="company" formControlName="officename" />
-                <label for="officeName">Office Name</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control invalid-check" id="officePin" placeholder="PinCode"
-                  appInputValidator="pincode" formControlName="OFFICEPIN" />
-                <label for="officePin">PinCode</label>
-              </div>
-
-              <div class="hidden lg:block"></div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control invalid-check" id="officeAddr1" placeholder="Office Address I"
-                  appInputValidator="address" formControlName="OFFICEADDR1" />
-                <label for="officeAddr1">Office Address</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control invalid-check" id="officeAddr2" placeholder="Office Address II"
-                  appInputValidator="address" formControlName="OFFICEADDR2" />
-                <label for="officeAddr2">Office Address II</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control invalid-check" id="officeAddr3" placeholder="Office Address III"
-                  appInputValidator="address" formControlName="OFFICEADDR3" />
-                <label for="officeAddr3">Office Address III</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control invalid-check" id="officePhone" placeholder="Office Phone No"
-                  appInputValidator="number" formControlName="OFFICEPHONE" />
-                <label for="officePhone">Office Phone No</label>
-              </div>
-
-              <div class="form-floating form-floating-outline mb-0">
-                <input type="text" class="form-control invalid-check" id="faxNo" placeholder="Fax No"
-                  formControlName="OFFICEPHONE1" />
-                <label for="faxNo">Fax No.</label>
-              </div>
-
-              <!-- <div class="form-floating form-floating-outline mb-0">
-                <input type="email" class="form-control invalid-check" id="emailId" placeholder="E-Mail ID" />
-                <label for="emailId">E-Mail ID</label>
-              </div> -->
-              <!-- <div class="form-floating form-floating-outline mb-4 position-relative">
-
-                <input type="email" class="form-control invalid-check" placeholder="Email" formControlName="email"
-                  [validIndicator]="form.controls['email']" />
-
-                <label>E-Mail ID</label>
-
-                <small class="text-danger"
-                  *ngIf="form.controls['email'].touched && form.controls['email'].hasError('emailInvalid')">
-                  Enter valid email address
-                </small>
-              </div> -->
-              <div class="flex-1">
-                <div class="form-floating form-floating-outline flex-1">
-
-                  <input type="email" class="form-control invalid-check" placeholder="Email" validatedInput="email"
-                    formControlName="EMAIL_ID" />
-
-                  <label>Email</label>
-
-                  <small class="text-danger mt-1 block" *ngIf="email.invalid()">
-                    Enter a valid email address
-                  </small>
-
-                </div>
-              </div>
-
-
-
-
-
-            </div>
-
-            <div class="mt-6 flex items-center justify-between gap-3">
-
               <!-- PREVIOUS -->
               <button type="button" (click)="navigateTo(3)"
                 class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border">
@@ -1154,14 +1058,200 @@
                 class="inline-flex items-center px-5 py-2.5 rounded-xl bg-violet-600 text-white">
                 Next
               </button>
-
             </div>
           </section>
 
-          <!-- STEP 5: KYC Details -->
+          <!-- STEP 5: Other Details (omitted lengthy bits for brevity) -->
           <section id="panel-5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step-5">
-            <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
+            <div *ngIf="accountType == 0">
+              <h4 class="mb-6 text-xl font-semibold text-gray-800">
+                Other Details
+              </h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Office Name -->
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline">
+                    <input type="text" id="officeName" class="form-control invalid-check" placeholder=" "
+                      appInputValidator="company" formControlName="officename" />
+                    <label for="officeName">
+                      <i class="fas fa-building"></i>
+                      Office Name
+                    </label>
+                  </div>
+                </div>
 
+                <!-- Office PinCode -->
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline">
+                    <input type="text" id="officePin" class="form-control invalid-check" placeholder=" "
+                      appInputValidator="pincode" formControlName="OFFICEPIN" />
+                    <label for="officePin">
+                      <i class="fas fa-mail-bulk"></i>
+                      PinCode
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Empty column for layout -->
+                <div class="hidden lg:block"></div>
+
+                <!-- Office Address I -->
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline">
+                    <input type="text" id="officeAddr1" class="form-control invalid-check" placeholder=" "
+                      appInputValidator="address" formControlName="OFFICEADDR1" />
+                    <label for="officeAddr1">
+                      <i class="fas fa-map-marker-alt"></i>
+                      Office Address
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Office Address II -->
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline">
+                    <input type="text" id="officeAddr2" class="form-control invalid-check" placeholder=" "
+                      appInputValidator="address" formControlName="OFFICEADDR2" />
+                    <label for="officeAddr2">
+                      <i class="fas fa-map-marker-alt"></i>
+                      Office Address II
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Office Address III -->
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline">
+                    <input type="text" id="officeAddr3" class="form-control invalid-check" placeholder=" "
+                      appInputValidator="address" formControlName="OFFICEADDR3" />
+                    <label for="officeAddr3">
+                      <i class="fas fa-map-marker-alt"></i>
+                      Office Address III
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Office Phone No -->
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline">
+                    <input type="text" id="officePhone" class="form-control invalid-check" placeholder=" "
+                      appInputValidator="number" formControlName="OFFICEPHONE" />
+                    <label for="officePhone">
+                      <i class="fas fa-phone"></i>
+                      Office Phone No
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Fax No -->
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline">
+                    <input type="text" id="faxNo" class="form-control invalid-check" placeholder=" "
+                      formControlName="OFFICEPHONE1" />
+                    <label for="faxNo">
+                      <i class="fas fa-fax"></i>
+                      Fax No.
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Empty column to maintain grid alignment -->
+                <div class="hidden lg:block"></div>
+              </div>
+            </div>
+
+            <div *ngIf="accountType != 0">
+              <h4 class="mb-6 text-xl font-semibold text-gray-800">
+                Beneficiary Details
+              </h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Customer ID (First dropdown) -->
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline">
+                    <input class="form-control invalid-check" id="customerId1" readonly placeholder="Customer ID"
+                      (click)="selectCustomers()" [(ngModel)]="customerText" style="cursor: pointer" />
+                    <label for="customerId1">
+                      <i class="fas fa-user"></i>
+                      Customer ID
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Customer ID (Second dropdown) -->
+                <div class="form-group">
+                  <div class="form-floating form-floating-outline">
+                    <input class="form-control invalid-check" id="customerId2" readonly placeholder="Designation"
+                      (click)="selectDesignation()" [(ngModel)]="designationText" style="cursor: pointer" />
+                    <label for="customerId2">
+                      <i class="fas fa-id-card"></i>
+                      Designation
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Empty column for layout -->
+                <div class="hidden lg:block"></div>
+              </div>
+
+              <!-- Table Section -->
+              <div class="mb-8" *ngIf="!loading && selectedCustomerDesignations?.length">
+                <div class="table-responsive text-nowrap">
+                  <table class="table">
+                    <thead class="table-dark" style="--bs-table-bg: #8c57ff !important">
+                      <tr>
+                        <th class="px-4 py-3 text-white">Sr</th>
+                        <th class="px-4 py-3 text-white">Name</th>
+                        <th class="px-4 py-3 text-white">Designation</th>
+                        <th class="px-4 py-3 text-white">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="
+                          let c of selectedCustomerDesignations;
+                          let i = index
+                        ">
+                        <td class="px-4 py-3">{{ i + 1 }}</td>
+                        <td class="px-4 py-3">
+                          <strong>{{ c.customerName }}</strong>
+                        </td>
+                        <td class="px-4 py-3">
+                          <strong>{{ c.designationName }}</strong>
+                        </td>
+                        <td class="px-4 py-3">
+                          <div class="btn-group btn-group-sm" role="group" style="gap: 6px">
+                            <button class="btn btn-danger text-white" title="Delete"
+                              (click)="removeCustomerDesignation(i)">
+                              <i class="ri-delete-bin-6-line"></i>
+                              <span class="d-none d-sm-inline">Remove</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
+              <button type="button" (click)="navigateTo(4)"
+                class="inline-flex items-center px-6 py-3 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors font-medium step-shake">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Previous
+              </button>
+
+              <button type="button" (click)="goToStep(6)"
+                class="inline-flex items-center px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:from-purple-700 hover:to-purple-600 transition-colors font-medium shadow-md hover:shadow-lg step-shake">
+                Next
+                <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- STEP 6: KYC Details -->
+          <section id="panel-6" class="panel" data-step="6" role="tabpanel" aria-labelledby="step-6">
+            <h4 class="mb-4 text-lg font-semibold">KYC Details</h4>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <!-- I.D. Proof -->
@@ -1169,13 +1259,11 @@
                 <input type="checkbox" id="chk_idProof" name="idProofCheck"
                   class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" formControlName="KycIdProof" />
                 <div class="form-floating form-floating-outline flex-1">
-                  <!-- <input type="text" id="IDProof" class="form-control invalid-check" placeholder="I.D.Proof" name="IDProof"
-                  [value]="idproofName" readonly (click)="openPicker('idproof')" style="cursor:pointer" /> -->
                   <input [disabled]="!form.get('KycIdProof')?.value" type="text" id="IDProof"
                     class="form-control invalid-check" placeholder="I.D.Proof" [value]="idproofName" readonly
-                    (click)="picker.openPicker('idproof','primary')" style="cursor:pointer" />
+                    (click)="picker.openPicker('idproof', 'primary')" style="cursor: pointer" />
                   <input type="hidden" name="IDProofCode" [(ngModel)]="idproofCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="IDProof">I.D.Proof</label>
                 </div>
               </div>
@@ -1185,14 +1273,11 @@
                 <input type="checkbox" id="chk_addressProof" name="addressProofCheck"
                   class="w-5 h-5 accent-violet-600 rounded-sm shadow-sm" formControlName="KycAddrProof" />
                 <div class="form-floating form-floating-outline flex-1">
-                  <!-- <input type="text" id="AddressProof" class="form-control invalid-check" placeholder="Address Proof"
-                  [value]="addrproofName" readonly (click)="openPicker('addrproof')" style="cursor:pointer"
-                  name="Address Proof" /> -->
                   <input [disabled]="!form.get('KycAddrProof')?.value" type="text" id="AddressProof"
                     class="form-control invalid-check" placeholder="Address Proof" [value]="addrproofName" readonly
-                    (click)="picker.openPicker('addrproof','primary')" style="cursor:pointer" />
+                    (click)="picker.openPicker('addrproof', 'primary')" style="cursor: pointer" />
                   <input type="hidden" name="AddpProofCode" [(ngModel)]="addrproofCode"
-                    [ngModelOptions]="{standalone: true}" />
+                    [ngModelOptions]="{ standalone: true }" />
                   <label for="AddressProof">Address Proof</label>
                 </div>
               </div>
@@ -1215,14 +1300,14 @@
                 <div class="mt-3">
                   <input type="file" accept="image/*" aria-label="Upload Photo" (change)="onFileChange($event, 'photo')"
                     class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #photoInput data-key="photo">
+                    #photoInput data-key="photo" />
                 </div>
                 <div class="mt-3">
                   <div
                     class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')"
-                    (keydown.space)="$event.preventDefault(); openPreview('photo')" role="button"
-                    aria-label="Preview Photo">
+                    (click)="openPreview('photo')" tabindex="0" (keydown.enter)="openPreview('photo')" (keydown.space)="
+                      $event.preventDefault(); openPreview('photo')
+                    " role="button" aria-label="Preview Photo">
                     <img [src]="previews.photo || ''" *ngIf="previews.photo && isImage(previews.photo)"
                       alt="Photo preview" class="w-full h-full object-contain" />
                     <span class="text-sm font-medium text-gray-400" *ngIf="!previews.photo">Preview</span>
@@ -1237,14 +1322,14 @@
                   <input type="file" accept="image/*" aria-label="Upload Signature"
                     (change)="onFileChange($event, 'sign')"
                     class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #signInput data-key="sign">
+                    #signInput data-key="sign" />
                 </div>
                 <div class="mt-3">
                   <div
                     class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')"
-                    (keydown.space)="$event.preventDefault(); openPreview('sign')" role="button"
-                    aria-label="Preview Signature">
+                    (click)="openPreview('sign')" tabindex="0" (keydown.enter)="openPreview('sign')" (keydown.space)="
+                      $event.preventDefault(); openPreview('sign')
+                    " role="button" aria-label="Preview Signature">
                     <img [src]="previews.sign || ''" *ngIf="previews.sign && isImage(previews.sign)"
                       alt="Signature preview" class="w-full h-full object-contain" />
                     <span class="text-sm font-medium text-gray-400" *ngIf="!previews.sign">Preview</span>
@@ -1254,19 +1339,21 @@
 
               <!-- PAN -->
               <div class="rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">ID Proof (PAN)</div>
+                <div class="text-sm font-semibold text-gray-800">
+                  ID Proof (PAN)
+                </div>
                 <div class="mt-3">
                   <input type="file" accept="image/*,.pdf" aria-label="Upload PAN"
                     (change)="onFileChange($event, 'pan')"
                     class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #panInput data-key="pan">
+                    #panInput data-key="pan" />
                 </div>
                 <div class="mt-3">
                   <div
                     class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-                    (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')"
-                    (keydown.space)="$event.preventDefault(); openPreview('pan')" role="button"
-                    aria-label="Preview PAN">
+                    (click)="openPreview('pan')" tabindex="0" (keydown.enter)="openPreview('pan')" (keydown.space)="
+                      $event.preventDefault(); openPreview('pan')
+                    " role="button" aria-label="Preview PAN">
                     <img [src]="previews.pan || ''" *ngIf="previews.pan && isImage(previews.pan)" alt="PAN preview"
                       class="w-full h-full object-contain" />
                     <div class="flex flex-col items-center gap-1 text-gray-500"
@@ -1283,24 +1370,28 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
               <!-- Aadhaar Front -->
               <div class="rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Front)</div>
+                <div class="text-sm font-semibold text-gray-800">
+                  Address Proof (Aadhaar Front)
+                </div>
                 <div class="mt-3">
                   <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Front"
                     (change)="onFileChange($event, 'aadhaarFront')"
                     class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #aadhaarFrontInput data-key="aadhaarFront">
+                    #aadhaarFrontInput data-key="aadhaarFront" />
                 </div>
                 <div class="mt-3">
                   <div
                     class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
                     (click)="openPreview('aadhaarFront')" tabindex="0" (keydown.enter)="openPreview('aadhaarFront')"
-                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarFront')" role="button"
-                    aria-label="Preview Aadhaar front">
-                    <img [src]="previews.aadhaarFront || ''"
-                      *ngIf="previews.aadhaarFront && isImage(previews.aadhaarFront)" alt="Aadhaar front preview"
-                      class="w-full h-full object-contain" />
-                    <div class="flex flex-col items-center gap-1 text-gray-500"
-                      *ngIf="previews.aadhaarFront && !isImage(previews.aadhaarFront)">
+                    (keydown.space)="
+                      $event.preventDefault(); openPreview('aadhaarFront')
+                    " role="button" aria-label="Preview Aadhaar front">
+                    <img [src]="previews.aadhaarFront || ''" *ngIf="
+                        previews.aadhaarFront && isImage(previews.aadhaarFront)
+                      " alt="Aadhaar front preview" class="w-full h-full object-contain" />
+                    <div class="flex flex-col items-center gap-1 text-gray-500" *ngIf="
+                        previews.aadhaarFront && !isImage(previews.aadhaarFront)
+                      ">
                       <i class="fa-solid fa-file-pdf text-3xl"></i>
                       <span class="text-sm">PDF Document</span>
                     </div>
@@ -1311,24 +1402,28 @@
 
               <!-- Aadhaar Back -->
               <div class="rounded-xl border border-gray-200 p-4">
-                <div class="text-sm font-semibold text-gray-800">Address Proof (Aadhaar Back)</div>
+                <div class="text-sm font-semibold text-gray-800">
+                  Address Proof (Aadhaar Back)
+                </div>
                 <div class="mt-3">
                   <input type="file" accept="image/*,.pdf" aria-label="Upload Aadhaar Back"
                     (change)="onFileChange($event, 'aadhaarBack')"
                     class="w-full rounded-xl border-2 border-dashed border-[#8c57ff]/40 bg-[#8c57ff]/5 px-3 py-3 text-sm outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#8c57ff] file:px-3 file:py-2 file:text-white hover:border-[#8c57ff]/60 file-input"
-                    #aadhaarBackInput data-key="aadhaarBack">
+                    #aadhaarBackInput data-key="aadhaarBack" />
                 </div>
                 <div class="mt-3">
                   <div
                     class="relative grid place-items-center w-full h-56 rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white overflow-hidden"
                     (click)="openPreview('aadhaarBack')" tabindex="0" (keydown.enter)="openPreview('aadhaarBack')"
-                    (keydown.space)="$event.preventDefault(); openPreview('aadhaarBack')" role="button"
-                    aria-label="Preview Aadhaar back">
-                    <img [src]="previews.aadhaarBack || ''"
-                      *ngIf="previews.aadhaarBack && isImage(previews.aadhaarBack)" alt="Aadhaar back preview"
-                      class="w-full h-full object-contain" />
-                    <div class="flex flex-col items-center gap-1 text-gray-500"
-                      *ngIf="previews.aadhaarBack && !isImage(previews.aadhaarBack)">
+                    (keydown.space)="
+                      $event.preventDefault(); openPreview('aadhaarBack')
+                    " role="button" aria-label="Preview Aadhaar back">
+                    <img [src]="previews.aadhaarBack || ''" *ngIf="
+                        previews.aadhaarBack && isImage(previews.aadhaarBack)
+                      " alt="Aadhaar back preview" class="w-full h-full object-contain" />
+                    <div class="flex flex-col items-center gap-1 text-gray-500" *ngIf="
+                        previews.aadhaarBack && !isImage(previews.aadhaarBack)
+                      ">
                       <i class="fa-solid fa-file-pdf text-3xl"></i>
                       <span class="text-sm">PDF Document</span>
                     </div>
@@ -1342,11 +1437,14 @@
               <label for="step-4"
                 class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-gray-100 text-gray-800 border-2 border-gray-200 hover:bg-gray-200 cursor-pointer">Previous</label>
               <button type="submit" class="px-5 py-2.5 rounded-lg bg-violet-600 text-white shadow hover:bg-violet-700"
-                (click)="submit()">Save</button>
+                (click)="submit()">
+                Save
+              </button>
             </div>
           </section>
         </form>
-      </div> <!-- /wizard-panels -->
+      </div>
+      <!-- /wizard-panels -->
     </div>
   </div>
 </main>
@@ -1359,7 +1457,9 @@
     <div class="flex items-center justify-between px-4 py-3 border-b">
       <div class="flex items-center gap-3">
         <h3 class="text-lg font-semibold">Preview</h3>
-        <span class="text-sm text-gray-500" *ngIf="activeKey">{{ activeKey }}</span>
+        <span class="text-sm text-gray-500" *ngIf="activeKey">{{
+          activeKey
+          }}</span>
       </div>
       <div class="flex items-center gap-2">
         <button type="button"
@@ -1380,7 +1480,7 @@
         <img *ngIf="isImage(previews[activeKey])" [src]="previews[activeKey]" alt="Preview"
           class="mx-auto max-h-[72vh] w-auto rounded" />
         <embed *ngIf="!isImage(previews[activeKey])" [src]="previews[activeKey]" type="application/pdf"
-          style="width:100%;height:72vh;border-radius:6px" />
+          style="width: 100%; height: 72vh; border-radius: 6px" />
       </ng-container>
 
       <ng-template #noFile>
@@ -1391,62 +1491,3 @@
     </div>
   </div>
 </div>
-
-<!-- Styles -->
-<style>
-  .wizard-card {
-    max-height: calc(560vh - 48px);
-    width: 100%;
-    max-width: none;
-  }
-
-  .wizard-state {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .wizard-panels .panel {
-    display: none;
-  }
-
-  #step-1:checked~.wizard-panels #panel-1 {
-    display: block;
-  }
-
-  #step-2:checked~.wizard-panels #panel-2 {
-    display: block;
-  }
-
-  #step-3:checked~.wizard-panels #panel-3 {
-    display: block;
-  }
-
-  #step-4:checked~.wizard-panels #panel-4 {
-    display: block;
-  }
-
-  #step-5:checked~.wizard-panels #panel-5 {
-    display: block;
-  }
-
-  #step-1:checked~.wizard-steps label[for="step-1"],
-  #step-2:checked~.wizard-steps label[for="step-2"],
-  #step-3:checked~.wizard-steps label[for="step-3"],
-  #step-4:checked~.wizard-steps label[for="step-4"],
-  #step-5:checked~.wizard-steps label[for="step-5"] {
-    background: linear-gradient(135deg, #8c57ff 0%, #a855f7 100%);
-    color: white;
-    border-color: transparent;
-    box-shadow: 0 6px 18px rgba(140, 87, 255, 0.25);
-    transform: translateY(-1px);
-  }
-
-  .wizard-steps label {
-    transition: all .18s ease;
-  }
-
-  .min-w-0 {
-    min-width: 0;
-  }
-</style>

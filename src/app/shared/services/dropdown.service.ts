@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
 export interface DropdownOption {
   name: string;
   code: number | string;
-  meta?: string;      // optional (city meta / code / pin)
+  meta?: string;
   [key: string]: any;
 }
 
-@Injectable({ providedIn: 'root' })
-export class DropdownService {
+@Injectable()
+export class DropdownService implements OnDestroy {
 
   pickerOpen$ = new BehaviorSubject<boolean>(false);
   dropdownOpen$ = new BehaviorSubject<boolean>(false);
@@ -22,85 +22,91 @@ export class DropdownService {
   searchText$ = new BehaviorSubject<string>('');
   searchChanged$ = new Subject<string>();
 
-
+  private destroy$ = new Subject<void>();
   private resolveFn: ((value: DropdownOption | null) => void) | null = null;
 
-  /** Open dynamic dropdown */
-openPicker(title: string, list: DropdownOption[]): Promise<DropdownOption | null> {
-  this.pickerTitle$.next(title);
-  this.pickerOptions$.next(list);
-  this.pickerFiltered$.next(list);
+  constructor() {
+    this.searchChanged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(q => this.filter(q));
+  }
 
-  // keep previously selected item in input
-  this.searchText$.next(this.pickerSelectedTemp$.value?.name || '');
+  /** Open dropdown */
+  openPicker(title: string, list: DropdownOption[]): Promise<DropdownOption | null> {
+    this.resetState();
 
-  this.dropdownOpen$.next(false);
-  this.pickerOpen$.next(true);
+    this.pickerTitle$.next(title);
+    this.pickerOptions$.next(list);
+    this.pickerFiltered$.next(list);
 
-  return new Promise(resolve => (this.resolveFn = resolve));
-}
+    this.pickerOpen$.next(true);
 
-
-  /** Close picker */
-  closePicker() {
-    this.pickerOpen$.next(false);
-    this.dropdownOpen$.next(false);
-    this.resolveFn?.(null);
-    this.resolveFn = null;
+    return new Promise(resolve => (this.resolveFn = resolve));
   }
 
   /** Confirm */
   confirmPicker() {
     const selected = this.pickerSelectedTemp$.value;
-    this.pickerOpen$.next(false);
-    this.dropdownOpen$.next(false);
+    this.closeInternal();
     this.resolveFn?.(selected);
     this.resolveFn = null;
   }
 
+  /** Close */
+  closePicker() {
+    this.closeInternal();
+    this.resolveFn?.(null);
+    this.resolveFn = null;
+  }
+
   /** Select option */
-pickOption(opt: DropdownOption) {
-  this.pickerSelectedTemp$.next(opt);
-  this.searchText$.next(opt.name); // <-- REQUIRED
-  this.dropdownOpen$.next(false);
-}
+  pickOption(opt: DropdownOption) {
+    this.pickerSelectedTemp$.next(opt);
+    this.searchText$.next(opt.name);
+    this.dropdownOpen$.next(false);
+  }
 
-
-
-  /** Check selected (for checkmark icon) */
   isSelected(opt: DropdownOption) {
     return this.pickerSelectedTemp$.value === opt;
   }
 
-  /** Toggle dropdown */
   toggleDropdown() {
     this.dropdownOpen$.next(!this.dropdownOpen$.value);
   }
 
-  /** Search */
   filter(q: string) {
-  this.searchText$.next(q);
+    this.searchText$.next(q);
 
-  const all = this.pickerOptions$.value || [];
-  q = (q || '').trim().toLowerCase();
+    const all = this.pickerOptions$.value;
+    q = (q || '').trim().toLowerCase();
 
-  if (!q) {
-    this.pickerFiltered$.next(all);
-    return;
+    if (!q) {
+      this.pickerFiltered$.next(all);
+      return;
+    }
+
+    this.pickerFiltered$.next(
+      all.filter(o =>
+        o.name.toLowerCase().includes(q) ||
+        o.code.toString().toLowerCase().includes(q)
+      )
+    );
   }
 
-  this.pickerFiltered$.next(
-    all.filter(o => {
-      const name = (o.name || '').toString().toLowerCase();
-      const code = (o.code || '').toString().toLowerCase();
-      
-      return (
-        name.includes(q) ||
-        code.includes(q)
-      );
-    })
-  );
-}
+  /** INTERNAL RESET */
+  private resetState() {
+    this.dropdownOpen$.next(false);
+    this.searchText$.next('');
+    this.pickerSelectedTemp$.next(null);
+  }
 
+  private closeInternal() {
+    this.pickerOpen$.next(false);
+    this.dropdownOpen$.next(false);
+  }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }
