@@ -13,8 +13,6 @@
 .custom-btn-close:hover { background: rgba(255,255,255,0.3) !important; transform: rotate(90deg) !important; }
 .custom-btn-close::after { content: "×" !important; }
 
-/* Body and form: allow modal to grow up to viewport limit and scroll if content large */
-.custom-modal-body { padding: 24px 24px 12px 24px !important; background: white !important; max-height: calc(80vh - 120px); overflow: auto; }
 
 /* Footer with centered buttons */
 .custom-modal-footer { border-top: 1px solid #f3f4f6 !important; padding: 16px 20px !important; background: #fafafa !important; display:flex !important; gap:12px !important; justify-content:center !important; margin:0 !important; }
@@ -24,11 +22,7 @@
 .custom-btn-cancel { background:#f3f4f6 !important; color:#6b7280 !important; }
 .custom-btn-save { background: linear-gradient(135deg,#8c57ff 0%,#a855f7 100%) !important; color:white !important; box-shadow: 0 4px 15px rgba(140,87,255,0.3) !important; }
 
-/* Form input visuals */
-.form-floating-outline .form-control { border:2px solid #e5e7eb !important; border-radius:12px !important; background:#fafafa !important; transition: all 0.2s ease !important; padding:12px 14px !important; }
-.form-floating-outline .form-control:focus { outline:none !important; border-color:#8c57ff !important; background:white !important; box-shadow:0 0 0 3px rgba(140,87,255,0.08) !important; transform: translateY(-1px) !important; }
-.form-floating-outline label { display:flex !important; align-items:center !important; gap:8px !important; font-weight:600 !important; color:#374151 !important; }
-.form-floating-outline label i { font-size:16px !important; color:#8c57ff !important; }
+
 
 /* Dropdown (inside modal input) */
 .branch-input { padding-right: 44px !important; cursor: text; }
@@ -117,7 +111,75 @@
   100% { transform: rotate(360deg); }
 }
 
+/* RED BORDER on invalid fields */
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched {
+  border: 1px solid #e53935 !important;
+  box-shadow: 0 0 3px rgba(229, 57, 53, 0.5);
+}
 
+.invalid-check.ng-invalid.ng-touched { border-color: #e53935 !important; }
 
+.wizard-card {
+    max-height: calc(560vh - 48px);
+    width: 100%;
+    max-width: none;
+  }
+
+  .wizard-state {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .wizard-panels .panel {
+    display: none;
+  }
+
+  #step-1:checked ~ .wizard-panels #panel-1 {
+    display: block;
+  }
+
+  #step-2:checked ~ .wizard-panels #panel-2 {
+    display: block;
+  }
+
+  #step-3:checked ~ .wizard-panels #panel-3 {
+    display: block;
+  }
+
+  #step-4:checked ~ .wizard-panels #panel-4 {
+    display: block;
+  }
+
+  #step-5:checked ~ .wizard-panels #panel-5 {
+    display: block;
+  }
+
+  #step-6:checked ~ .wizard-panels #panel-6
+  {
+    display: block;
+  }
+
+  #step-1:checked ~ .wizard-steps label[for="step-1"],
+  #step-2:checked ~ .wizard-steps label[for="step-2"],
+  #step-3:checked ~ .wizard-steps label[for="step-3"],
+  #step-4:checked ~ .wizard-steps label[for="step-4"],
+  #step-5:checked ~ .wizard-steps label[for="step-5"] {
+    background: linear-gradient(135deg, #8c57ff 0%, #a855f7 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 6px 18px rgba(140, 87, 255, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .wizard-steps label {
+    transition: all 0.18s ease;
+  }
+
+  .min-w-0 {
+    min-width: 0;
+  }
 
 
