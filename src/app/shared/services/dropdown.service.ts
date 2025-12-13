@@ -8,7 +8,7 @@ export interface DropdownOption {
   [key: string]: any;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class DropdownService {
 
   pickerOpen$ = new BehaviorSubject<boolean>(false);
