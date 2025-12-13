@@ -154,6 +154,9 @@ export const UserMaster_Routes: Routes = [
       { path: 'localdirector', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Local Director | Pro Bank' }, //50
       { path: 'areamaster', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Area Master | Pro Bank' },       //51
       { path: 'lawadcourt', loadComponent: () => import('../Masters/commanmst-f2/commanmst-f2.component').then(m => m.CommanmstF2Component), title: 'Lawad Court Master | Pro Bank' }, //52
+      { path: 'agentmst', loadComponent: () =>import('../Masters/agentmst/agentmst.component').then(m => m.AgentmstComponent), title: 'Agent Master | SmartBank'},
+      { path: 'usermst', loadComponent: () =>import('../Masters/usermst/usermst.component').then(m => m.UsermstComponent), title: 'User Master | SmartBank'},
+
       {
         path: 'CheckMenuId',
         loadComponent: () =>

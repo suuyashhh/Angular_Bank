@@ -29,32 +29,47 @@
           </div>
 
           <!-- reactive form -->
+          <!-- reactive form -->
           <form [formGroup]="data" (ngSubmit)="submit()" class="grid grid-cols-1 gap-4 sm:grid-cols-3" #agentFormStart>
 
             <!-- Branch Code (select via modal) -->
             <div class="form-floating form-floating-outline mb-0" tabindex="0" #editFocusStart>
               <input id="branchCodeDisplay" type="text" class="form-control" placeholder="Select Branch" readonly
-                (click)="picker.openPicker('branch','primary')" [value]="selectedBranchName" style="cursor:pointer" />
-              <!-- actual code stored in hidden control -->
+                (click)="onBranchClick()" [value]="selectedBranchName" [class.opacity-60]="btn === 'E'"
+                style="cursor:pointer" />
               <input type="hidden" formControlName="BRNC_CODE" />
               <label for="branchCodeDisplay">Branch Code</label>
+
+              <div *ngIf="(data.get('BRNC_CODE')?.invalid && (data.get('BRNC_CODE')?.touched || submitted))"
+                class="text-danger mt-1 text-sm">
+                Branch is required.
+              </div>
             </div>
 
-            <!-- Agent Code (select via modal) -->
-            <!-- Agent Code (read-only if generated on server / new mode) -->
-            <div class="form-floating form-floating-outline mb-0 " [hidden]="btn !== 'E'">
+            <!-- Agent Code (visible only in edit) -->
+            <div class="form-floating form-floating-outline mb-0" [hidden]="btn !== 'E'">
               <input id="agentCode" type="text" class="form-control" formControlName="AGENT_CODE"
-                placeholder="Agent Code" [readonly]="btn !== 'E'"  />
+                placeholder="Agent Code" readonly [class.opacity-60]="btn === 'E'" />
               <label for="agentCode">Agent Code</label>
-            </div>
 
+              <div *ngIf="(data.get('AGENT_CODE')?.invalid && (data.get('AGENT_CODE')?.touched || submitted))"
+                class="text-danger mt-1 text-sm">
+                Agent Code is required.
+              </div>
+            </div>
 
             <!-- Customer Code (select via modal) -->
             <div class="form-floating form-floating-outline mb-0">
               <input id="customerCodeDisplay" type="text" class="form-control" placeholder="Select Customer" readonly
-                (click)="openCustomer()" [value]="selectedCustomerCode" style="cursor:pointer" />
+                (click)="onCustomerClick()" [value]="selectedCustomerName || selectedCustomerCode"
+                [class.opacity-60]="btn === 'E'" style="cursor:pointer" />
               <input type="hidden" formControlName="PARTY_CODE" />
               <label for="customerCodeDisplay">Customer Code</label>
+
+              <div *ngIf="(data.get('PARTY_CODE')?.invalid && (data.get('PARTY_CODE')?.touched || submitted))"
+                class="text-danger mt-1 text-sm">
+                Customer is required.
+              </div>
             </div>
 
             <!-- Mobile No. -->
@@ -62,6 +77,16 @@
               <input id="mobileNo" type="text" class="form-control" formControlName="MobileNo"
                 placeholder="Mobile No." />
               <label for="mobileNo">Mobile No.</label>
+
+              <div *ngIf="(data.get('MobileNo')?.errors && (data.get('MobileNo')?.touched || submitted))"
+                class="text-danger mt-1 text-sm">
+                <div *ngIf="data.get('MobileNo')?.errors?.['pattern']">
+                  Invalid phone number. Use digits only, optionally starting with +, length 7–15.
+                </div>
+                <div *ngIf="data.get('MobileNo')?.errors?.['maxlength']">
+                  Phone must be at most 15 characters.
+                </div>
+              </div>
             </div>
 
             <!-- Join Date -->
@@ -76,12 +101,24 @@
               <input id="resignDate" type="date" class="form-control" formControlName="Resign_Date"
                 placeholder="Resign Date" />
               <label for="resignDate">Resign Date</label>
+
+              <div
+                *ngIf="(data.errors?.['dateRange'] && (data.get('Resign_Date')?.touched || data.get('Join_date')?.touched || submitted))"
+                class="text-danger mt-1 text-sm">
+                Resign date must be the same as or after Join date.
+              </div>
             </div>
 
             <!-- Name (full width) -->
             <div class="form-floating form-floating-outline mb-0 sm:col-span-3">
-              <input id="agentName" type="text" class="form-control" formControlName="NAME" placeholder="Name" readonly />
+              <input id="agentName" type="text" class="form-control" formControlName="NAME" placeholder="Name"
+                readonly />
               <label for="agentName">Name</label>
+
+              <div *ngIf="(data.get('NAME')?.invalid && (data.get('NAME')?.touched || submitted))"
+                class="text-danger mt-1 text-sm">
+                Name is required.
+              </div>
             </div>
 
             <!-- Collection Machine (full width) -->
@@ -94,7 +131,6 @@
               </select>
               <label for="collectionMachine">Collection Machine</label>
             </div>
-
 
             <!-- Active Yes/No -->
             <div class="mb-0 sm:col-span-3 flex items-center gap-4">
@@ -122,11 +158,12 @@
 
               <button type="submit"
                 class="px-5 py-2.5 rounded-xl bg-violet-600 text-white font-medium shadow hover:bg-violet-700"
-                [disabled]="saving || data.invalid">
+                [disabled]="saving">
                 {{ saving ? 'Saving...' : (btn === 'E' ? 'Update' : 'Save') }}
               </button>
             </div>
           </form>
+
         </div>
 
         <div class="mt-6">
@@ -163,7 +200,7 @@
                     <th>Actions</th>
                     <th>Agent Name</th>
                     <th>Agent Code</th>
-                    <!-- <th>Mobile</th> -->
+                    <th>ID</th>
                     <th>Branch</th>
                     <th>Active</th>
                   </tr>
@@ -178,7 +215,7 @@
                           <i class="ri-pencil-line"></i>
                           <span class="d-none d-sm-inline">Edit</span>
                         </button>
-                        <button class="btn btn-danger text-white" (click)="deleteAgent(a)" title="Delete">
+                        <button class="btn btn-danger text-white" (click)="deleteAgent(a.ID, a.NAME)" title="Delete">
                           <i class="ri-delete-bin-6-line"></i>
                           <span class="d-none d-sm-inline">Delete</span>
                         </button>
@@ -186,9 +223,13 @@
                     </td>
                     <td><strong>{{ a.NAME }}</strong></td>
                     <td><strong>{{ a.AGENT_CODE || a.code }}</strong></td>
-                    <!-- <td><strong>{{ a.MobileNo }}</strong></td> -->
+                    <td><strong>{{ a.ID }}</strong></td>
                     <td><strong>{{ a.BRNC_CODE }}</strong></td>
-                    <td><strong>{{ a.Active_YN === 'Y' ? 'Yes' : 'No' }}</strong></td>
+                    <td>
+                      <span class="status-badge" [ngClass]="a.Active_YN === 'Y' ? 'status-active' : 'status-inactive'">
+                        {{ a.Active_YN === 'Y' ? 'Yes' : 'No' }}
+                      </span>
+                    </td>
                   </tr>
 
                   <tr *ngIf="(filteredAgents() || []).length === 0">
@@ -221,6 +262,171 @@
     </div>
   </div>
 
-  <!-- Your dropdown/picker modal component, if you use one globally -->
-  <app-dropdpwn-modal></app-dropdpwn-modal>
+  <!-- Branch modal instance -->
+  <app-dropdpwn-modal [open]="branchModalOpen" [title]="'Branch'" [options]="branchOptions"
+    [selected]="branchTempSelection" (closed)="onBranchClosed()" (confirmed)="onBranchConfirmed($event)">
+  </app-dropdpwn-modal>
+
+  <!-- Customer / Agent modal instance -->
+  <app-dropdpwn-modal [open]="customerModalOpen" [title]="'Customer / Agent'" [options]="customerOptions"
+    [selected]="customerTempSelection" (closed)="onCustomerClosed()" (confirmed)="onCustomerConfirmed($event)">
+  </app-dropdpwn-modal>
+
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; width: 90%;">
+      <div class="modal-content" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+        <div class="modal-header"
+          style="background-color: #e74c3c; color: #fff; border-bottom: none; padding: 12px 16px;">
+          <h5 class="modal-title" style="font-size: 1rem; margin: 0; display: flex; align-items: center;">
+            <i class="ri-delete-bin-6-line" style="margin-right: 8px; font-size: 1.2rem;"></i> Confirm Deletion
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
+            style="filter: invert(1);"></button>
+        </div>
+        <div class="modal-body" style="text-align: center; padding: 24px 16px;">
+          <i class="ri-alert-fill" style="font-size: 3rem; color: #e74c3c;"></i>
+          <h5 style="margin-top: 12px; font-size: 1.25rem; font-weight: 600;">Are you sure?</h5>
+          <p style="margin-top: 8px; color: #6c757d; font-size: 0.9rem;">
+            You are about to delete the Agent
+            <strong style="color: #e74c3c;">{{ data.get('NAME')?.value }}</strong>.
+            This action cannot be undone.
+          </p>
+        </div>
+        <div class="modal-footer"
+          style="display: flex; justify-content: center; gap: 12px; border-top: none; padding: 16px;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+            style="padding: 8px 20px; border-radius: 20px; font-weight: 500;">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="executeDelete()" data-bs-dismiss="modal"
+            style="padding: 8px 20px; border-radius: 20px; font-weight: 500; display: flex; align-items: center;">
+            <i class="ri-delete-bin-6-line" style="margin-right: 6px;"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent Saved Success Modal -->
+  <!-- Agent Saved Success Modal -->
+  <div class="modal fade agent-success-backdrop" [class.show]="showAgentSavedModal" tabindex="-1" aria-hidden="true"
+    [ngStyle]="{ display: showAgentSavedModal ? 'block' : 'none' }">
+    <div class="modal-dialog modal-dialog-centered" style="
+      max-width: 420px;
+      width: calc(100% - 24px);
+      margin: 12px auto;
+    ">
+      <div class="modal-content" style="
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      ">
+        <!-- Header -->
+        <div class="modal-header" style="
+          background-color: #eef2ff;
+          color: #4338ca;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 16px;
+          border-bottom: none;
+        ">
+          <h5 class="modal-title" style="
+            font-size: 1rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+          ">
+            <i class="ri-checkbox-circle-line" style="margin-right: 8px; font-size: 1.25rem;"></i>
+            NEW AGENT DETAILS
+          </h5>
+
+          <!-- Close Button -->
+          <button type="button" aria-label="Close" (click)="closeAgentSavedModal()" style="
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+          ">
+            <i class="ri-close-line" style="font-size: 18px; color: #4338ca;"></i>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body" style="
+          text-align: center;
+          padding: 20px 16px;
+        ">
+          <i class="ri-user-add-line" style="font-size: 3rem; color: #6366f1;"></i>
+
+          <!-- Agent Name -->
+          <h5 style="
+            margin-top: 14px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e1b4b;
+          ">
+            {{ savedAgentDetails?.name }}
+          </h5>
+
+          <!-- Agent Code -->
+          <p style="
+            margin-top: 12px;
+            font-size: 0.95rem;
+            color: #475569;
+          ">
+            Agent Code :
+            <span style="
+              display: inline-block;
+              margin-left: 6px;
+              padding: 4px 14px;
+              background: #e0e7ff;
+              color: #3730a3;
+              font-weight: 700;
+              border-radius: 9999px;
+              letter-spacing: 0.08em;
+              font-size: 0.95rem;
+            ">
+              {{ savedAgentDetails?.code }}
+            </span>
+          </p>
+
+          <!-- Branch -->
+          <p *ngIf="savedAgentDetails?.branch" style="
+            margin-top: 6px;
+            font-size: 0.9rem;
+            color: #64748b;
+          ">
+            Branch :
+            <strong>{{ savedAgentDetails?.branch }}</strong>
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer" style="
+          display: flex;
+          justify-content: center;
+          border-top: none;
+          padding: 16px;
+        ">
+          <button type="button" class="btn btn-primary" style="
+            padding: 8px 26px;
+            border-radius: 20px;
+            font-weight: 500;
+          " (click)="closeAgentSavedModal()">
+            Okay
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
 </main>
