@@ -97,171 +97,186 @@
               <div
                 class="max-w-screen-2xl mx-auto flex items-center justify-center gap-6 md:gap-10 lg:gap-14 w-full px-4 min-w-0">
                 <!-- Step 1 -->
-                <div
-                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-                  [ngClass]="getStepClass(1)" (click)="tryOpenStep(1)">
-                  <ng-container [ngSwitch]="getStepIcon(1)">
-                    <svg *ngSwitchCase="'user'" class="step-svg">
-                      <use href="#icon-user" />
-                    </svg>
-                    <svg *ngSwitchCase="'home'" class="step-svg">
-                      <use href="#General Information" />
-                    </svg>
-                    <svg *ngSwitchCase="'id'" class="step-svg">
-                      <use href="#Scheme" />
-                    </svg>
-                    <svg *ngSwitchCase="'office'" class="step-svg">
-                      <use href="#Installment-Info" />
-                    </svg>
-                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
-                      <use href="#Printing" />
-                    </svg>
-                    <svg *ngSwitchCase="'check'" class="step-svg">
-                      <use href="#icon-check" />
-                    </svg>
-                    <svg *ngSwitchCase="'cross'" class="step-svg">
-                      <use href="#icon-cross" />
-                    </svg>
-                    <svg *ngSwitchDefault="'check-circle'" class="step-svg">
-                      <use href="#icon-user" />
-                    </svg>
-                  </ng-container>
+                <div class="flex flex-col items-center">
+                  <div
+                    class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                    [ngClass]="getStepClass(1)" (click)="tryOpenStep(1)">
+                    <ng-container [ngSwitch]="getStepIcon(1)">
+                      <svg *ngSwitchCase="'user'" class="step-svg">
+                        <use href="#icon-user" />
+                      </svg>
+                      <svg *ngSwitchCase="'home'" class="step-svg">
+                        <use href="#General Information" />
+                      </svg>
+                      <svg *ngSwitchCase="'id'" class="step-svg">
+                        <use href="#Scheme" />
+                      </svg>
+                      <svg *ngSwitchCase="'office'" class="step-svg">
+                        <use href="#Installment-Info" />
+                      </svg>
+                      <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                        <use href="#Printing" />
+                      </svg>
+                      <svg *ngSwitchCase="'check'" class="step-svg">
+                        <use href="#icon-check" />
+                      </svg>
+                      <svg *ngSwitchCase="'cross'" class="step-svg">
+                        <use href="#icon-cross" />
+                      </svg>
+                      <svg *ngSwitchDefault="'check-circle'" class="step-svg">
+                        <use href="#icon-user" />
+                      </svg>
+                    </ng-container>
+                  </div>
+                  <p class="text-xs text-center mt-2 whitespace-nowrap">Basic Details</p>
                 </div>
 
-                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px] self-start mt-5"></div>
 
                 <!-- Step 2 -->
-                <div
-                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-                  [ngClass]="getStepClass(2)" (click)="tryOpenStep(2)">
-                  <ng-container [ngSwitch]="getStepIcon(2)">
-                    <svg *ngSwitchCase="'user'" class="step-svg">
-                      <use href="#icon-user" />
-                    </svg>
-                    <svg *ngSwitchCase="'home'" class="step-svg">
-                      <use href="#General Information" />
-                    </svg>
-                    <svg *ngSwitchCase="'id'" class="step-svg">
-                      <use href="#Scheme" />
-                    </svg>
-                    <svg *ngSwitchCase="'office'" class="step-svg">
-                      <use href="#Installment-Info" />
-                    </svg>
-                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
-                      <use href="#Printing" />
-                    </svg>
-                    <svg *ngSwitchCase="'check'" class="step-svg">
-                      <use href="#icon-check" />
-                    </svg>
-                    <svg *ngSwitchCase="'cross'" class="step-svg">
-                      <use href="#icon-cross" />
-                    </svg>
-                    <svg *ngSwitchDefault="'check-circle'" class="step-svg">
-                      <use href="#General Information" />
-                    </svg>
-                  </ng-container>
+                <div class="flex flex-col items-center">
+                  <div
+                    class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                    [ngClass]="getStepClass(2)" (click)="tryOpenStep(2)">
+                    <ng-container [ngSwitch]="getStepIcon(2)">
+                      <svg *ngSwitchCase="'user'" class="step-svg">
+                        <use href="#icon-user" />
+                      </svg>
+                      <svg *ngSwitchCase="'home'" class="step-svg">
+                        <use href="#General Information" />
+                      </svg>
+                      <svg *ngSwitchCase="'id'" class="step-svg">
+                        <use href="#Scheme" />
+                      </svg>
+                      <svg *ngSwitchCase="'office'" class="step-svg">
+                        <use href="#Installment-Info" />
+                      </svg>
+                      <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                        <use href="#Printing" />
+                      </svg>
+                      <svg *ngSwitchCase="'check'" class="step-svg">
+                        <use href="#icon-check" />
+                      </svg>
+                      <svg *ngSwitchCase="'cross'" class="step-svg">
+                        <use href="#icon-cross" />
+                      </svg>
+                      <svg *ngSwitchDefault="'check-circle'" class="step-svg">
+                        <use href="#General Information" />
+                      </svg>
+                    </ng-container>
+                  </div>
+                  <p class="text-xs text-center mt-2 whitespace-nowrap">General Information</p>
                 </div>
 
-                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px] self-start mt-5"></div>
 
                 <!-- Step 3 -->
-                <div
-                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-                  [ngClass]="getStepClass(3)" (click)="tryOpenStep(3)">
-                  <ng-container [ngSwitch]="getStepIcon(3)">
-                    <svg *ngSwitchCase="'user'" class="step-svg">
-                      <use href="#icon-user" />
-                    </svg>
-                    <svg *ngSwitchCase="'home'" class="step-svg">
-                      <use href="#General Information" />
-                    </svg>
-                    <svg *ngSwitchCase="'id'" class="step-svg">
-                      <use href="#Scheme" />
-                    </svg>
-                    <svg *ngSwitchCase="'office'" class="step-svg">
-                      <use href="#Installment-Info" />
-                    </svg>
-                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
-                      <use href="#Printing" />
-                    </svg>
-                    <svg *ngSwitchCase="'check'" class="step-svg">
-                      <use href="#icon-check" />
-                    </svg>
-                    <svg *ngSwitchCase="'cross'" class="step-svg">
-                      <use href="#icon-cross" />
-                    </svg>
-                    <svg *ngSwitchDefault="'check-circle'" class="step-svg">
-                      <use href="#Scheme" />
-                    </svg>
-                  </ng-container>
+                <div class="flex flex-col items-center">
+                  <div
+                    class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                    [ngClass]="getStepClass(3)" (click)="tryOpenStep(3)">
+                    <ng-container [ngSwitch]="getStepIcon(3)">
+                      <svg *ngSwitchCase="'user'" class="step-svg">
+                        <use href="#icon-user" />
+                      </svg>
+                      <svg *ngSwitchCase="'home'" class="step-svg">
+                        <use href="#General Information" />
+                      </svg>
+                      <svg *ngSwitchCase="'id'" class="step-svg">
+                        <use href="#Scheme" />
+                      </svg>
+                      <svg *ngSwitchCase="'office'" class="step-svg">
+                        <use href="#Installment-Info" />
+                      </svg>
+                      <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                        <use href="#Printing" />
+                      </svg>
+                      <svg *ngSwitchCase="'check'" class="step-svg">
+                        <use href="#icon-check" />
+                      </svg>
+                      <svg *ngSwitchCase="'cross'" class="step-svg">
+                        <use href="#icon-cross" />
+                      </svg>
+                      <svg *ngSwitchDefault="'check-circle'" class="step-svg">
+                        <use href="#Scheme" />
+                      </svg>
+                    </ng-container>
+                  </div>
+                  <p class="text-xs text-center mt-2 whitespace-nowrap">Scheme</p>
                 </div>
 
-                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px] self-start mt-5"></div>
 
                 <!-- Step 4 -->
-                <div
-                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-                  [ngClass]="getStepClass(4)" (click)="tryOpenStep(4)">
-                  <ng-container [ngSwitch]="getStepIcon(4)">
-                    <svg *ngSwitchCase="'user'" class="step-svg">
-                      <use href="#icon-user" />
-                    </svg>
-                    <svg *ngSwitchCase="'home'" class="step-svg">
-                      <use href="#General Information" />
-                    </svg>
-                    <svg *ngSwitchCase="'id'" class="step-svg">
-                      <use href="#Scheme" />
-                    </svg>
-                    <svg *ngSwitchCase="'office'" class="step-svg">
-                      <use href="#Installment-Info" />
-                    </svg>
-                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
-                      <use href="#Printing" />
-                    </svg>
-                    <svg *ngSwitchCase="'check'" class="step-svg">
-                      <use href="#icon-check" />
-                    </svg>
-                    <svg *ngSwitchCase="'cross'" class="step-svg">
-                      <use href="#icon-cross" />
-                    </svg>
-                    <svg *ngSwitchDefault="'check-circle'" class="step-svg">
-                      <use href="#Installment-Info" />
-                    </svg>
-                  </ng-container>
+                <div class="flex flex-col items-center">
+                  <div
+                    class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                    [ngClass]="getStepClass(4)" (click)="tryOpenStep(4)">
+                    <ng-container [ngSwitch]="getStepIcon(4)">
+                      <svg *ngSwitchCase="'user'" class="step-svg">
+                        <use href="#icon-user" />
+                      </svg>
+                      <svg *ngSwitchCase="'home'" class="step-svg">
+                        <use href="#General Information" />
+                      </svg>
+                      <svg *ngSwitchCase="'id'" class="step-svg">
+                        <use href="#Scheme" />
+                      </svg>
+                      <svg *ngSwitchCase="'office'" class="step-svg">
+                        <use href="#Installment-Info" />
+                      </svg>
+                      <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                        <use href="#Printing" />
+                      </svg>
+                      <svg *ngSwitchCase="'check'" class="step-svg">
+                        <use href="#icon-check" />
+                      </svg>
+                      <svg *ngSwitchCase="'cross'" class="step-svg">
+                        <use href="#icon-cross" />
+                      </svg>
+                      <svg *ngSwitchDefault="'check-circle'" class="step-svg">
+                        <use href="#Installment-Info" />
+                      </svg>
+                    </ng-container>
+                  </div>
+                  <p class="text-xs text-center mt-2 whitespace-nowrap">Installment Info</p>
                 </div>
 
-                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px]"></div>
+                <div class="flex-1 h-0.5 bg-gray-200 max-w-[100px] self-start mt-5"></div>
 
                 <!-- Step 5 -->
-                <div
-                  class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
-                  [ngClass]="getStepClass(5)" (click)="tryOpenStep(5)">
-                  <ng-container [ngSwitch]="getStepIcon(5)">
-                    <svg *ngSwitchCase="'user'" class="step-svg">
-                      <use href="#icon-user" />
-                    </svg>
-                    <svg *ngSwitchCase="'home'" class="step-svg">
-                      <use href="#General Information" />
-                    </svg>
-                    <svg *ngSwitchCase="'id'" class="step-svg">
-                      <use href="#Scheme" />
-                    </svg>
-                    <svg *ngSwitchCase="'office'" class="step-svg">
-                      <use href="#Installment-Info" />
-                    </svg>
-                    <svg *ngSwitchCase="'check-circle'" class="step-svg">
-                      <use href="#Printing" />
-                    </svg>
-                    <svg *ngSwitchCase="'check'" class="step-svg">
-                      <use href="#icon-check" />
-                    </svg>
-                    <svg *ngSwitchCase="'cross'" class="step-svg">
-                      <use href="#icon-cross" />
-                    </svg>
-                    <svg *ngSwitchDefault="'check-circle'" class="step-svg">
-                      <use href="#Printing" />
-                    </svg>
-                  </ng-container>
+                <div class="flex flex-col items-center">
+                  <div
+                    class="step w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer transition-all duration-200"
+                    [ngClass]="getStepClass(5)" (click)="tryOpenStep(5)">
+                    <ng-container [ngSwitch]="getStepIcon(5)">
+                      <svg *ngSwitchCase="'user'" class="step-svg">
+                        <use href="#icon-user" />
+                      </svg>
+                      <svg *ngSwitchCase="'home'" class="step-svg">
+                        <use href="#General Information" />
+                      </svg>
+                      <svg *ngSwitchCase="'id'" class="step-svg">
+                        <use href="#Scheme" />
+                      </svg>
+                      <svg *ngSwitchCase="'office'" class="step-svg">
+                        <use href="#Installment-Info" />
+                      </svg>
+                      <svg *ngSwitchCase="'check-circle'" class="step-svg">
+                        <use href="#Printing" />
+                      </svg>
+                      <svg *ngSwitchCase="'check'" class="step-svg">
+                        <use href="#icon-check" />
+                      </svg>
+                      <svg *ngSwitchCase="'cross'" class="step-svg">
+                        <use href="#icon-cross" />
+                      </svg>
+                      <svg *ngSwitchDefault="'check-circle'" class="step-svg">
+                        <use href="#Printing" />
+                      </svg>
+                    </ng-container>
+                  </div>
+                  <p class="text-xs text-center mt-2 whitespace-nowrap">Printing</p>
                 </div>
               </div>
             </div>
@@ -430,7 +445,8 @@
                     <h4 class="mb-4 text-lg font-semibold">Scheme</h4>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                       <div class="form-floating form-floating-outline mb-0">
-                        <input type="text" id="interestScheme" class="form-control" placeholder="Interest Installment Info" />
+                        <input type="text" id="interestScheme" class="form-control"
+                          placeholder="Interest Installment Info" />
                         <label for="interestScheme">Interest Installment Info</label>
                       </div>
 
