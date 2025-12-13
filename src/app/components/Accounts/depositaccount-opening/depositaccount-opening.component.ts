@@ -89,11 +89,9 @@ export class DepositaccountOpeningComponent implements OnInit {
     
     this.initializeForm();
     
-    // Subscribe to picker selections
     this.picker.pickerSelected$.subscribe(sel => {
       if (!sel) return;
       const { field, option, target } = sel;
-      // Handle picker selections here
     });
   }
   
@@ -198,11 +196,6 @@ export class DepositaccountOpeningComponent implements OnInit {
     return 'number';
   }
   
-  // Utility methods
-  openEdit() {
-    this.isEditMode = !this.isEditMode;
-  }
-  
   getCustomers() {
     this.api.get(
       `PartyMaster/GetCustomers?branchCode=${this.branchCode}&search=`
@@ -217,35 +210,7 @@ export class DepositaccountOpeningComponent implements OnInit {
     });
   }
   
-  submit() {
-    if (!this.form.valid) {
-      this.toastr.error("Please fill all required fields");
-      return;
-    }
-    
-    // Submit logic here
-    this.loader.show();
-    
-    // Example API call
-    const payload = {
-      ...this.form.value,
-      branchCode: this.branchCode
-    };
-    
-    this.api.post("PartyMaster/save", payload).subscribe({
-      next: (res: any) => {
-        this.loader.hide();
-        this.toastr.success("Saved Successfully!");
-        console.log("API RESPONSE →", res);
-        this.resetForm();
-      },
-      error: (err: any) => {
-        this.loader.hide();
-        this.toastr.error("Error saving data");
-        console.error("API ERROR →", err);
-      }
-    });
-  }
+   submit(){}
   
   resetForm() {
     this.form.reset();
