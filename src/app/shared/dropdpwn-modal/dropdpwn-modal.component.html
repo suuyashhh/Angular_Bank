@@ -1,126 +1,81 @@
 <!-- MODAL -->
 <div class="modal custom-modal-fade"
-     [ngClass]="{ 'show d-block': picker.pickerOpen$ | async }"
+     [ngClass]="{ 'show d-block': open }"
      tabindex="-1">
-
 
   <div class="modal-dialog modal-dialog-centered custom-modal-dialog" (click)="$event.stopPropagation()">
     <div class="modal-content custom-modal-content">
 
       <!-- HEADER -->
       <div class="custom-modal-header">
-        <h5 class="custom-modal-title">Select {{ picker.pickerTitle$ | async }}</h5>
-        <button class="custom-btn-close" (click)="picker.closePicker()"></button>
+        <h5 class="custom-modal-title">Select {{ title }}</h5>
+        <button class="custom-btn-close" (click)="onClose()"></button>
       </div>
 
       <!-- BODY -->
       <div class="custom-modal-body">
-
         <form class="custom-form" (submit)="$event.preventDefault()">
           <div class="custom-form-group">
             <div class="form-floating form-floating-outline mb-0 position-relative">
 
               <!-- SEARCH BAR -->
               <input #modalSearchInput type="text"
-       class="form-control branch-input"
-       [value]="(picker.searchText$ | async) || ''"
-       (input)="picker.searchChanged$.next($any($event.target).value)"
-       (focus)="picker.dropdownOpen$.next(true)"
-       placeholder="{{ picker.pickerTitle$ | async }}"
-       autocomplete="off" />
-
-
-
-
+                     class="form-control branch-input"
+                     [value]="searchText"
+                     (input)="onSearchChange($any($event.target).value)"
+                     (focus)="dropdownOpen = true"
+                     placeholder="{{ title }}"
+                     autocomplete="off" />
 
               <label>
                 <i class="ri-search-line"></i>
-                {{ picker.pickerTitle$ | async }}
+                {{ title }}
               </label>
 
               <!-- CARET -->
               <button type="button"
-                class="dropdown-caret-button"
-                (click)="picker.toggleDropdown()">
-                <i
-                  [ngClass]="(picker.dropdownOpen$ | async) ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'">
-                </i>
+                      class="dropdown-caret-button"
+                      (click)="toggleDropdown()">
+                <i [ngClass]="dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
               </button>
 
             </div>
 
             <!-- DROPDOWN LIST -->
-            <div class="dropdown-panel mt-2"
-              *ngIf="picker.dropdownOpen$ | async">
-
+            <div class="dropdown-panel mt-2" *ngIf="dropdownOpen">
               <div class="dropdown-list">
-
-                <!-- OPTION ITEM -->
                 <div class="dropdown-item"
-                  *ngFor="let opt of picker.pickerFiltered$ | async"
-                  (click)="picker.pickOption(opt)"
-                  [class.is-selected]="picker.isSelected(opt)">
-
+                     *ngFor="let opt of filtered"
+                     (click)="pickOption(opt)"
+                     [class.is-selected]="isSelected(opt)">
                   <div style="flex:1;min-width:0;">
-                    <!-- MAIN NAME -->
-                    <div class="item-name text-sm font-medium truncate">
-                      {{ opt.name }}
-                    </div>
-
-                    <!-- META LINES (optional) -->
-                    <div *ngIf="opt.code"
-                      class="item-meta text-xs text-muted truncate">
-                      {{ opt.code }}
-                    </div>
+                    <div class="item-name text-sm font-medium truncate">{{ opt.name }}</div>
+                    <div *ngIf="opt.code" class="item-meta text-xs text-muted truncate">{{ opt.code }}</div>
                   </div>
-
-                  <!-- CHECKMARK -->
-                  <i class="ri-check-line text-success"
-                    *ngIf="picker.isSelected(opt)">
-                  </i>
-
+                  <i class="ri-check-line text-success" *ngIf="isSelected(opt)"></i>
                 </div>
 
-                <!-- EMPTY -->
-                <div class="dropdown-empty"
-                  *ngIf="(picker.pickerFiltered$ | async)?.length === 0">
-                  No {{ picker.pickerTitle$ | async }} found
+                <div class="dropdown-empty" *ngIf="(filtered?.length || 0) === 0">
+                  No {{ title }} found
                 </div>
-
               </div>
             </div>
 
           </div>
         </form>
-
       </div>
 
       <!-- FOOTER -->
       <div class="custom-modal-footer">
-        <button class="custom-btn custom-btn-cancel"
-          (click)="picker.closePicker()">
-          Cancel
-        </button>
-
-        <button class="custom-btn custom-btn-save"
-          [disabled]="!(picker.pickerSelectedTemp$ | async)"
-          (click)="picker.confirmPicker()">
-          Continue
-        </button>
+        <button class="custom-btn custom-btn-cancel" (click)="onClose()">Cancel</button>
+        <button class="custom-btn custom-btn-save" [disabled]="!tempSelected" (click)="onConfirm()">Continue</button>
       </div>
 
     </div>
   </div>
-
 </div>
-
 
 <!-- BACKDROP -->
-<div *ngIf="picker.pickerOpen$ | async"
-     class="modal-backdrop fade show d-block"></div>
+<div *ngIf="open" class="modal-backdrop fade show d-block"></div>
 
-
-<div class="dropdown-backdrop"
-  *ngIf="picker.dropdownOpen$ | async"
-  (click)="picker.dropdownOpen$.next(false)">
-</div>
+<div class="dropdown-backdrop" *ngIf="dropdownOpen" (click)="dropdownOpen = false"></div>
