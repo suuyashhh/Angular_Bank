@@ -33,39 +33,43 @@ export class CommanmstF2Component implements OnInit {
 
   // ViewId -> table mapping
   ViewIdList: { [key: number]: { tblName: string } } = {
-    1: { tblName: 'castmast' },
-    2: { tblName: 'GradeMast' },
-    3: { tblName: 'golditems' },
-    4: { tblName: 'occumast' },
-    5: { tblName: 'resmmast' },
-    6: { tblName: 'staffMast' },
-    7: { tblName: 'talkmast' },
-    8: { tblName: 'pertmast' },
-    9: { tblName: 'villmast' },
-    10: { tblName: 'vehicle' },
-    11: { tblName: 'zonemast' },
-    12: { tblName: 'SubkGroup' },
-    13: { tblName: 'FamilyMast' },
-    14: { tblName: 'purpmast' },
-    15: { tblName: 'KycIdmast' },
-    16: { tblName: 'KycAddrmast' },
-    17: { tblName: 'catqmast' },
-    18: { tblName: 'diremast' },
-    19: { tblName: 'hellmast' },
-    20: { tblName: 'secumast' },
-    21: { tblName: 'LOCKERGROUP' },
-    22: { tblName: 'DDCITY' },
-    23: { tblName: 'Clg_Trn_Type' },
-    24: { tblName: 'GRPMAST' },
-    25: { tblName: 'compmast' },
-    26: { tblName: 'Valuator' },
-    27: { tblName: 'Bank Master' },
-    28: { tblName: 'Item Group Master' },
-    30: { tblName: 'Item Master' },
-    36: { tblName: 'Division Master' },
-    50: { tblName: 'Local Director' },
-    51: { tblName: 'Area Master' },
-    52: { tblName: 'Lawad Court Master' }
+    0: { tblName: 'AreaMast' },//done  - 1
+    1: { tblName: 'castmast' }, //done - 2
+    3: { tblName: 'golditems' },//done - 3
+    4: { tblName: 'occumast' },//done - 4
+    5: { tblName: 'resmmast' },//done - 5
+    6: { tblName: 'staffMast' },//done - 6
+    7: { tblName: 'talkmast' },//done  - 7
+    9: { tblName: 'villmast' },//done - 8
+    10: { tblName: 'vehicle' },//done - 9
+    13: { tblName: 'FamilyMast' },//done - 10
+    14: { tblName: 'purpmast' },//done - 11
+    15: { tblName: 'KycIdmast' },//done - 12
+    16: { tblName: 'KycAddrmast' },//done - 13
+    17: { tblName: 'catgmast' },//done - 14
+    18: { tblName: 'diremast' },//done - 15
+    20: { tblName: 'secumast' },// done - 16
+    26: { tblName: 'Valuator' },//done - 17
+    33: { tblName: 'pertmast'},//done - 18
+    36: { tblName: 'Division_Master' },// done - 19
+    51: { tblName: 'AreaMast' },// done - 20
+
+    
+    // 2: { tblName: 'GradeMast' },//not found
+    // 8: { tblName: 'pertmast' },// done
+    // 11: { tblName: 'zonemast' },//not found
+    // 12: { tblName: 'SubkGroup' },//not found
+    // 19: { tblName: 'hellmast' },//not found
+    // 21: { tblName: 'LOCKERGROUP' },//not found
+    // 22: { tblName: 'DDCITY' },//not found
+    // 23: { tblName: 'Clg_Trn_Type' },//not found
+    // 24: { tblName: 'GRPMAST' },//not found
+    // 25: { tblName: 'compmast' },//not found
+    // 27: { tblName: 'Bank Master' },//not found
+     // 28: { tblName: 'Item Group Master' },//not found
+    // 30: { tblName: 'Item Master' },//not found
+    // 50: { tblName: 'Local Director' },//not found
+    // 52: { tblName: 'Lawad Court Master' }//not found
   };
 
   form!: FormGroup;

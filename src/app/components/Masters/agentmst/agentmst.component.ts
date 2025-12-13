@@ -22,6 +22,7 @@ import { PickerService } from '../../../services/picker.service';
     RouterModule,
     DropdpwnModalComponent
   ],
+providers:[DropdownService],
   templateUrl: './agentmst.component.html',
   styleUrl: './agentmst.component.css'
 })
@@ -379,4 +380,3 @@ openCustomer(): void {
     return result;
   }
 }
-
